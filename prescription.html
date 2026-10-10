@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Prescription</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+
+  <a href="pet-record.html">← Back to Pet Records</a>
+
+  <h1 style="margin:20px 0;">PRESCRIPTION</h1>
+  <p>Create and manage a pet's prescription records.</p>
+
+  <form id="prescriptionForm" style="margin-top:25px;">
+
+    <h2>Prescription Information</h2>
+
+    <label for="prescriptionId">Prescription ID</label>
+    <input id="prescriptionId" type="text"
+      placeholder="Enter prescription ID" required>
+
+    <label for="petName">Pet Name</label>
+    <input id="petName" type="text"
+      placeholder="Enter pet name" required>
+
+    <label for="ownerName">Owner Name</label>
+    <input id="ownerName" type="text"
+      placeholder="Enter owner name" required>
+
+    <label for="medicineName">Medicine</label>
+    <select id="medicineName" required>
+      <option value="">Select medicine</option>
+      <option>Credelio Quattro</option>
+      <option>Other</option>
+    </select>
+
+    <label for="dosage">Dosage / Instructions</label>
+    <textarea id="dosage" rows="3"
+      placeholder="Enter dosage and instructions" required></textarea>
+
+    <label for="prescriptionDate">Prescription Date</label>
+    <input id="prescriptionDate" type="date" required>
+
+    <label for="notes">Additional Notes</label>
+    <textarea id="notes" rows="3"
+      placeholder="Enter additional notes"></textarea>
+
+    <div style="display:flex;gap:10px;margin-top:25px;">
+      <button type="submit">SAVE PRESCRIPTION</button>
+      <button type="button"
+        onclick="location.href='pet-record.html'"
+        style="background:#E85B5B;">CANCEL</button>
+    </div>
+
+    <p id="saveMessage" style="margin-top:15px;"></p>
+
+  </form>
+
+  <h2 style="margin:30px 0 12px;">PRESCRIPTION HISTORY</h2>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Prescription ID</th>
+          <th>Pet Name</th>
+          <th>Medicine</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="prescriptionTable"></tbody>
+    </table>
+  </div>
+
+</main>
+</div>
+
+<script>
+const prescriptionForm = document.getElementById("prescriptionForm");
+const prescriptionTable = document.getElementById("prescriptionTable");
+
+function loadPrescriptions() {
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoPrescriptions") || "[]"
+  );
+
+  prescriptionTable.innerHTML = "";
+
+  records.forEach(record => {
+    const row = prescriptionTable.insertRow();
+    [record.id, record.pet, record.medicine, record.date]
+      .forEach(value => {
+        row.insertCell().textContent = value;
+      });
+  });
+}
+
+prescriptionForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const record = {
+    id: document.getElementById("prescriptionId").value,
+    pet: document.getElementById("petName").value,
+    owner: document.getElementById("ownerName").value,
+    medicine: document.getElementById("medicineName").value,
+    dosage: document.getElementById("dosage").value,
+    date: document.getElementById("prescriptionDate").value,
+    notes: document.getElementById("notes").value
+  };
+
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoPrescriptions") || "[]"
+  );
+
+  records.push(record);
+  localStorage.setItem("vetmotoPrescriptions", JSON.stringify(records));
+
+  prescriptionForm.reset();
+  loadPrescriptions();
+
+  document.getElementById("saveMessage").textContent =
+    "Prescription saved in this browser.";
+});
+
+loadPrescriptions();
+</script>
+
+</body>
+</html>

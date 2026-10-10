@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VetMoto - Edit Pet</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="notifications.html">♧ Notification</a>
+  <a href="history.html">▦ History</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+  <button onclick="location.href='pet-profile.html'">← BACK</button>
+  <h1>EDIT PET</h1>
+  <p>Update the pet details and owner information.</p>
+
+  <br>
+  <form onsubmit="savePet(event)">
+    <div class="card">
+      <h2>Pet Details</h2>
+
+      <label>Pet ID</label>
+      <input name="petId" value="PR-1042" readonly>
+
+      <label>Breed</label>
+      <input name="breed" value="Golden Retriever" required>
+
+      <label>Pet Name</label>
+      <input name="petName" value="Luna" required>
+
+      <label>Species</label>
+      <input name="species" value="Dog" required>
+
+      <label>Sex</label>
+      <select name="sex">
+        <option>Female</option>
+        <option>Male</option>
+      </select>
+
+      <label>Color</label>
+      <input name="color" placeholder="Enter color">
+    </div>
+
+    <br>
+    <div class="card">
+      <h2>Owner Information</h2>
+
+      <label>Owner Name</label>
+      <input name="owner" value="Maya Patel" required>
+
+      <label>Contact Information</label>
+      <input name="contact" value="maya.patel@vetmoto.com" required>
+
+      <label>Registration Status</label>
+      <select name="status">
+        <option>Registered</option>
+        <option>Pending</option>
+      </select>
+    </div>
+
+    <br>
+    <button type="submit">EDIT CONFIRM</button>
+    <button type="button" onclick="location.href='pet-profile.html'">CANCEL</button>
+  </form>
+</main>
+
+</div>
+
+<script>
+function savePet(event) {
+  event.preventDefault();
+
+  const data = Object.fromEntries(new FormData(event.target));
+  localStorage.setItem("vetmotoPet", JSON.stringify(data));
+
+  alert("Pet information saved!");
+  location.href = "pet-profile.html";
+}
+</script>
+
+</body>
+</html>

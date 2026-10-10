@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VetMoto - Reports</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .report-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .report-card {
+      background: #FFF9F2;
+      border: 1px solid #E9DDF7;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .report-card h3 {
+      color: #5B3A82;
+      margin-top: 0;
+    }
+
+    .report-number {
+      font-size: 26px;
+      font-weight: bold;
+      color: #5B3A82;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .report-table th,
+    .report-table td {
+      text-align: left;
+      padding: 10px;
+      border-bottom: 1px solid #E9DDF7;
+    }
+
+    .report-table th {
+      background: #5B3A82;
+      color: white;
+    }
+
+    .report-section {
+      margin: 25px 0;
+      overflow-x: auto;
+    }
+
+    .report-search {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #D7C8E8;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    @media print {
+      .sidebar, .no-print, button, .report-search {
+        display: none !important;
+      }
+
+      .main-content {
+        margin: 0 !important;
+        width: 100% !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="dashboard">
+  <aside class="sidebar">
+    <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+    <h2>VETMOTO</h2>
+
+    <a href="dashboard.html">⌂ Home</a>
+    <a href="owner-record.html">♧ Owner Records</a>
+    <a href="pet-record.html">🐾 Pet Records</a>
+    <a href="appointment.html">◷ Appointment</a>
+    <a href="vaccination.html">💉 Vaccination</a>
+    <a href="grooming.html">✂ Grooming</a>
+    <a href="payment.html">₱ Payments</a>
+    <a href="index.html" class="logout">LOG OUT</a>
+  </aside>
+
+  <main class="main-content">
+    <a href="dashboard.html">← Back to Dashboard</a>
+
+    <h1 style="margin-top:20px;">CLINIC REPORTS</h1>
+    <p>Summary of records saved in this browser.</p>
+
+    <div class="no-print">
+      <button type="button" onclick="refreshReports()">REFRESH REPORTS</button>
+      <button type="button" onclick="window.print()">PRINT REPORT</button>
+    </div>
+
+    <div class="report-cards">
+      <div class="report-card">
+        <h3>Total Pets</h3>
+        <div class="report-number" id="petCount">0</div>
+      </div>
+
+      <div class="report-card">
+        <h3>Vaccinations</h3>
+        <div class="report-number" id="vaccineCount">0</div>
+      </div>
+
+      <div class="report-card">
+        <h3>Grooming Records</h3>
+        <div class="report-number" id="groomingCount">0</div>
+      </div>
+
+      <div class="report-card">
+        <h3>Appointments</h3>
+        <div class="report-number" id="appointmentCount">0</div>
+      </div>
+
+      <div class="report-card">
+        <h3>Paid Payments</h3>
+        <div class="report-number" id="paymentCount">0</div>
+      </div>
+
+      <div class="report-card">
+        <h3>Total Paid Amount</h3>
+        <div class="report-number" id="paidTotal">₱0.00</div>
+      </div>
+    </div>
+
+    <section class="report-section">
+      <h2>Payment Summary</h2>
+      <p>Only records marked Paid are included in the total amount.</p>
+
+      <input id="paymentSearch" class="report-search no-print"
+        placeholder="Search payment records..."
+        oninput="renderPaymentReport()">
+
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Payment ID</th>
+            <th>Owner</th>
+            <th>Pet</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="paymentReportTable"></tbody>
+      </table>
+      <p id="noPayments" hidden>No matching payment records.</p>
+    </section>
+
+    <section class="report-section">
+      <h2>Vaccination Summary</h2>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Record ID</th>
+            <th>Pet</th>
+            <th>Vaccine</th>
+            <th>Date</th>
+            <th>Next Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="vaccineReportTable"></tbody>
+      </table>
+      <p id="noVaccines" hidden>No vaccination records found.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+function readRecords(key) {
+  try {
+    const data = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function refreshReports() {
+  const pets = readRecords("vetmotoPets");
+  const vaccines = readRecords("vetmotoVaccinations");
+  const grooming = readRecords("vetmotoGrooming");
+  const appointments = readRecords("vetmotoAppointments");
+  const payments = readRecords("vetmotoPayments");
+
+  document.getElementById("petCount").textContent = pets.length;
+  document.getElementById("vaccineCount").textContent = vaccines.length;
+  document.getElementById("groomingCount").textContent = grooming.length;
+  document.getElementById("appointmentCount").textContent =
+    appointments.length;
+
+  const paidPayments = payments.filter(
+    item => item.status === "Paid"
+  );
+
+  document.getElementById("paymentCount").textContent =
+    paidPayments.length;
+
+  const total = paidPayments.reduce(
+    (sum, item) => sum + Number(item.amount || 0), 0
+  );
+
+  document.getElementById("paidTotal").textContent =
+    "₱" + total.toLocaleString("en-PH", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+  renderPaymentReport();
+  renderVaccineReport();
+}
+
+function renderPaymentReport() {
+  const payments = readRecords("vetmotoPayments");
+  const query = document.getElementById("paymentSearch")
+    .value.trim().toLowerCase();
+
+  const matches = payments.filter(item =>
+    [
+      item.id, item.owner, item.pet,
+      item.service, item.date, item.status
+    ].some(value =>
+      String(value || "").toLowerCase().includes(query)
+    )
+  );
+
+  const table = document.getElementById("paymentReportTable");
+  table.replaceChildren();
+
+  matches.forEach(item => {
+    const row = table.insertRow();
+
+    [
+      item.id,
+      item.owner,
+      item.pet,
+      item.service,
+      item.date,
+      "₱" + Number(item.amount || 0).toFixed(2),
+      item.status
+    ].forEach(value => {
+      row.insertCell().textContent = value || "—";
+    });
+  });
+
+  document.getElementById("noPayments").hidden =
+    matches.length > 0;
+}
+
+function renderVaccineReport() {
+  const vaccines = readRecords("vetmotoVaccinations");
+  const table = document.getElementById("vaccineReportTable");
+  table.replaceChildren();
+
+  vaccines.forEach(item => {
+    const row = table.insertRow();
+
+    [
+      item.id,
+      item.pet,
+      item.vaccine,
+      item.date,
+      item.nextDate || "—",
+      item.status
+    ].forEach(value => {
+      row.insertCell().textContent = value || "—";
+    });
+  });
+
+  document.getElementById("noVaccines").hidden =
+    vaccines.length > 0;
+}
+
+refreshReports();
+</script>
+</body>
+</html>

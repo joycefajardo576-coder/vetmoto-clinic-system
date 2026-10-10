@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Laboratory Records</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="prescription.html">▤ Prescription</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+  <a href="dashboard.html">← Back to Dashboard</a>
+  <h1 style="margin:20px 0;">LABORATORY RECORDS</h1>
+  <p>Record and review laboratory tests for clinic patients.</p>
+
+  <button style="margin-top:20px;"
+    onclick="document.getElementById('labForm').hidden=false">
+    + ADD LAB TEST
+  </button>
+
+  <form id="labForm" hidden style="margin:20px 0;">
+    <h2>Laboratory Information</h2>
+
+    <label for="labId">Laboratory ID</label>
+    <input id="labId" required placeholder="Enter laboratory ID">
+
+    <label for="petName">Pet Name</label>
+    <input id="petName" required placeholder="Enter pet name">
+
+    <label for="ownerName">Owner Name</label>
+    <input id="ownerName" required placeholder="Enter owner name">
+
+    <label for="testName">Test Name</label>
+    <input id="testName" required placeholder="Enter test name">
+
+    <label for="testDate">Test Date</label>
+    <input id="testDate" type="date" required>
+
+    <label for="result">Result / Findings</label>
+    <textarea id="result" rows="3"
+      placeholder="Enter laboratory findings"></textarea>
+
+    <label for="labStatus">Status</label>
+    <select id="labStatus">
+      <option>Pending</option>
+      <option>In Progress</option>
+      <option>Completed</option>
+    </select>
+
+    <div style="display:flex;gap:10px;margin-top:15px;">
+      <button type="submit">SAVE LAB TEST</button>
+      <button type="button"
+        onclick="document.getElementById('labForm').hidden=true"
+        style="background:#E85B5B;">CANCEL</button>
+    </div>
+  </form>
+
+  <label for="labSearch">Search laboratory records</label>
+  <input id="labSearch" placeholder="Search records..."
+    oninput="filterLabRecords()" style="width:100%;margin:10px 0 20px;">
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Lab ID</th>
+          <th>Pet</th>
+          <th>Owner</th>
+          <th>Test</th>
+          <th>Date</th>
+          <th>Result</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="labTable"></tbody>
+    </table>
+  </div>
+</main>
+</div>
+
+<script>
+const labForm = document.getElementById("labForm");
+const labTable = document.getElementById("labTable");
+
+function loadLabRecords() {
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoLabRecords") || "[]"
+  );
+
+  labTable.innerHTML = "";
+
+  records.forEach(item => {
+    const row = labTable.insertRow();
+
+    [
+      item.id, item.pet, item.owner, item.test,
+      item.date, item.result, item.status
+    ].forEach(value => {
+      row.insertCell().textContent = value || "—";
+    });
+  });
+
+  filterLabRecords();
+}
+
+labForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const item = {
+    id: document.getElementById("labId").value,
+    pet: document.getElementById("petName").value,
+    owner: document.getElementById("ownerName").value,
+    test: document.getElementById("testName").value,
+    date: document.getElementById("testDate").value,
+    result: document.getElementById("result").value,
+    status: document.getElementById("labStatus").value
+  };
+
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoLabRecords") || "[]"
+  );
+
+  records.push(item);
+  localStorage.setItem("vetmotoLabRecords", JSON.stringify(records));
+
+  labForm.reset();
+  labForm.hidden = true;
+  loadLabRecords();
+});
+
+function filterLabRecords() {
+  const query = document.getElementById("labSearch")
+    .value.toLowerCase();
+
+  [...labTable.rows].forEach(row => {
+    row.hidden = !row.textContent.toLowerCase().includes(query);
+  });
+}
+
+loadLabRecords();
+</script>
+
+</body>
+</html>

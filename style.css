@@ -1,0 +1,351 @@
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:Arial,sans-serif;
+  color:#54207D;
+  background:#fff;
+}
+
+/* ===== LOGIN / BUNGAD ===== */
+
+.login-page{
+  min-height:100vh;
+  display:flex;
+  background:#E9DDF7;
+}
+
+.welcome-section{
+  width:50%;
+  min-height:100vh;
+  padding:35px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:#E9DDF7;
+}
+
+.logo{
+  width:115px;
+  height:115px;
+  object-fit:contain;
+  margin-bottom:18px;
+}
+
+.pet-image{
+  width:85%;
+  max-width:360px;
+  height:220px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-bottom:20px;
+}
+
+.accent-line{
+  width:45px;
+  height:4px;
+  background:#E85B5B;
+  margin-bottom:10px;
+}
+
+.welcome-section h1{
+  font-size:28px;
+  color:#54207D;
+  margin-bottom:5px;
+}
+
+.welcome-section h2{
+  font-size:17px;
+  color:#E85B5B;
+  margin-bottom:8px;
+}
+
+.welcome-section p{
+  max-width:360px;
+  font-size:12px;
+  line-height:1.5;
+  color:#54207D;
+}
+
+/* LOGIN */
+
+.login-section{
+  width:50%;
+  min-height:100vh;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:35px;
+}
+
+.login-box{
+  width:100%;
+  max-width:370px;
+}
+
+.vetmoto-title{
+  color:#54207D;
+  font-weight:bold;
+  letter-spacing:3px;
+  margin-bottom:8px;
+}
+
+.login-box h1{
+  color:#54207D;
+  font-size:25px;
+  margin-bottom:5px;
+}
+
+.description{
+  color:#777;
+  font-size:12px;
+  margin-bottom:18px;
+}
+
+.login-box label{
+  display:block;
+  font-size:11px;
+  font-weight:bold;
+  color:#54207D;
+  margin:12px 0 5px;
+}
+
+.login-box input{
+  width:100%;
+  padding:11px;
+  border:1px solid #D8C4EA;
+  border-radius:7px;
+  background:#FAF7FC;
+}
+
+.login-button{
+  width:100%;
+  margin-top:18px;
+  background:#54207D;
+}
+
+.signup-text{
+  text-align:center;
+  font-size:11px;
+  margin-top:12px;
+  color:#777;
+}
+
+.signup-text span{
+  color:#E85B5B;
+}
+
+/* ===== DASHBOARD ===== */
+
+.dashboard{
+  display:flex;
+  min-height:100vh;
+  background:#fff;
+}
+
+.sidebar{
+  width:200px;
+  min-height:100vh;
+  background:#54207D;
+  color:white;
+  padding:15px;
+  display:flex;
+  flex-direction:column;
+}
+
+.side-logo{
+  width:75px;
+  margin:5px auto 8px;
+}
+
+.sidebar h2{
+  text-align:center;
+  font-size:18px;
+  margin-bottom:15px;
+}
+
+.sidebar a{
+  color:white;
+  text-decoration:none;
+  padding:10px 8px;
+  border-top:1px solid #ffffff33;
+  font-size:13px;
+}
+
+.sidebar a:hover{
+  background:#6B3595;
+}
+
+.sidebar .logout{
+  margin-top:auto;
+  background:#E85B5B;
+  border-radius:7px;
+  text-align:center;
+}
+
+.main-content{
+  flex:1;
+  padding:25px 40px;
+  background:#fff;
+}
+
+/* HOME */
+
+.welcome-card{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:#FFF4D9;
+  padding:20px;
+  border-radius:16px;
+}
+
+.dashboard-pet{
+  width:110px;
+  height:75px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:15px;
+}
+
+.card{
+  background:#fff;
+  border:1px solid #E5DDEB;
+  border-radius:14px;
+  padding:18px;
+}
+
+.purple-card{
+  background:#F0E5F8;
+  border:0;
+}
+
+.card strong{
+  display:block;
+  margin-top:8px;
+  font-size:28px;
+  color:#E85B5B;
+}
+
+.section-title{
+  margin:25px 0 10px;
+}
+
+.quick-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.quick-actions button{
+  background:#F0E5F8;
+  color:#54207D;
+}
+
+.activity-title{
+  display:flex;
+  justify-content:space-between;
+  margin-top:25px;
+}
+
+.activity-title a{
+  color:#E85B5B;
+}
+
+.activity{
+  border:1px solid #E5DDEB;
+  border-radius:14px;
+  margin-top:10px;
+  background:#fff;
+}
+
+.activity-item{
+  padding:15px;
+  border-bottom:1px solid #eee;
+}
+
+/* TABLE */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:#fff;
+}
+
+th,td{
+  padding:12px;
+  text-align:left;
+  border-bottom:1px solid #eee;
+}
+
+th{
+  background:#54207D;
+  color:white;
+}
+
+/* BUTTONS */
+
+button{
+  padding:9px 15px;
+  border:0;
+  border-radius:7px;
+  background:#54207D;
+  color:white;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#E85B5B;
+}
+
+input{
+  padding:11px;
+  border:1px solid #D8C4EA;
+  border-radius:7px;
+  background:#FAF7FC;
+}
+
+/* MOBILE */
+
+@media(max-width:800px){
+
+  .login-page,
+  .dashboard{
+    flex-direction:column;
+  }
+
+  .welcome-section,
+  .login-section{
+    width:100%;
+  }
+
+  .welcome-section{
+    min-height:50vh;
+  }
+
+  .login-section{
+    min-height:50vh;
+  }
+
+  .sidebar{
+    width:100%;
+    min-height:auto;
+  }
+
+  .main-content{
+    padding:20px;
+  }
+
+  .stats,
+  .quick-actions{
+    grid-template-columns:1fr;
+  }
+}

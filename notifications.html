@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VetMoto | Notifications</title>
+<style>
+:root {
+  --purple:#5b3a82; --lavender:#e9ddf7; --coral:#e85b5b;
+  --cream:#fff9f2; --bg:#f5effa; --white:#fff; --text:#5b4672;
+  --border:#e8dfea;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:205px;background:var(--purple);color:white;padding:18px 16px;display:flex;flex-direction:column;flex-shrink:0}
+.logo{width:104px;height:104px;border-radius:50%;background:white;color:var(--purple);display:grid;place-items:center;text-align:center;font-weight:bold;margin:0 auto 12px}
+.brand{text-align:center;font-weight:bold;margin-bottom:18px}
+.nav a{display:block;color:white;text-decoration:none;padding:12px 5px;border-top:1px solid #ffffff66}
+.nav a.active,.nav a:hover{background:#795ba0}
+.logout{margin-top:auto;background:var(--coral);color:white;border:0;border-radius:9px;padding:13px;font-weight:bold;cursor:pointer}
+main{flex:1;min-width:0;padding:28px 30px}
+.header{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:22px}
+.eyebrow{font-size:13px;margin-bottom:8px}
+h1{margin:0 0 8px;font-size:30px;color:var(--purple)}
+.subtitle{margin:0;font-size:14px;color:#806b91}
+button,input,select{font:inherit}
+.btn{border:0;border-radius:9px;padding:12px 15px;cursor:pointer;font-weight:bold}
+.primary{background:var(--coral);color:white}
+.secondary{background:white;color:var(--purple);border:1px solid var(--border)}
+.summary{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--cream);padding:18px;border-radius:16px;margin-bottom:20px}
+.summary strong{color:var(--purple)}
+.badge{display:inline-block;background:var(--coral);color:white;border-radius:50%;padding:4px 9px;margin-right:8px}
+.card{background:white;padding:18px;border-radius:18px;box-shadow:0 5px 22px #46285a0f}
+.card-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px}
+.card-heading h2{font-size:18px;margin:0;color:var(--purple)}
+.small{font-size:12px;color:#88749b}
+.notification{display:flex;align-items:center;gap:14px;padding:15px 10px;border-bottom:1px solid var(--border);border-radius:10px}
+.notification.unread{background:#f7f1fb;margin-bottom:6px;border:1px solid #eee3f6}
+.notif-icon{width:42px;height:42px;flex-shrink:0;border-radius:12px;background:var(--lavender);display:grid;place-items:center;font-size:21px;color:var(--purple)}
+.notif-body{flex:1;min-width:0}
+.notif-title{font-weight:bold;color:var(--purple);margin-bottom:6px}
+.notif-desc{font-size:13px;line-height:1.5;color:#806b91}
+.notif-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:95px}
+.time{font-size:12px;color:#806b91}
+.read-state{font-size:11px;color:#88749b}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--coral);margin-right:4px}
+.view{padding:9px 14px}
+.footer{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:#88749b}
+.empty{text-align:center;padding:35px;color:#88749b}
+.modal-bg{display:none;position:fixed;inset:0;background:#26173080;z-index:5;align-items:center;justify-content:center;padding:18px}
+.modal{background:white;border-radius:16px;padding:24px;width:min(500px,100%)}
+.modal h2{color:var(--purple);margin-top:0}
+.modal p{line-height:1.6}
+@media(max-width:850px){.sidebar{width:165px}main{padding:22px 16px}}
+@media(max-width:600px){.layout{display:block}.sidebar{width:100%}.logo{width:76px;height:76px}.nav{display:grid;grid-template-columns:1fr 1fr}.logout{margin-top:15px}main{padding:18px 12px}.header{flex-direction:column}h1{font-size:25px}.notification{align-items:flex-start;flex-wrap:wrap}.notif-body{min-width:calc(100% - 60px)}.notif-side{width:100%;flex-direction:row;justify-content:flex-end;align-items:center}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">🐾<br>VETMOTO</div>
+    <div class="brand">VETMOTO</div>
+    <nav class="nav">
+      <a href="dashboard.html">⌂ Home</a>
+      <a href="pet-record.html">▤ Pet Record</a>
+      <a href="owner-record.html">♙ Owner Record</a>
+      <a href="medicine.html">▱ Medicine</a>
+      <a href="clinic-charge.html">▣ Clinic Charge</a>
+      <a href="appointment.html">◷ Appointment</a>
+      <a href="notifications.html" class="active">♧ Notification</a>
+      <a href="history.html">▦ History</a>
+    </nav>
+    <button class="logout" onclick="if(confirm('Log out of the demo?'))location.href='index.html'">LOG OUT</button>
+  </aside>
+
+  <main>
+    <header class="header">
+      <div>
+        <div class="eyebrow">Clinic staff / Notifications</div>
+        <h1>NOTIFICATIONS</h1>
+        <p class="subtitle">Stay up to date with appointments and patient care.</p>
+      </div>
+      <button class="btn primary" onclick="markAllRead()">✓ MARK ALL AS READ</button>
+    </header>
+
+    <section class="summary">
+      <div><span class="badge" id="unreadCount">3</span><strong id="summaryText">Unread notifications</strong><span class="small" id="readSummary"> · 3 already read</span></div>
+      <span class="small">12 Mar 2025</span>
+    </section>
+
+    <section class="card">
+      <div class="card-heading">
+        <h2>All notifications</h2>
+        <span class="small">Today · Newest first</span>
+      </div>
+      <div id="notificationList"></div>
+      <div class="footer">
+        <span id="footerCount">6 notifications · 3 unread</span>
+        <span>Illustrative clinic notifications</span>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2 id="modalTitle">Notification details</h2>
+    <div id="modalContent"></div>
+    <button class="btn primary" onclick="closeModal()">CLOSE</button>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = "vetmotoNotifications";
+const initialNotifications = [
+  {id:"NT-1001",icon:"♙",title:"New online registration submitted",description:"Bella · Noah Anderson · Ready for staff review.",time:"10:15 AM",read:false,record:"Owner Record"},
+  {id:"NT-1002",icon:"◷",title:"Upcoming appointment",description:"Cooper · Liam Santos · Consultation today at 10:30 AM.",time:"10:00 AM",read:false,record:"Appointment"},
+  {id:"NT-1003",icon:"▣",title:"Appointment status update",description:"Daisy · Emma Garcia · Appointment confirmed for 2:00 PM.",time:"09:45 AM",read:false,record:"Appointment"},
+  {id:"NT-1004",icon:"✚",title:"New consultation record",description:"Luna · Allergic dermatitis · Saved by Dr. Maya Patel.",time:"09:30 AM",read:true,record:"Consultation"},
+  {id:"NT-1005",icon:"⚗",title:"Laboratory result update",description:"Luna · LT-2042 · Complete blood count normal, within range.",time:"09:20 AM",read:true,record:"Laboratory"},
+  {id:"NT-1006",icon:"♢",title:"Prescription saved",description:"Luna · RX-3042 · Oclacitinib issued by Dr. Maya Patel.",time:"09:10 AM",read:true,record:"Prescription"}
+];
+
+let notifications;
+try {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  notifications = saved === null ? initialNotifications : JSON.parse(saved);
+  if (!Array.isArray(notifications)) notifications = initialNotifications;
+} catch {
+  notifications = initialNotifications;
+}
+if (localStorage.getItem(STORAGE_KEY) === null) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
+}
+
+const $ = id => document.getElementById(id);
+function escapeHTML(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
+}
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
+}
+function renderNotifications() {
+  const unread = notifications.filter(n => !n.read).length;
+  const read = notifications.length - unread;
+  $("unreadCount").textContent = unread;
+  $("summaryText").textContent = unread ? "Unread notifications" : "You're all caught up";
+  $("readSummary").textContent = ` · ${read} already read`;
+  $("footerCount").textContent = `${notifications.length} notifications · ${unread} unread`;
+
+  if (!notifications.length) {
+    $("notificationList").innerHTML = '<div class="empty">No notifications yet.</div>';
+    return;
+  }
+
+  $("notificationList").innerHTML = notifications.map(n => `
+    <article class="notification ${n.read ? "" : "unread"}">
+      <div class="notif-icon">${escapeHTML(n.icon || "♧")}</div>
+      <div class="notif-body">
+        <div class="notif-title">${escapeHTML(n.title)}</div>
+        <div class="notif-desc">${escapeHTML(n.description)}</div>
+      </div>
+      <div class="notif-side">
+        <span class="time">${escapeHTML(n.time)}</span>
+        <span class="read-state">${n.read ? "✓ Read" : '<span class="dot"></span>Unread'}</span>
+        <button class="btn primary view" onclick="viewNotification('${escapeHTML(n.id)}')">VIEW</button>
+      </div>
+    </article>
+  `).join("");
+}
+function markAllRead() {
+  notifications = notifications.map(n => ({...n, read:true}));
+  save();
+  renderNotifications();
+}
+function viewNotification(id) {
+  const n = notifications.find(item => item.id === id);
+  if (!n) return;
+  n.read = true;
+  save();
+  renderNotifications();
+  $("modalTitle").textContent = n.title;
+  $("modalContent").innerHTML = `
+    <p>${escapeHTML(n.description)}</p>
+    <p><strong>Time:</strong> ${escapeHTML(n.time)}</p>
+    <p><strong>Related record:</strong> ${escapeHTML(n.record)}</p>
+    <p><strong>Status:</strong> Read</p>
+  `;
+  $("modalBg").style.display = "flex";
+}
+function closeModal() {
+  $("modalBg").style.display = "none";
+}
+$("modalBg").addEventListener("click", event => {
+  if (event.target.id === "modalBg") closeModal();
+});
+renderNotifications();
+</script>
+</body>
+</html>

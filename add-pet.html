@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Add Pet</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+
+  <a href="pet-record.html">← Back to Pet Records</a>
+
+  <h1 style="margin:20px 0;">ADD NEW PET</h1>
+  <p>Register a pet and enter its information below.</p>
+
+  <form id="addPetForm" style="margin-top:25px;">
+
+    <h2>Pet Information</h2>
+
+    <label for="petId">Pet ID</label>
+    <input id="petId" type="text" placeholder="Enter Pet ID" required>
+
+    <label for="petName">Pet Name</label>
+    <input id="petName" type="text" placeholder="Enter pet name" required>
+
+    <label for="species">Species</label>
+    <select id="species" required>
+      <option value="">Select species</option>
+      <option>Dog</option>
+      <option>Cat</option>
+      <option>Other</option>
+    </select>
+
+    <label for="breed">Breed</label>
+    <input id="breed" type="text" placeholder="Enter breed" required>
+
+    <label for="sex">Sex</label>
+    <select id="sex" required>
+      <option value="">Select sex</option>
+      <option>Male</option>
+      <option>Female</option>
+    </select>
+
+    <label for="color">Color</label>
+    <input id="color" type="text" placeholder="Enter pet color">
+
+    <label for="birthDate">Date of Birth</label>
+    <input id="birthDate" type="date">
+
+    <h2 style="margin-top:25px;">Owner Information</h2>
+
+    <label for="ownerName">Owner Name</label>
+    <input id="ownerName" type="text" placeholder="Enter owner name" required>
+
+    <label for="ownerContact">Contact Information</label>
+    <input id="ownerContact" type="text" placeholder="Enter contact number" required>
+
+    <label for="status">Registration Status</label>
+    <select id="status">
+      <option>Registered</option>
+      <option>Pending</option>
+    </select>
+
+    <div style="display:flex;gap:10px;margin-top:25px;">
+      <button type="submit">SAVE PET</button>
+      <button type="button"
+        onclick="location.href='pet-record.html'"
+        style="background:#E85B5B;">CANCEL</button>
+    </div>
+
+    <p id="saveMessage" style="margin-top:15px;"></p>
+
+  </form>
+
+</main>
+</div>
+
+<script>
+document.getElementById("addPetForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const pet = {
+    id: document.getElementById("petId").value,
+    name: document.getElementById("petName").value,
+    species: document.getElementById("species").value,
+    breed: document.getElementById("breed").value,
+    sex: document.getElementById("sex").value,
+    color: document.getElementById("color").value,
+    birthDate: document.getElementById("birthDate").value,
+    owner: document.getElementById("ownerName").value,
+    contact: document.getElementById("ownerContact").value,
+    status: document.getElementById("status").value
+  };
+
+  const pets = JSON.parse(localStorage.getItem("vetmotoPets") || "[]");
+  pets.push(pet);
+  localStorage.setItem("vetmotoPets", JSON.stringify(pets));
+
+  document.getElementById("saveMessage").textContent =
+    "Pet information saved on this browser.";
+  document.getElementById("addPetForm").reset();
+});
+</script>
+
+</body>
+</html>

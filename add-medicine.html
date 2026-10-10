@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Add Medicine</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+
+  <a href="medicine.html">← Back to Medicine Inventory</a>
+
+  <h1 style="margin:20px 0;">ADD MEDICINE</h1>
+  <p>Enter medicine details and inventory information.</p>
+
+  <form id="medicineForm" style="margin-top:25px;">
+
+    <h2>Medicine Information</h2>
+
+    <label for="medicineName">Medicine Name</label>
+    <input id="medicineName" type="text"
+      placeholder="Enter medicine name" required>
+
+    <label for="genericName">Generic Name</label>
+    <input id="genericName" type="text"
+      placeholder="Enter generic name">
+
+    <label for="productionDate">Production Date</label>
+    <input id="productionDate" type="date" required>
+
+    <label for="expirationDate">Expiration Date</label>
+    <input id="expirationDate" type="date" required>
+
+    <label for="quantity">Quantity (Units)</label>
+    <input id="quantity" type="number"
+      min="0" placeholder="Enter quantity" required>
+
+    <label for="status">Inventory Status</label>
+    <select id="status">
+      <option>IN STOCK</option>
+      <option>LOW STOCK</option>
+      <option>OUT OF STOCK</option>
+    </select>
+
+    <div style="display:flex;gap:10px;margin-top:25px;">
+      <button type="submit">SAVE MEDICINE</button>
+      <button type="button"
+        onclick="location.href='medicine.html'"
+        style="background:#E85B5B;">CANCEL</button>
+    </div>
+
+    <p id="saveMessage" style="margin-top:15px;"></p>
+
+  </form>
+</main>
+</div>
+
+<script>
+document.getElementById("medicineForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const medicine = {
+    name: document.getElementById("medicineName").value,
+    genericName: document.getElementById("genericName").value,
+    productionDate: document.getElementById("productionDate").value,
+    expirationDate: document.getElementById("expirationDate").value,
+    quantity: document.getElementById("quantity").value,
+    status: document.getElementById("status").value
+  };
+
+  const medicines = JSON.parse(
+    localStorage.getItem("vetmotoMedicines") || "[]"
+  );
+
+  medicines.push(medicine);
+  localStorage.setItem("vetmotoMedicines", JSON.stringify(medicines));
+
+  document.getElementById("saveMessage").textContent =
+    "Medicine information saved on this browser.";
+
+  document.getElementById("medicineForm").reset();
+});
+</script>
+
+</body>
+</html>

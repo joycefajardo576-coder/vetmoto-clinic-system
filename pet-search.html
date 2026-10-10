@@ -1,0 +1,156 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VetMoto - Search Pet Records</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="dashboard">
+
+  <aside class="sidebar">
+    <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+    <h2>VETMOTO</h2>
+    <a href="dashboard.html">⌂ Home</a>
+    <a href="pet-record.html">▤ Pet Record</a>
+    <a href="owner-record.html">♧ Owner Record</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="clinic-charge.html">▭ Clinic Charge</a>
+    <a href="appointment.html">◷ Appointment</a>
+    <a href="notifications.html">♧ Notification</a>
+    <a href="history.html">▦ History</a>
+    <a href="index.html" class="logout">LOG OUT</a>
+  </aside>
+
+  <main class="main-content">
+    <button type="button" onclick="location.href='pet-record.html'">
+      ← BACK
+    </button>
+
+    <h1>SEARCH PET RECORDS</h1>
+    <p>Find a pet by name, ID, breed, species, or owner.</p>
+
+    <div class="search-area">
+      <input
+        id="petSearch"
+        type="search"
+        placeholder="Enter pet name, ID, breed, or owner..."
+        autocomplete="off"
+      >
+      <button type="button" id="searchButton">SEARCH</button>
+      <button type="button" id="clearButton">CLEAR</button>
+    </div>
+
+    <p id="resultCount">Loading pet records...</p>
+
+    <div class="table-container" style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Pet ID</th>
+            <th>Pet Name</th>
+            <th>Species</th>
+            <th>Breed</th>
+            <th>Owner</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="petSearchTable"></tbody>
+      </table>
+    </div>
+
+    <p id="emptyMessage" hidden>No matching pet records found.</p>
+  </main>
+</div>
+
+<script>
+const searchInput = document.getElementById("petSearch");
+const searchTable = document.getElementById("petSearchTable");
+const resultCount = document.getElementById("resultCount");
+const emptyMessage = document.getElementById("emptyMessage");
+
+function getPets() {
+  try {
+    return JSON.parse(localStorage.getItem("vetmotoPets") || "[]");
+  } catch (error) {
+    return [];
+  }
+}
+
+function displayPetResults() {
+  const query = searchInput.value.trim().toLowerCase();
+  const pets = getPets();
+
+  const filteredPets = pets.filter(pet => {
+    const searchableText = [
+      pet.id,
+      pet.name,
+      pet.species,
+      pet.breed,
+      pet.owner
+    ].join(" ").toLowerCase();
+
+    return searchableText.includes(query);
+  });
+
+  searchTable.replaceChildren();
+
+  filteredPets.forEach(pet => {
+    const row = document.createElement("tr");
+
+    [
+      pet.id,
+      pet.name,
+      pet.species,
+      pet.breed,
+      pet.owner
+    ].forEach(value => {
+      const cell = document.createElement("td");
+      cell.textContent = value || "—";
+      row.appendChild(cell);
+    });
+
+    const actionCell = document.createElement("td");
+    const viewButton = document.createElement("button");
+
+    viewButton.type = "button";
+    viewButton.textContent = "VIEW";
+
+    viewButton.addEventListener("click", () => {
+      localStorage.setItem("vetmotoSelectedPetId", pet.id);
+      location.href = "pet-profile.html";
+    });
+
+    actionCell.appendChild(viewButton);
+    row.appendChild(actionCell);
+    searchTable.appendChild(row);
+  });
+
+  resultCount.textContent =
+    filteredPets.length + (filteredPets.length === 1
+      ? " pet record found"
+      : " pet records found");
+
+  emptyMessage.hidden = filteredPets.length !== 0;
+}
+
+document.getElementById("searchButton")
+  .addEventListener("click", displayPetResults);
+
+searchInput.addEventListener("input", displayPetResults);
+
+document.getElementById("clearButton").addEventListener("click", () => {
+  searchInput.value = "";
+  displayPetResults();
+  searchInput.focus();
+});
+
+window.addEventListener("storage", displayPetResults);
+
+displayPetResults();
+</script>
+
+</body>
+</html>

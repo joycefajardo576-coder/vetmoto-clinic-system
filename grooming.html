@@ -1,0 +1,362 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VetMoto - Grooming Records</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .grooming-form {
+      background: #FFF9F2;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 12px;
+    }
+
+    .grooming-form input,
+    .grooming-form select,
+    .grooming-form textarea {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      margin: 6px 0 14px;
+      border: 1px solid #D7C8E8;
+      border-radius: 8px;
+    }
+
+    .grooming-search {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #D7C8E8;
+      border-radius: 8px;
+    }
+
+    .grooming-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .grooming-table th,
+    .grooming-table td {
+      padding: 10px;
+      border-bottom: 1px solid #E9DDF7;
+      text-align: left;
+    }
+
+    .grooming-table th {
+      background: #5B3A82;
+      color: white;
+    }
+
+    .grooming-actions button {
+      margin: 3px;
+    }
+
+    .cancel-button,
+    .delete-button {
+      background: #E85B5B !important;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+<div class="dashboard">
+
+  <aside class="sidebar">
+    <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+    <h2>VETMOTO</h2>
+
+    <a href="dashboard.html">⌂ Home</a>
+    <a href="owner-record.html">♧ Owner Records</a>
+    <a href="pet-record.html">🐾 Pet Records</a>
+    <a href="medicine.html">💊 Medicine</a>
+    <a href="appointment.html">◷ Appointment</a>
+    <a href="consultation.html">🩺 Consultation</a>
+    <a href="vaccination.html">💉 Vaccination</a>
+    <a href="index.html" class="logout">LOG OUT</a>
+  </aside>
+
+  <main class="main-content">
+    <a href="dashboard.html">← Back to Dashboard</a>
+
+    <h1 style="margin-top:20px;">GROOMING RECORDS</h1>
+    <p>Manage pet grooming services and appointments.</p>
+
+    <button type="button" onclick="addGrooming()">
+      + ADD GROOMING
+    </button>
+
+    <form id="groomingForm" class="grooming-form" hidden>
+      <h2 id="formTitle">Add Grooming Record</h2>
+
+      <label for="groomingId">Record ID</label>
+      <input id="groomingId" required placeholder="Enter record ID">
+
+      <label for="petName">Pet Name</label>
+      <input id="petName" required placeholder="Enter pet name">
+
+      <label for="ownerName">Owner Name</label>
+      <input id="ownerName" required placeholder="Enter owner name">
+
+      <label for="service">Grooming Service</label>
+      <select id="service" required>
+        <option value="">Select service</option>
+        <option>Bath and Blow Dry</option>
+        <option>Haircut</option>
+        <option>Nail Trimming</option>
+        <option>Ear Cleaning</option>
+        <option>Full Grooming</option>
+      </select>
+
+      <label for="groomingDate">Grooming Date</label>
+      <input id="groomingDate" type="date" required>
+
+      <label for="groomingTime">Grooming Time</label>
+      <input id="groomingTime" type="time" required>
+
+      <label for="staffName">Assigned Staff</label>
+      <input id="staffName" placeholder="Enter staff name">
+
+      <label for="groomingFee">Service Fee (₱)</label>
+      <input id="groomingFee" type="number" min="0" step="0.01"
+        required placeholder="Enter fee">
+
+      <label for="groomingStatus">Status</label>
+      <select id="groomingStatus">
+        <option>Scheduled</option>
+        <option>In Progress</option>
+        <option>Completed</option>
+        <option>Cancelled</option>
+      </select>
+
+      <label for="groomingNotes">Notes</label>
+      <textarea id="groomingNotes" rows="3"
+        placeholder="Enter additional notes"></textarea>
+
+      <button type="submit">SAVE RECORD</button>
+      <button type="button" class="cancel-button"
+        onclick="cancelGrooming()">CANCEL</button>
+    </form>
+
+    <h2>Grooming History</h2>
+
+    <input id="groomingSearch" class="grooming-search"
+      placeholder="Search ID, pet, owner, or service..."
+      oninput="renderGrooming()">
+
+    <div style="overflow-x:auto;">
+      <table class="grooming-table">
+        <thead>
+          <tr>
+            <th>Record ID</th>
+            <th>Pet</th>
+            <th>Owner</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Fee</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="groomingTable"></tbody>
+      </table>
+    </div>
+
+    <p id="emptyMessage" hidden>No grooming records found.</p>
+  </main>
+</div>
+
+<script>
+const groomingForm = document.getElementById("groomingForm");
+const groomingTable = document.getElementById("groomingTable");
+let editingGroomingIndex = -1;
+
+function getGroomingRecords() {
+  try {
+    return JSON.parse(
+      localStorage.getItem("vetmotoGrooming") || "[]"
+    );
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveGroomingRecords(records) {
+  localStorage.setItem("vetmotoGrooming", JSON.stringify(records));
+}
+
+function addGrooming() {
+  editingGroomingIndex = -1;
+  groomingForm.reset();
+  document.getElementById("formTitle").textContent =
+    "Add Grooming Record";
+  groomingForm.hidden = false;
+  groomingForm.scrollIntoView({ behavior: "smooth" });
+}
+
+function cancelGrooming() {
+  groomingForm.reset();
+  groomingForm.hidden = true;
+  editingGroomingIndex = -1;
+}
+
+groomingForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const records = getGroomingRecords();
+
+  const record = {
+    id: document.getElementById("groomingId").value.trim(),
+    pet: document.getElementById("petName").value.trim(),
+    owner: document.getElementById("ownerName").value.trim(),
+    service: document.getElementById("service").value,
+    date: document.getElementById("groomingDate").value,
+    time: document.getElementById("groomingTime").value,
+    staff: document.getElementById("staffName").value.trim(),
+    fee: document.getElementById("groomingFee").value,
+    status: document.getElementById("groomingStatus").value,
+    notes: document.getElementById("groomingNotes").value.trim()
+  };
+
+  const duplicate = records.some((item, index) =>
+    item.id === record.id && index !== editingGroomingIndex
+  );
+
+  if (duplicate) {
+    alert("This Record ID already exists.");
+    return;
+  }
+
+  if (editingGroomingIndex >= 0) {
+    records[editingGroomingIndex] = record;
+  } else {
+    records.push(record);
+  }
+
+  saveGroomingRecords(records);
+  cancelGrooming();
+  renderGrooming();
+  alert("Grooming record saved successfully!");
+});
+
+function viewGrooming(index) {
+  const item = getGroomingRecords()[index];
+  if (!item) return;
+
+  alert(
+    "GROOMING DETAILS\n\n" +
+    "Record ID: " + item.id +
+    "\nPet: " + item.pet +
+    "\nOwner: " + item.owner +
+    "\nService: " + item.service +
+    "\nDate: " + item.date +
+    "\nTime: " + item.time +
+    "\nStaff: " + (item.staff || "—") +
+    "\nFee: ₱" + item.fee +
+    "\nStatus: " + item.status +
+    "\nNotes: " + (item.notes || "—")
+  );
+}
+
+function editGrooming(index) {
+  const item = getGroomingRecords()[index];
+  if (!item) return;
+
+  editingGroomingIndex = index;
+
+  document.getElementById("formTitle").textContent =
+    "Edit Grooming Record";
+  document.getElementById("groomingId").value = item.id;
+  document.getElementById("petName").value = item.pet;
+  document.getElementById("ownerName").value = item.owner;
+  document.getElementById("service").value = item.service;
+  document.getElementById("groomingDate").value = item.date;
+  document.getElementById("groomingTime").value = item.time;
+  document.getElementById("staffName").value = item.staff || "";
+  document.getElementById("groomingFee").value = item.fee;
+  document.getElementById("groomingStatus").value = item.status;
+  document.getElementById("groomingNotes").value = item.notes || "";
+
+  groomingForm.hidden = false;
+  groomingForm.scrollIntoView({ behavior: "smooth" });
+}
+
+function deleteGrooming(index) {
+  const records = getGroomingRecords();
+  if (!records[index]) return;
+
+  if (!confirm("Delete this grooming record?")) return;
+
+  records.splice(index, 1);
+  saveGroomingRecords(records);
+  renderGrooming();
+}
+
+function renderGrooming() {
+  const records = getGroomingRecords();
+  const query = document.getElementById("groomingSearch")
+    .value.trim().toLowerCase();
+
+  const matches = records
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) =>
+      [
+        item.id, item.pet, item.owner,
+        item.service, item.status
+      ].some(value =>
+        String(value || "").toLowerCase().includes(query)
+      )
+    );
+
+  groomingTable.replaceChildren();
+
+  matches.forEach(({ item, index }) => {
+    const row = groomingTable.insertRow();
+
+    [
+      item.id,
+      item.pet,
+      item.owner,
+      item.service,
+      item.date,
+      item.time,
+      "₱" + Number(item.fee || 0).toFixed(2),
+      item.status
+    ].forEach(value => {
+      row.insertCell().textContent = value || "—";
+    });
+
+    const actions = row.insertCell();
+    actions.className = "grooming-actions";
+
+    const viewButton = document.createElement("button");
+    viewButton.textContent = "VIEW";
+    viewButton.onclick = () => viewGrooming(index);
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "EDIT";
+    editButton.onclick = () => editGrooming(index);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "DELETE";
+    deleteButton.className = "delete-button";
+    deleteButton.onclick = () => deleteGrooming(index);
+
+    actions.append(viewButton, editButton, deleteButton);
+  });
+
+  document.getElementById("emptyMessage").hidden =
+    matches.length > 0;
+}
+
+renderGrooming();
+</script>
+</body>
+</html>

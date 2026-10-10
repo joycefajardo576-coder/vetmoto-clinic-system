@@ -1,0 +1,70 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VetMoto - Medicine Inventory</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="notifications.html">♧ Notification</a>
+  <a href="history.html">▦ History</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+  <p>Thursday, May 29</p>
+  <h1>MEDICINE INVENTORY</h1>
+  <p>Monitor stock, prescriptions, and upcoming expirations.</p>
+
+  <br>
+  <button onclick="location.href='add-medicine.html'">
+    ADD MEDICINE
+  </button>
+
+  <br><br>
+  <h2>Medicines Directory</h2>
+  <p>3 medicines shown</p>
+
+  <br>
+  <input id="medicineSearch" placeholder="Search medicine name...">
+
+  <br><br>
+  
+<table>
+  <thead>
+    <tr>
+      <th>Expiration Date</th>
+      <th>Medicine Name</th>
+      <th>Inventory</th>
+      <th>Status</th>
+      <th>Actions</th>
+      <th>Production Date</th>
+    </tr>
+  </thead>
+  <tbody id="medicineTableBody">
+    <tr>
+      <td>2027-05-29</td>
+      <td>Credelio Quattro (lotilaner + praziquantel)</td>
+      <td>84 units</td>
+      <td>IN STOCK</td>
+      <td><button onclick="location.href='medicine-detail.html'">OPEN</button></td>
+      <td>2025-06-13</td>
+    </tr>
+  </tbody>
+</table>
+
+<script src="script.js"></script>

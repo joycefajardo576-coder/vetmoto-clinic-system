@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Appointments</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="prescription.html">▤ Prescription</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+  <h1>APPOINTMENTS</h1>
+  <p style="margin:10px 0 20px;">View and manage clinic appointments.</p>
+
+  <button onclick="document.getElementById('appointmentForm').hidden=false">
+    + ADD APPOINTMENT
+  </button>
+
+  <form id="appointmentForm" hidden style="margin:20px 0;">
+    <h2>Appointment Information</h2>
+
+    <label for="appointmentId">Appointment ID</label>
+    <input id="appointmentId" required placeholder="Enter appointment ID">
+
+    <label for="petName">Pet Name</label>
+    <input id="petName" required placeholder="Enter pet name">
+
+    <label for="ownerName">Owner Name</label>
+    <input id="ownerName" required placeholder="Enter owner name">
+
+    <label for="appointmentDate">Date</label>
+    <input id="appointmentDate" type="date" required>
+
+    <label for="appointmentTime">Time</label>
+    <input id="appointmentTime" type="time" required>
+
+    <label for="appointmentType">Appointment Type</label>
+    <select id="appointmentType" required>
+      <option value="">Select service</option>
+      <option>Consultation</option>
+      <option>Vaccination</option>
+      <option>Laboratory</option>
+      <option>Surgery</option>
+      <option>Grooming</option>
+      <option>Other</option>
+    </select>
+
+    <label for="appointmentStatus">Status</label>
+    <select id="appointmentStatus">
+      <option>Pending</option>
+      <option>Confirmed</option>
+      <option>Completed</option>
+      <option>Cancelled</option>
+    </select>
+
+    <div style="display:flex;gap:10px;margin-top:15px;">
+      <button type="submit">SAVE APPOINTMENT</button>
+      <button type="button"
+        onclick="document.getElementById('appointmentForm').hidden=true"
+        style="background:#E85B5B;">CANCEL</button>
+    </div>
+  </form>
+
+  <label for="appointmentSearch">Search appointments</label>
+  <input id="appointmentSearch"
+    placeholder="Search appointment, pet or owner"
+    oninput="filterAppointments()"
+    style="width:100%;margin:10px 0 20px;">
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Appointment ID</th>
+          <th>Pet</th>
+          <th>Owner</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Service</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="appointmentTable"></tbody>
+    </table>
+  </div>
+</main>
+</div>
+
+<script>
+const appointmentForm = document.getElementById("appointmentForm");
+const appointmentTable = document.getElementById("appointmentTable");
+
+function loadAppointments() {
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoAppointments") || "[]"
+  );
+
+  appointmentTable.innerHTML = "";
+
+  records.forEach(item => {
+    const row = appointmentTable.insertRow();
+
+    [
+      item.id, item.pet, item.owner, item.date,
+      item.time, item.type, item.status
+    ].forEach(value => {
+      row.insertCell().textContent = value || "";
+    });
+  });
+
+  filterAppointments();
+}
+
+appointmentForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const item = {
+    id: document.getElementById("appointmentId").value,
+    pet: document.getElementById("petName").value,
+    owner: document.getElementById("ownerName").value,
+    date: document.getElementById("appointmentDate").value,
+    time: document.getElementById("appointmentTime").value,
+    type: document.getElementById("appointmentType").value,
+    status: document.getElementById("appointmentStatus").value
+  };
+
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoAppointments") || "[]"
+  );
+
+  records.push(item);
+  localStorage.setItem("vetmotoAppointments", JSON.stringify(records));
+
+  appointmentForm.reset();
+  appointmentForm.hidden = true;
+  loadAppointments();
+});
+
+function filterAppointments() {
+  const query = document.getElementById("appointmentSearch")
+    .value.toLowerCase();
+
+  [...appointmentTable.rows].forEach(row => {
+    row.hidden = !row.textContent.toLowerCase().includes(query);
+  });
+}
+
+loadAppointments();
+</script>
+
+</body>
+</html>

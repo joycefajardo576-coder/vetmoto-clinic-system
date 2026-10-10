@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetMoto - Clinic Staff Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="login-page">
+
+    <div class="welcome-section">
+        <img src="vetmoto-logo.webp" alt="VetMoto Logo" class="logo">
+
+        <img src="pet-image.png" alt="Pets" class="pet-image">
+
+        <div class="accent-line"></div>
+
+        <h1>Welcome to VetMoto</h1>
+        <h2>Healthy Pets, Happier Lives.</h2>
+
+        <p>
+            Your trusted companion for pet health,
+            appointments and wellness — all in one place.
+        </p>
+    </div>
+
+    <div class="login-section">
+        <div class="login-box">
+
+            <div class="vetmoto-title">VETMOTO</div>
+
+            <h1>CLINIC STAFF LOGIN</h1>
+
+            <p class="description">
+                Sign in with your clinic credentials to continue.
+            </p>
+
+            <form id="loginForm">
+
+                <label for="email">EMAIL / USERNAME</label>
+                <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    placeholder="staff@vetmoto.clinic"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="password">PASSWORD</label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button type="submit" class="login-button">
+                    LOGIN
+                </button>
+
+                <p id="loginError" class="login-error" role="alert"></p>
+
+            </form>
+
+            <p class="signup-text">
+                Don't have an Account? <span>Sign-Up</span>
+            </p>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const loginForm = document.getElementById("loginForm");
+    const loginError = document.getElementById("loginError");
+
+    loginForm.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value;
+
+        if (email === "" || password === "") {
+            loginError.textContent = "Please enter your email and password.";
+            return;
+        }
+
+        window.location.href = "dashboard.html";
+    });
+</script>
+
+</body>
+</html>

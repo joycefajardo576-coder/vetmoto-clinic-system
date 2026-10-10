@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Surgery Records</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="prescription.html">▤ Prescription</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+  <a href="dashboard.html">← Back to Dashboard</a>
+  <h1 style="margin:20px 0;">SURGERY RECORDS</h1>
+  <p>Record and review pet surgery information.</p>
+
+  <button style="margin-top:20px;"
+    onclick="document.getElementById('surgeryForm').hidden=false">
+    + ADD SURGERY
+  </button>
+
+  <form id="surgeryForm" hidden style="margin:20px 0;">
+    <h2>Surgery Information</h2>
+
+    <label for="surgeryId">Surgery ID</label>
+    <input id="surgeryId" required placeholder="Enter surgery ID">
+
+    <label for="petName">Pet Name</label>
+    <input id="petName" required placeholder="Enter pet name">
+
+    <label for="ownerName">Owner Name</label>
+    <input id="ownerName" required placeholder="Enter owner name">
+
+    <label for="surgeryType">Surgery Type</label>
+    <input id="surgeryType" required placeholder="Enter surgery type">
+
+    <label for="surgeryDate">Surgery Date</label>
+    <input id="surgeryDate" type="date" required>
+
+    <label for="veterinarian">Veterinarian</label>
+    <input id="veterinarian" placeholder="Enter veterinarian's name">
+
+    <label for="notes">Notes</label>
+    <textarea id="notes" rows="3"
+      placeholder="Enter notes"></textarea>
+
+    <label for="surgeryStatus">Status</label>
+    <select id="surgeryStatus">
+      <option>Scheduled</option>
+      <option>In Progress</option>
+      <option>Completed</option>
+      <option>Cancelled</option>
+    </select>
+
+    <div style="display:flex;gap:10px;margin-top:15px;">
+      <button type="submit">SAVE SURGERY</button>
+      <button type="button"
+        onclick="document.getElementById('surgeryForm').hidden=true"
+        style="background:#E85B5B;">CANCEL</button>
+    </div>
+  </form>
+
+  <label for="surgerySearch">Search surgery records</label>
+  <input id="surgerySearch" placeholder="Search records..."
+    oninput="filterSurgeries()" style="width:100%;margin:10px 0 20px;">
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Surgery ID</th>
+          <th>Pet</th>
+          <th>Owner</th>
+          <th>Surgery Type</th>
+          <th>Date</th>
+          <th>Veterinarian</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="surgeryTable"></tbody>
+    </table>
+  </div>
+</main>
+</div>
+
+<script>
+const surgeryForm = document.getElementById("surgeryForm");
+const surgeryTable = document.getElementById("surgeryTable");
+
+function loadSurgeries() {
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoSurgeries") || "[]"
+  );
+
+  surgeryTable.innerHTML = "";
+
+  records.forEach(item => {
+    const row = surgeryTable.insertRow();
+
+    [
+      item.id, item.pet, item.owner, item.type,
+      item.date, item.veterinarian, item.status
+    ].forEach(value => {
+      row.insertCell().textContent = value || "—";
+    });
+  });
+
+  filterSurgeries();
+}
+
+surgeryForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const item = {
+    id: document.getElementById("surgeryId").value,
+    pet: document.getElementById("petName").value,
+    owner: document.getElementById("ownerName").value,
+    type: document.getElementById("surgeryType").value,
+    date: document.getElementById("surgeryDate").value,
+    veterinarian: document.getElementById("veterinarian").value,
+    notes: document.getElementById("notes").value,
+    status: document.getElementById("surgeryStatus").value
+  };
+
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoSurgeries") || "[]"
+  );
+
+  records.push(item);
+  localStorage.setItem("vetmotoSurgeries", JSON.stringify(records));
+
+  surgeryForm.reset();
+  surgeryForm.hidden = true;
+  loadSurgeries();
+});
+
+function filterSurgeries() {
+  const query = document.getElementById("surgerySearch")
+    .value.toLowerCase();
+
+  [...surgeryTable.rows].forEach(row => {
+    row.hidden = !row.textContent.toLowerCase().includes(query);
+  });
+}
+
+loadSurgeries();
+</script>
+
+</body>
+</html>

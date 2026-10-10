@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VetMoto - Payment Records</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .payment-form {
+      background: #FFF9F2;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 12px;
+    }
+
+    .payment-form input,
+    .payment-form select,
+    .payment-form textarea {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      margin: 6px 0 14px;
+      border: 1px solid #D7C8E8;
+      border-radius: 8px;
+    }
+
+    .payment-search {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #D7C8E8;
+      border-radius: 8px;
+    }
+
+    .payment-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .payment-table th,
+    .payment-table td {
+      padding: 10px;
+      border-bottom: 1px solid #E9DDF7;
+      text-align: left;
+    }
+
+    .payment-table th {
+      background: #5B3A82;
+      color: white;
+    }
+
+    .payment-actions button {
+      margin: 3px;
+    }
+
+    .cancel-button,
+    .delete-button {
+      background: #E85B5B !important;
+      color: white;
+    }
+
+    .total-box {
+      background: #E9DDF7;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+    }
+  </style>
+</head>
+
+<body>
+<div class="dashboard">
+  <aside class="sidebar">
+    <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+    <h2>VETMOTO</h2>
+
+    <a href="dashboard.html">⌂ Home</a>
+    <a href="owner-record.html">♧ Owner Records</a>
+    <a href="pet-record.html">🐾 Pet Records</a>
+    <a href="appointment.html">◷ Appointment</a>
+    <a href="consultation.html">🩺 Consultation</a>
+    <a href="clinic-charge.html">▤ Clinic Charges</a>
+    <a href="prescription.html">💊 Prescription</a>
+    <a href="index.html" class="logout">LOG OUT</a>
+  </aside>
+
+  <main class="main-content">
+    <a href="dashboard.html">← Back to Dashboard</a>
+
+    <h1 style="margin-top:20px;">PAYMENT RECORDS</h1>
+    <p>Record and manage payments for clinic services.</p>
+
+    <button type="button" onclick="addPayment()">
+      + ADD PAYMENT
+    </button>
+
+    <div class="total-box">
+      <strong>Total Recorded Payments: </strong>
+      <span id="totalPayments">₱0.00</span>
+    </div>
+
+    <form id="paymentForm" class="payment-form" hidden>
+      <h2 id="formTitle">Add Payment</h2>
+
+      <label for="paymentId">Payment ID</label>
+      <input id="paymentId" required placeholder="Enter payment ID">
+
+      <label for="ownerName">Owner Name</label>
+      <input id="ownerName" required placeholder="Enter owner name">
+
+      <label for="petName">Pet Name</label>
+      <input id="petName" required placeholder="Enter pet name">
+
+      <label for="serviceName">Service / Description</label>
+      <input id="serviceName" required
+        placeholder="e.g. Consultation, Grooming">
+
+      <label for="paymentDate">Payment Date</label>
+      <input id="paymentDate" type="date" required>
+
+      <label for="paymentAmount">Amount (₱)</label>
+      <input id="paymentAmount" type="number" min="0.01"
+        step="0.01" required placeholder="Enter amount">
+
+      <label for="paymentMethod">Payment Method</label>
+      <select id="paymentMethod" required>
+        <option value="">Select method</option>
+        <option>Cash</option>
+        <option>GCash</option>
+        <option>Bank Transfer</option>
+        <option>Card</option>
+      </select>
+
+      <label for="paymentStatus">Payment Status</label>
+      <select id="paymentStatus" required>
+        <option>Paid</option>
+        <option>Pending</option>
+        <option>Partial</option>
+        <option>Refunded</option>
+      </select>
+
+      <label for="paymentNotes">Notes</label>
+      <textarea id="paymentNotes" rows="3"
+        placeholder="Additional details"></textarea>
+
+      <button type="submit">SAVE PAYMENT</button>
+      <button type="button" class="cancel-button"
+        onclick="cancelPayment()">CANCEL</button>
+    </form>
+
+    <h2>Payment History</h2>
+
+    <input id="paymentSearch" class="payment-search"
+      placeholder="Search payment ID, owner, pet, or service..."
+      oninput="renderPayments()">
+
+    <div style="overflow-x:auto;">
+      <table class="payment-table">
+        <thead>
+          <tr>
+            <th>Payment ID</th>
+            <th>Owner</th>
+            <th>Pet</th>
+            <th>Service</th>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="paymentTable"></tbody>
+      </table>
+    </div>
+
+    <p id="emptyMessage" hidden>No payment records found.</p>
+  </main>
+</div>
+
+<script>
+const paymentForm = document.getElementById("paymentForm");
+const paymentTable = document.getElementById("paymentTable");
+let editingPaymentIndex = -1;
+
+function getPayments() {
+  try {
+    return JSON.parse(localStorage.getItem("vetmotoPayments") || "[]");
+  } catch (error) {
+    return [];
+  }
+}
+
+function savePayments(records) {
+  localStorage.setItem("vetmotoPayments", JSON.stringify(records));
+}
+
+function addPayment() {
+  editingPaymentIndex = -1;
+  paymentForm.reset();
+  document.getElementById("formTitle").textContent = "Add Payment";
+  paymentForm.hidden = false;
+  paymentForm.scrollIntoView({ behavior: "smooth" });
+}
+
+function cancelPayment() {
+  paymentForm.reset();
+  paymentForm.hidden = true;
+  editingPaymentIndex = -1;
+}
+
+paymentForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const records = getPayments();
+
+  const payment = {
+    id: document.getElementById("paymentId").value.trim(),
+    owner: document.getElementById("ownerName").value.trim(),
+    pet: document.getElementById("petName").value.trim(),
+    service: document.getElementById("serviceName").value.trim(),
+    date: document.getElementById("paymentDate").value,
+    amount: Number(document.getElementById("paymentAmount").value),
+    method: document.getElementById("paymentMethod").value,
+    status: document.getElementById("paymentStatus").value,
+    notes: document.getElementById("paymentNotes").value.trim()
+  };
+
+  const duplicate = records.some((item, index) =>
+    item.id === payment.id && index !== editingPaymentIndex
+  );
+
+  if (duplicate) {
+    alert("This Payment ID already exists.");
+    return;
+  }
+
+  if (editingPaymentIndex >= 0) {
+    records[editingPaymentIndex] = payment;
+  } else {
+    records.push(payment);
+  }
+
+  savePayments(records);
+  cancelPayment();
+  renderPayments();
+  alert("Payment saved successfully!");
+});
+
+function viewPayment(index) {
+  const item = getPayments()[index];
+  if (!item) return;
+
+  alert(
+    "PAYMENT DETAILS\n\n" +
+    "Payment ID: " + item.id +
+    "\nOwner: " + item.owner +
+    "\nPet: " + item.pet +
+    "\nService: " + item.service +
+    "\nDate: " + item.date +
+    "\nAmount: ₱" + Number(item.amount).toFixed(2) +
+    "\nMethod: " + item.method +
+    "\nStatus: " + item.status +
+    "\nNotes: " + (item.notes || "—")
+  );
+}
+
+function editPayment(index) {
+  const item = getPayments()[index];
+  if (!item) return;
+
+  editingPaymentIndex = index;
+  document.getElementById("formTitle").textContent = "Edit Payment";
+  document.getElementById("paymentId").value = item.id;
+  document.getElementById("ownerName").value = item.owner;
+  document.getElementById("petName").value = item.pet;
+  document.getElementById("serviceName").value = item.service;
+  document.getElementById("paymentDate").value = item.date;
+  document.getElementById("paymentAmount").value = item.amount;
+  document.getElementById("paymentMethod").value = item.method;
+  document.getElementById("paymentStatus").value = item.status;
+  document.getElementById("paymentNotes").value = item.notes || "";
+
+  paymentForm.hidden = false;
+  paymentForm.scrollIntoView({ behavior: "smooth" });
+}
+
+function deletePayment(index) {
+  const records = getPayments();
+  if (!records[index]) return;
+
+  if (!confirm("Are you sure you want to delete this payment?")) return;
+
+  records.splice(index, 1);
+  savePayments(records);
+  renderPayments();
+}
+
+function renderPayments() {
+  const records = getPayments();
+  const query = document.getElementById("paymentSearch")
+    .value.trim().toLowerCase();
+
+  const matches = records
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) =>
+      [
+        item.id, item.owner, item.pet,
+        item.service, item.method, item.status
+      ].some(value =>
+        String(value || "").toLowerCase().includes(query)
+      )
+    );
+
+  paymentTable.replaceChildren();
+
+  matches.forEach(({ item, index }) => {
+    const row = paymentTable.insertRow();
+
+    [
+      item.id,
+      item.owner,
+      item.pet,
+      item.service,
+      item.date,
+      "₱" + Number(item.amount || 0).toFixed(2),
+      item.method,
+      item.status
+    ].forEach(value => {
+      row.insertCell().textContent = value || "—";
+    });
+
+    const actions = row.insertCell();
+    actions.className = "payment-actions";
+
+    const viewButton = document.createElement("button");
+    viewButton.textContent = "VIEW";
+    viewButton.onclick = () => viewPayment(index);
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "EDIT";
+    editButton.onclick = () => editPayment(index);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "DELETE";
+    deleteButton.className = "delete-button";
+    deleteButton.onclick = () => deletePayment(index);
+
+    actions.append(viewButton, editButton, deleteButton);
+  });
+
+  const paidTotal = records
+    .filter(item => item.status === "Paid")
+    .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+  document.getElementById("totalPayments").textContent =
+    "₱" + paidTotal.toFixed(2);
+
+  document.getElementById("emptyMessage").hidden =
+    matches.length > 0;
+}
+
+renderPayments();
+</script>
+</body>
+</html>

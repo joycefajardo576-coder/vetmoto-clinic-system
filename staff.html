@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VetMoto - Staff Records</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    .staff-form {
+      background: #FFF9F2;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 12px;
+    }
+
+    .staff-form input,
+    .staff-form select {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      margin: 6px 0 14px;
+      border: 1px solid #D7C8E8;
+      border-radius: 8px;
+    }
+
+    .staff-search {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #D7C8E8;
+      border-radius: 8px;
+    }
+
+    .staff-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .staff-table th,
+    .staff-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #E9DDF7;
+    }
+
+    .staff-table th {
+      background: #5B3A82;
+      color: white;
+    }
+
+    .staff-actions button {
+      margin: 3px;
+    }
+
+    .cancel-button,
+    .delete-button {
+      background: #E85B5B !important;
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+<div class="dashboard">
+  <aside class="sidebar">
+    <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+    <h2>VETMOTO</h2>
+
+    <a href="dashboard.html">⌂ Home</a>
+    <a href="owner-record.html">♧ Owner Records</a>
+    <a href="pet-record.html">🐾 Pet Records</a>
+    <a href="appointment.html">◷ Appointment</a>
+    <a href="vaccination.html">💉 Vaccination</a>
+    <a href="grooming.html">✂ Grooming</a>
+    <a href="payment.html">₱ Payments</a>
+    <a href="reports.html">▤ Reports</a>
+    <a href="index.html" class="logout">LOG OUT</a>
+  </aside>
+
+  <main class="main-content">
+    <a href="dashboard.html">← Back to Dashboard</a>
+
+    <h1 style="margin-top:20px;">STAFF RECORDS</h1>
+    <p>Manage clinic staff information and roles.</p>
+
+    <button type="button" onclick="addStaff()">+ ADD STAFF</button>
+
+    <form id="staffForm" class="staff-form" hidden>
+      <h2 id="formTitle">Add Staff</h2>
+
+      <label for="staffId">Staff ID</label>
+      <input id="staffId" required placeholder="Enter staff ID">
+
+      <label for="staffName">Full Name</label>
+      <input id="staffName" required placeholder="Enter full name">
+
+      <label for="staffEmail">Email Address</label>
+      <input id="staffEmail" type="email" required
+        placeholder="Enter email address">
+
+      <label for="staffPhone">Contact Number</label>
+      <input id="staffPhone" type="tel" required
+        placeholder="Enter contact number">
+
+      <label for="staffRole">Position</label>
+      <select id="staffRole" required>
+        <option value="">Select position</option>
+        <option>Veterinarian</option>
+        <option>Veterinary Assistant</option>
+        <option>Receptionist</option>
+        <option>Groomer</option>
+        <option>Clinic Administrator</option>
+      </select>
+
+      <label for="staffStatus">Status</label>
+      <select id="staffStatus">
+        <option>Active</option>
+        <option>Inactive</option>
+        <option>On Leave</option>
+      </select>
+
+      <button type="submit">SAVE STAFF</button>
+      <button type="button" class="cancel-button"
+        onclick="cancelStaff()">CANCEL</button>
+    </form>
+
+    <h2>Staff Directory</h2>
+
+    <input id="staffSearch" class="staff-search"
+      placeholder="Search ID, name, email, or position..."
+      oninput="renderStaff()">
+
+    <div style="overflow-x:auto;">
+      <table class="staff-table">
+        <thead>
+          <tr>
+            <th>Staff ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>Position</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="staffTable"></tbody>
+      </table>
+    </div>
+
+    <p id="emptyMessage" hidden>No staff records found.</p>
+  </main>
+</div>
+
+<script>
+const staffForm = document.getElementById("staffForm");
+const staffTable = document.getElementById("staffTable");
+let editingStaffIndex = -1;
+
+function getStaff() {
+  try {
+    const records = JSON.parse(
+      localStorage.getItem("vetmotoStaff") || "[]"
+    );
+    return Array.isArray(records) ? records : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveStaff(records) {
+  localStorage.setItem("vetmotoStaff", JSON.stringify(records));
+}
+
+function addStaff() {
+  editingStaffIndex = -1;
+  staffForm.reset();
+  document.getElementById("formTitle").textContent = "Add Staff";
+  staffForm.hidden = false;
+  staffForm.scrollIntoView({ behavior: "smooth" });
+}
+
+function cancelStaff() {
+  staffForm.reset();
+  staffForm.hidden = true;
+  editingStaffIndex = -1;
+}
+
+staffForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const records = getStaff();
+
+  const staff = {
+    id: document.getElementById("staffId").value.trim(),
+    name: document.getElementById("staffName").value.trim(),
+    email: document.getElementById("staffEmail").value.trim(),
+    phone: document.getElementById("staffPhone").value.trim(),
+    role: document.getElementById("staffRole").value,
+    status: document.getElementById("staffStatus").value
+  };
+
+  const duplicate = records.some((item, index) =>
+    (item.id.toLowerCase() === staff.id.toLowerCase() ||
+     item.email.toLowerCase() === staff.email.toLowerCase()) &&
+    index !== editingStaffIndex
+  );
+
+  if (duplicate) {
+    alert("Staff ID or email already exists.");
+    return;
+  }
+
+  if (editingStaffIndex >= 0) {
+    records[editingStaffIndex] = staff;
+  } else {
+    records.push(staff);
+  }
+
+  saveStaff(records);
+  cancelStaff();
+  renderStaff();
+  alert("Staff record saved successfully!");
+});
+
+function viewStaff(index) {
+  const item = getStaff()[index];
+  if (!item) return;
+
+  alert(
+    "STAFF DETAILS\n\n" +
+    "Staff ID: " + item.id +
+    "\nName: " + item.name +
+    "\nEmail: " + item.email +
+    "\nContact: " + item.phone +
+    "\nPosition: " + item.role +
+    "\nStatus: " + item.status
+  );
+}
+
+function editStaff(index) {
+  const item = getStaff()[index];
+  if (!item) return;
+
+  editingStaffIndex = index;
+  document.getElementById("formTitle").textContent = "Edit Staff";
+  document.getElementById("staffId").value = item.id;
+  document.getElementById("staffName").value = item.name;
+  document.getElementById("staffEmail").value = item.email;
+  document.getElementById("staffPhone").value = item.phone;
+  document.getElementById("staffRole").value = item.role;
+  document.getElementById("staffStatus").value = item.status;
+
+  staffForm.hidden = false;
+  staffForm.scrollIntoView({ behavior: "smooth" });
+}
+
+function deleteStaff(index) {
+  const records = getStaff();
+  if (!records[index]) return;
+
+  if (!confirm("Delete this staff record?")) return;
+
+  records.splice(index, 1);
+  saveStaff(records);
+  renderStaff();
+}
+
+function renderStaff() {
+  const records = getStaff();
+  const query = document.getElementById("staffSearch")
+    .value.trim().toLowerCase();
+
+  const matches = records
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) =>
+      [
+        item.id, item.name, item.email,
+        item.phone, item.role, item.status
+      ].some(value =>
+        String(value || "").toLowerCase().includes(query)
+      )
+    );
+
+  staffTable.replaceChildren();
+
+  matches.forEach(({ item, index }) => {
+    const row = staffTable.insertRow();
+
+    [
+      item.id, item.name, item.email,
+      item.phone, item.role, item.status
+    ].forEach(value => {
+      row.insertCell().textContent = value || "—";
+    });
+
+    const actions = row.insertCell();
+    actions.className = "staff-actions";
+
+    const viewButton = document.createElement("button");
+    viewButton.textContent = "VIEW";
+    viewButton.onclick = () => viewStaff(index);
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "EDIT";
+    editButton.onclick = () => editStaff(index);
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "DELETE";
+    deleteButton.className = "delete-button";
+    deleteButton.onclick = () => deleteStaff(index);
+
+    actions.append(viewButton, editButton, deleteButton);
+  });
+
+  document.getElementById("emptyMessage").hidden =
+    matches.length > 0;
+}
+
+renderStaff();
+</script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Consultation</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="prescription.html">▤ Prescription</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+  <a href="dashboard.html">← Back to Dashboard</a>
+  <h1 style="margin:20px 0;">CONSULTATION</h1>
+  <p>Record consultation details for clinic patients.</p>
+
+  <form id="consultationForm" style="margin-top:25px;">
+    <h2>Consultation Information</h2>
+
+    <label for="consultId">Consultation ID</label>
+    <input id="consultId" required placeholder="Enter consultation ID">
+
+    <label for="petName">Pet Name</label>
+    <input id="petName" required placeholder="Enter pet name">
+
+    <label for="ownerName">Owner Name</label>
+    <input id="ownerName" required placeholder="Enter owner name">
+
+    <label for="consultDate">Date</label>
+    <input id="consultDate" type="date" required>
+
+    <label for="symptoms">Symptoms / Complaint</label>
+    <textarea id="symptoms" rows="3" required
+      placeholder="Describe the pet's complaint"></textarea>
+
+    <label for="diagnosis">Diagnosis</label>
+    <textarea id="diagnosis" rows="3"
+      placeholder="Enter veterinarian's diagnosis"></textarea>
+
+    <label for="treatment">Treatment / Advice</label>
+    <textarea id="treatment" rows="3"
+      placeholder="Enter treatment or advice"></textarea>
+
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button type="submit">SAVE CONSULTATION</button>
+      <button type="reset" style="background:#E85B5B;">CLEAR</button>
+    </div>
+    <p id="consultMessage" style="margin-top:12px;"></p>
+  </form>
+
+  <h2 style="margin:30px 0 12px;">CONSULTATION HISTORY</h2>
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Pet</th>
+          <th>Owner</th>
+          <th>Date</th>
+          <th>Symptoms</th>
+          <th>Diagnosis</th>
+        </tr>
+      </thead>
+      <tbody id="consultTable"></tbody>
+    </table>
+  </div>
+</main>
+</div>
+
+<script>
+const consultForm = document.getElementById("consultationForm");
+const consultTable = document.getElementById("consultTable");
+
+function loadConsultations() {
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoConsultations") || "[]"
+  );
+
+  consultTable.innerHTML = "";
+
+  records.forEach(item => {
+    const row = consultTable.insertRow();
+
+    [item.id, item.pet, item.owner, item.date,
+     item.symptoms, item.diagnosis].forEach(value => {
+      row.insertCell().textContent = value || "";
+    });
+  });
+}
+
+consultForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const item = {
+    id: document.getElementById("consultId").value,
+    pet: document.getElementById("petName").value,
+    owner: document.getElementById("ownerName").value,
+    date: document.getElementById("consultDate").value,
+    symptoms: document.getElementById("symptoms").value,
+    diagnosis: document.getElementById("diagnosis").value,
+    treatment: document.getElementById("treatment").value
+  };
+
+  const records = JSON.parse(
+    localStorage.getItem("vetmotoConsultations") || "[]"
+  );
+
+  records.push(item);
+  localStorage.setItem("vetmotoConsultations", JSON.stringify(records));
+
+  consultForm.reset();
+  loadConsultations();
+
+  document.getElementById("consultMessage").textContent =
+    "Consultation saved in this browser.";
+});
+
+loadConsultations();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Clinic Charges</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="dashboard">
+
+<aside class="sidebar">
+  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
+  <h2>VETMOTO</h2>
+  <a href="dashboard.html">⌂ Home</a>
+  <a href="pet-record.html">▤ Pet Record</a>
+  <a href="owner-record.html">♧ Owner Record</a>
+  <a href="medicine.html">💊 Medicine</a>
+  <a href="clinic-charge.html">▭ Clinic Charge</a>
+  <a href="appointment.html">◷ Appointment</a>
+  <a href="prescription.html">▤ Prescription</a>
+  <a href="index.html" class="logout">LOG OUT</a>
+</aside>
+
+<main class="main-content">
+
+  <h1>CLINIC CHARGES</h1>
+  <p style="margin:10px 0 20px;">View and record clinic service charges.</p>
+
+  <button onclick="document.getElementById('chargeForm').hidden=false">
+    + ADD CHARGE
+  </button>
+
+  <form id="chargeForm" hidden style="margin:20px 0;">
+    <h2>New Clinic Charge</h2>
+
+    <label for="chargeId">Charge ID</label>
+    <input id="chargeId" placeholder="Enter charge ID" required>
+
+    <label for="petName">Pet Name</label>
+    <input id="petName" placeholder="Enter pet name" required>
+
+    <label for="ownerName">Owner Name</label>
+    <input id="ownerName" placeholder="Enter owner name" required>
+
+    <label for="service">Service</label>
+    <select id="service" required>
+      <option value="">Select service</option>
+      <option>Consultation</option>
+      <option>Vaccination</option>
+      <option>Laboratory</option>
+      <option>Surgery</option>
+      <option>Grooming</option>
+      <option>Other</option>
+    </select>
+
+    <label for="amount">Amount (₱)</label>
+    <input id="amount" type="number" min="0" step="0.01" required>
+
+    <label for="paymentStatus">Payment Status</label>
+    <select id="paymentStatus">
+      <option>UNPAID</option>
+      <option>PAID</option>
+      <option>PARTIAL</option>
+    </select>
+
+    <div style="display:flex;gap:10px;margin-top:15px;">
+      <button type="submit">SAVE CHARGE</button>
+      <button type="button" onclick="document.getElementById('chargeForm').hidden=true"
+        style="background:#E85B5B;">CANCEL</button>
+    </div>
+  </form>
+
+  <label for="chargeSearch">Search charges</label>
+  <input id="chargeSearch" placeholder="Search ID, pet, owner or service"
+    oninput="filterCharges()" style="width:100%;margin:10px 0 20px;">
+
+  <div style="overflow-x:auto;">
+    <table>
+      <thead>
+        <tr>
+          <th>Charge ID</th>
+          <th>Pet Name</th>
+          <th>Owner</th>
+          <th>Service</th>
+          <th>Amount</th>
+          <th>Payment Status</th>
+        </tr>
+      </thead>
+      <tbody id="chargeTable"></tbody>
+    </table>
+  </div>
+
+</main>
+</div>
+
+<script>
+const chargeForm = document.getElementById("chargeForm");
+const chargeTable = document.getElementById("chargeTable");
+
+function loadCharges() {
+  const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
+  chargeTable.innerHTML = "";
+
+  records.forEach(charge => {
+    const row = chargeTable.insertRow();
+
+    [
+      charge.id,
+      charge.pet,
+      charge.owner,
+      charge.service,
+      "₱" + Number(charge.amount).toFixed(2),
+      charge.status
+    ].forEach(value => {
+      row.insertCell().textContent = value;
+    });
+  });
+
+  filterCharges();
+}
+
+chargeForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const charge = {
+    id: document.getElementById("chargeId").value,
+    pet: document.getElementById("petName").value,
+    owner: document.getElementById("ownerName").value,
+    service: document.getElementById("service").value,
+    amount: document.getElementById("amount").value,
+    status: document.getElementById("paymentStatus").value
+  };
+
+  const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
+  records.push(charge);
+  localStorage.setItem("vetmotoCharges", JSON.stringify(records));
+
+  chargeForm.reset();
+  chargeForm.hidden = true;
+  loadCharges();
+});
+
+function filterCharges() {
+  const query = document.getElementById("chargeSearch").value.toLowerCase();
+
+  [...chargeTable.rows].forEach(row => {
+    row.hidden = !row.textContent.toLowerCase().includes(query);
+  });
+}
+
+loadCharges();
+</script>
+
+</body>
+</html>
