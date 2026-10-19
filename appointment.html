@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VetMoto - Medical Services & Appointments</title>
+<title>VetMoto - Medical Services</title>
 <script>
   if (!sessionStorage.getItem("vetmoto_user")) {
     window.location.href = "index.html";
@@ -18,7 +18,6 @@
     --purple: #5b3a82;
     --lavender: #f3ecfb;
     --coral: #e85b5b;
-    --cream: #fbf7f4;
     --bg: #f5effa;
     --white: #fff;
     --text: #4a3560;
@@ -36,8 +35,8 @@
   .nav a { display: block; color: white; text-decoration: none; padding: 10px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
   .nav a.active, .nav a:hover { background: #714c9e; }
   .sub-nav { padding-left: 10px; background: rgba(0,0,0,0.15); border-bottom: 1px solid #ffffff33; }
-  .sub-nav a { border-top: none; padding: 8px 10px; font-size: 11px; opacity: 0.9; cursor: pointer; }
-  .sub-nav a:hover, .sub-nav a.sub-active { opacity: 1; font-weight: bold; background: rgba(255,255,255,0.2); }
+  .sub-nav a { border-top: none; padding: 8px 10px; font-size: 11px; opacity: 0.9; cursor: pointer; text-decoration: none; display: block; color: white; }
+  .sub-nav a:hover { opacity: 1; font-weight: bold; background: rgba(255,255,255,0.2); }
   .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
 
   /* MAIN CONTENT */
@@ -45,28 +44,12 @@
   h1 { margin: 0 0 6px; color: var(--purple); font-size: 26px; font-weight: bold; }
   .subtitle { margin: 0 0 25px; color: #806b91; font-size: 13px; }
 
-  .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
-  .card { background: white; border-radius: 12px; padding: 16px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+  .card { background: white; border-radius: 14px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s; }
   .card:hover { border-color: var(--purple); transform: translateY(-2px); }
-  .card h3 { margin: 0 0 6px; color: var(--purple); font-size: 14px; display: flex; align-items: center; gap: 8px; }
-  .card p { margin: 0 0 12px; font-size: 11px; color: #666; line-height: 1.3; }
-  .btn-open { background: var(--coral); color: white; border: none; padding: 6px 10px; border-radius: 6px; font-weight: bold; font-size: 10px; cursor: pointer; text-transform: uppercase; }
-
-  /* DETAIL / RECORD PANEL */
-  .detail-panel { background: white; border-radius: 14px; padding: 22px; border: 1px solid var(--border); }
-  .detail-title { font-size: 18px; font-weight: bold; color: var(--purple); margin-bottom: 15px; border-bottom: 2px solid var(--lavender); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-  
-  .action-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
-  .search-box input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; width: 250px; outline: none; }
-  .btn-add { background: var(--purple); color: white; border: none; padding: 9px 14px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; }
-  .btn-add:hover { opacity: 0.9; }
-
-  table { width: 100%; border-collapse: collapse; }
-  th, td { padding: 10px 12px; text-align: left; font-size: 12px; border-bottom: 1px solid var(--border); }
-  th { background: var(--lavender); color: var(--purple); }
-  .badge { background: var(--lavender); color: var(--purple); padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; }
-  .btn-action { background: #eee; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; color: var(--purple); }
-  .btn-action:hover { background: var(--purple); color: white; }
+  .card h3 { margin: 0 0 8px; color: var(--purple); font-size: 15px; display: flex; align-items: center; gap: 8px; }
+  .card p { margin: 0 0 15px; font-size: 12px; color: #666; line-height: 1.4; }
+  .btn-open { background: var(--coral); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; }
 </style>
 </head>
 <body>
@@ -86,12 +69,12 @@
       <a href="appointment.html" class="active">◷ Medical Services</a>
       
       <div class="sub-nav">
-        <a onclick="showModule('Consultation')">🩺 Consultation</a>
-        <a onclick="showModule('Laboratory')">🔬 Laboratory</a>
-        <a onclick="showModule('Surgery')">🚑 Surgery</a>
-        <a onclick="showModule('Vaccination')">💉 Vaccination</a>
-        <a onclick="showModule('Grooming')">✂️ Grooming</a>
-        <a onclick="showModule('Confinement')">🏥 Confinement</a>
+        <a href="consultation.html">🩺 Consultation</a>
+        <a href="laboratory.html">🔬 Laboratory</a>
+        <a href="surgery.html">🚑 Surgery</a>
+        <a href="vaccination.html">💉 Vaccination</a>
+        <a href="grooming.html">✂️ Grooming</a>
+        <a href="confinement.html">🏥 Confinement</a>
       </div>
 
       <a href="notifications.html">♧ Notification</a>
@@ -101,211 +84,49 @@
   </aside>
 
   <main>
-    <h1>Medical Services Management</h1>
-    <p class="subtitle">Review visits, diagnoses, treatments, and clinical schedules across modules[cite: 57, 60].</p>
+    <h1>Medical Services & Care Modules</h1>
+    <p class="subtitle">Select a clinical service module to manage records, visits, and patient history.</p>
 
-    <!-- SERVICE CARDS -->
+    <!-- 6 OFFICIAL MODULE CARDS NAKALINK SA KANI-KANANG HTML PAGES -->
     <div class="services-grid">
-      <div class="card" onclick="showModule('Consultation')">
+      <div class="card" onclick="window.location.href='consultation.html'">
         <h3>🩺 Consultation</h3>
-        <p>Review visits, diagnoses, and patient medical history.</p>
+        <p>Review visits, diagnoses, and each pet's medical history[cite: 60].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
-      <div class="card" onclick="showModule('Laboratory')">
+      <div class="card" onclick="window.location.href='laboratory.html'">
         <h3>🔬 Laboratory</h3>
-        <p>Review laboratory results and disease screening tests.</p>
+        <p>Review laboratory results and each pet's disease tests[cite: 64].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
-      <div class="card" onclick="showModule('Surgery')">
+      <div class="card" onclick="window.location.href='surgery.html'">
         <h3>🚑 Surgery</h3>
-        <p>Review surgical procedures and recovery status.</p>
+        <p>Review surgical procedures and each pet's recovery status[cite: 68].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
-      <div class="card" onclick="showModule('Vaccination')">
+      <div class="card" onclick="window.location.href='vaccination.html'">
         <h3>💉 Vaccination</h3>
-        <p>Review vaccines and immunization history.</p>
+        <p>Review vaccines and each pet's vaccination history[cite: 72].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
-      <div class="card" onclick="showModule('Grooming')">
+      <div class="card" onclick="window.location.href='grooming.html'">
         <h3>✂️ Grooming</h3>
-        <p>Review grooming services and pet styling history.</p>
+        <p>Review grooming services and each pet's grooming history[cite: 76].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
-      <div class="card" onclick="showModule('Confinement')">
+      <div class="card" onclick="window.location.href='confinement.html'">
         <h3>🏥 Confinement</h3>
-        <p>Review patient admissions and monitoring.</p>
+        <p>Review admissions and each pet's confinement history[cite: 80].</p>
         <button class="btn-open">Open Module</button>
       </div>
-    </div>
-
-    <!-- DYNAMIC RECORD TABLE PANEL -->
-    <div class="detail-panel" id="detailSection">
-      <div class="detail-title">
-        <span id="moduleTitle">Active Module: Consultation</span>
-        <button class="btn-add" onclick="addNewRecord()">+ Add New Record</button>
-      </div>
-
-      <div class="action-bar">
-        <div class="search-box">
-          <input type="text" id="searchInput" placeholder="Search pet name, ID, or owner..." onkeyup="filterTable()">
-        </div>
-      </div>
-
-      <table id="moduleTable">
-        <thead id="tableHead"></thead>
-        <tbody id="moduleTableBody"></tbody>
-      </table>
     </div>
   </main>
 </div>
-
-<script>
-  let medicalData = {
-    "Consultation": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", vet: "Dr. Maya Patel", info: "Allergic dermatitis" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", vet: "Dr. Maya Patel", info: "Annual wellness exam" },
-      { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", date: "12 Mar 2025", vet: "Dr. Alex Reyes", info: "Acute gastritis" }
-    ],
-    "Laboratory": [
-      { id: "LT-2042", pet: "Luna", owner: "Maya Peterson", type: "Complete blood count", date: "12 Mar 2025", status: "Normal / Within range" },
-      { id: "LT-2041", pet: "Bella", owner: "Noah Anderson", type: "Heartworm antigen", date: "12 Mar 2025", status: "Negative / Not detected" },
-      { id: "LT-2040", pet: "Cooper", owner: "Liam Santos", type: "Canine parvovirus", date: "12 Mar 2025", status: "Positive / Detected" }
-    ],
-    "Surgery": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", type: "Spay", date: "14 Mar 2025", status: "Scheduled" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", type: "Spay", date: "13 Mar 2025", status: "Recovering" },
-      { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", type: "Neuter", date: "12 Mar 2025", status: "Postponed" }
-    ],
-    "Vaccination": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", vaccine: "Rabies", date: "12 Mar 2025", status: "Current" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", vaccine: "DHPP", date: "12 Mar 2025", status: "Current" },
-      { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", vaccine: "Bordetella", date: "12 Mar 2025", status: "Current" }
-    ],
-    "Grooming": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", service: "Bath & brush", date: "12 Mar 2025", status: "Completed" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", service: "Full grooming", date: "12 Mar 2025", status: "Completed" },
-      { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", service: "Nail trimming", date: "12 Mar 2025", status: "Pending" }
-    ],
-    "Confinement": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", vet: "Dr. Maya Patel", status: "Confined" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", vet: "Dr. Maya Patel", status: "Pending" },
-      { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", date: "12 Mar 2025", vet: "Dr. Alex Reyes", status: "Confined" }
-    ]
-  };
-
-  let currentModule = 'Consultation';
-
-  function showModule(moduleName) {
-    currentModule = moduleName;
-    document.getElementById("moduleTitle").textContent = "Active Module: " + moduleName;
-    document.getElementById("searchInput").value = "";
-    renderTable(medicalData[moduleName]);
-  }
-
-  function renderTable(dataArray) {
-    const headerEl = document.getElementById("tableHead");
-    const bodyEl = document.getElementById("moduleTableBody");
-
-    if (currentModule === 'Consultation') {
-      headerEl.innerHTML = `<tr><th>Record ID</th><th>Pet Name</th><th>Owner</th><th>Date</th><th>Veterinarian</th><th>Diagnosis / Info</th><th>Actions</th></tr>`;
-    } else if (currentModule === 'Laboratory') {
-      headerEl.innerHTML = `<tr><th>Test ID</th><th>Pet Name</th><th>Owner</th><th>Test Type</th><th>Date</th><th>Status</th><th>Actions</th></tr>`;
-    } else if (currentModule === 'Surgery') {
-      headerEl.innerHTML = `<tr><th>Record ID</th><th>Pet Name</th><th>Owner</th><th>Surgery Type</th><th>Date</th><th>Status</th><th>Actions</th></tr>`;
-    } else if (currentModule === 'Vaccination') {
-      headerEl.innerHTML = `<tr><th>Record ID</th><th>Pet Name</th><th>Owner</th><th>Vaccine</th><th>Date</th><th>Status</th><th>Actions</th></tr>`;
-    } else if (currentModule === 'Grooming') {
-      headerEl.innerHTML = `<tr><th>Record ID</th><th>Pet Name</th><th>Owner</th><th>Service</th><th>Date</th><th>Status</th><th>Actions</th></tr>`;
-    } else if (currentModule === 'Confinement') {
-      headerEl.innerHTML = `<tr><th>Record ID</th><th>Pet Name</th><th>Owner</th><th>Admission Date</th><th>Veterinarian</th><th>Status</th><th>Actions</th></tr>`;
-    }
-
-    if (dataArray.length === 0) {
-      bodyEl.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888; padding:20px;">No records found.</td></tr>`;
-      return;
-    }
-
-    bodyEl.innerHTML = dataArray.map((r, index) => {
-      let col3 = r.info || r.type || r.vaccine || r.service || r.vet;
-      let col4 = r.vet || r.date;
-      let badgeVal = r.status || r.date;
-
-      return `
-        <tr>
-          <td><b>${r.id}</b></td>
-          <td>${r.pet}</td>
-          <td>${r.owner}</td>
-          <td>${col3}</td>
-          <td>${col4}</td>
-          <td><span class="badge">${badgeVal}</span></td>
-          <td>
-            <button class="btn-action" onclick="editRecord('${currentModule}', ${index})">Edit</button>
-            <button class="btn-action" style="color:var(--coral);" onclick="deleteRecord('${currentModule}', ${index})">Delete</button>
-          </td>
-        </tr>
-      `;
-    }).join("");
-  }
-
-  function filterTable() {
-    let query = document.getElementById("searchInput").value.toLowerCase();
-    let filtered = medicalData[currentModule].filter(item => 
-      item.pet.toLowerCase().includes(query) || 
-      item.owner.toLowerCase().includes(query) || 
-      item.id.toLowerCase().includes(query)
-    );
-    renderTable(filtered);
-  }
-
-  function addNewRecord() {
-    let petName = prompt("Enter Pet Name:");
-    if (!petName) return;
-    let ownerName = prompt("Enter Owner Name:");
-    let detailInfo = prompt("Enter Status / Diagnosis / Details:");
-
-    let newEntry = {
-      id: "REC-" + Math.floor(1000 + Math.random() * 9000),
-      pet: petName,
-      owner: ownerName || "Unknown",
-      date: "19 Oct 2026",
-      status: detailInfo || "Active",
-      info: detailInfo || "N/A",
-      type: detailInfo || "N/A",
-      vaccine: detailInfo || "N/A",
-      service: detailInfo || "N/A",
-      vet: "Dr. Maya Patel"
-    };
-
-    medicalData[currentModule].push(newEntry);
-    showModule(currentModule);
-  }
-
-  function editRecord(mod, index) {
-    let item = medicalData[mod][index];
-    let newPet = prompt("Edit Pet Name:", item.pet);
-    if (!newPet) return;
-    let newOwner = prompt("Edit Owner Name:", item.owner);
-
-    item.pet = newPet;
-    item.owner = newOwner;
-    showModule(mod);
-  }
-
-  function deleteRecord(mod, index) {
-    if (confirm("Are you sure you want to delete this record?")) {
-      medicalData[mod].splice(index, 1);
-      showModule(mod);
-    }
-  }
-
-  // Default load
-  showModule('Consultation');
-</script>
 
 </body>
 </html>
