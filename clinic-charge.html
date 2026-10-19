@@ -28,13 +28,14 @@
   body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
   .layout { display: flex; min-height: 100vh; }
   
-  /* SIDEBAR */
+  /* UNIFIED SIDEBAR */
   .sidebar { width: 205px; background: var(--purple); color: #fff; padding: 18px 16px; display: flex; flex-direction: column; flex-shrink: 0; }
-  .logo { height: 104px; width: 104px; border-radius: 50%; background: white; color: var(--purple); display: grid; place-items: center; text-align: center; font-weight: bold; margin: 0 auto 12px; font-size: 13px; line-height: 1.2; }
-  .brand { text-align: center; font-weight: bold; margin-bottom: 18px; letter-spacing: 1px; }
+  .logo { height: 100px; width: 100px; border-radius: 50%; background: white; color: var(--purple); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; overflow: hidden; }
+  .logo img { width: 85%; height: 85%; object-fit: contain; }
+  .brand { text-align: center; font-weight: bold; font-size: 16px; letter-spacing: 1px; color: #ffffff; margin-bottom: 20px; }
   .nav a { display: block; color: white; text-decoration: none; padding: 12px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
   .nav a.active, .nav a:hover { background: #714c9e; }
-  .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 9px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
+  .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
 
   /* MAIN CONTENT */
   main { flex: 1; min-width: 0; padding: 28px 36px; background: var(--bg); }
@@ -51,12 +52,12 @@
   .result-row { padding: 8px 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 12px; border-bottom: 1px solid #f0f0f0; }
   .result-row:hover { background: var(--lavender); }
 
-  /* OWNER & PET FIELDS GRID */
+  /* INPUT FIELDS */
   .inputs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 22px; }
   .field-box label { display: block; font-size: 10px; font-weight: bold; color: #806b91; text-transform: uppercase; margin-bottom: 5px; }
   .field-box input { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--white); font-weight: bold; color: var(--purple); font-size: 13px; }
 
-  /* SERVICES AVAILED SECTION */
+  /* SERVICES GRID */
   .section-label { font-size: 10px; color: #806b91; text-transform: uppercase; margin-bottom: 2px; }
   .section-title { font-size: 15px; font-weight: bold; color: var(--purple); margin-bottom: 4px; text-transform: uppercase; }
   .section-sub { font-size: 11px; color: #806b91; margin-bottom: 12px; display: block; }
@@ -68,31 +69,24 @@
   .service-name { font-weight: bold; color: var(--purple); text-transform: uppercase; font-size: 13px; }
   .service-price { font-weight: bold; color: var(--purple); font-size: 13px; }
 
-  /* SUBMIT BUTTON */
   .btn-container { display: flex; justify-content: flex-end; }
   .btn-send { background: var(--coral); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 13px; text-transform: uppercase; }
-  .btn-send:hover { opacity: 0.9; }
-
-  @media(max-width: 768px) {
-    .layout { flex-direction: column; }
-    .sidebar { width: 100%; }
-    .inputs-grid, .services-grid { grid-template-columns: 1fr; }
-  }
 </style>
 </head>
 <body>
 
 <div class="layout">
-  <!-- SIDEBAR -->
   <aside class="sidebar">
-    <div class="logo">🐾<br>VETMOTO</div>
+    <div class="logo">
+      <img src="vetmoto-logo.webp" alt="VetMoto Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾<br>VETMOTO';">
+    </div>
     <div class="brand">VETMOTO</div>
     <nav class="nav">
       <a href="dashboard.html">⌂ Home</a>
       <a href="pet-record.html">▤ Pet Record</a>
       <a href="owner-record.html">♙ Owner Record</a>
-      <a href="medicine.html">▱ Medicine</a>
-      <a href="clinic-charge.html" class="active">▣ Clinic Charge</a>
+      <a href="medicine.html">💊 Medicine</a>
+      <a href="clinic-charge.html" class="active">▭ Clinic Charge</a>
       <a href="appointment.html">◷ Appointment</a>
       <a href="notifications.html">♧ Notification</a>
       <a href="history.html">▦ History</a>
@@ -100,13 +94,11 @@
     <button class="logout" onclick="logout()">LOG OUT</button>
   </aside>
 
-  <!-- MAIN -->
   <main>
     <div class="eyebrow">Clinic billing</div>
     <h1>CLINIC CHARGES</h1>
     <p class="subtitle">Find the owner, review the services availed, and send the completed bill.</p>
 
-    <!-- SEARCH OWNER -->
     <label style="font-size:11px; font-weight:bold; color:#806b91; text-transform:uppercase; margin-bottom:5px; display:block;">Find owner to bill</label>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
@@ -114,7 +106,6 @@
       <div id="resultsBox" class="results-box"></div>
     </div>
 
-    <!-- OWNER & PET NAME INPUTS -->
     <div class="inputs-grid">
       <div class="field-box">
         <label>OWNER NAME</label>
@@ -126,7 +117,6 @@
       </div>
     </div>
 
-    <!-- SERVICES AVAILED -->
     <div>
       <div class="section-label">Choose services</div>
       <div class="section-title">Services availed</div>
@@ -183,7 +173,6 @@
       </div>
     </div>
 
-    <!-- SUBMIT BUTTON -->
     <div class="btn-container">
       <button class="btn-send" onclick="sendBill()">Send Bill</button>
     </div>
@@ -200,14 +189,8 @@
   function handleSearch() {
     const q = document.getElementById("ownerSearch").value.toLowerCase().trim();
     const box = document.getElementById("resultsBox");
-
-    if (!q) {
-      box.style.display = "none";
-      return;
-    }
-
+    if (!q) { box.style.display = "none"; return; }
     const filtered = sampleOwners.filter(o => o.owner.toLowerCase().includes(q) || o.pet.toLowerCase().includes(q));
-
     if (filtered.length > 0) {
       box.innerHTML = filtered.map(item => `
         <div class="result-row" onclick="selectOwner('${item.owner}', '${item.pet}')">
@@ -236,20 +219,8 @@
   function sendBill() {
     const owner = document.getElementById("ownerName").value;
     const pet = document.getElementById("petName").value;
-
-    if (owner === "N/A" || !owner) {
-      alert("Please select an owner first.");
-      return;
-    }
-
-    alert(`Clinic bill successfully recorded and sent for ${owner} and pet ${pet}!`);
-    document.getElementById("ownerName").value = "N/A";
-    document.getElementById("petName").value = "N/A";
-    document.getElementById("ownerSearch").value = "";
-    
-    ['consultation', 'vaccination', 'laboratory', 'grooming', 'surgery', 'confinement'].forEach(k => {
-      document.getElementById("chk-" + k).checked = false;
-    });
+    if (owner === "N/A" || !owner) { alert("Please select an owner first."); return; }
+    alert(`Clinic bill recorded and sent for ${owner} (${pet})!`);
   }
 </script>
 
