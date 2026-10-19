@@ -1,163 +1,234 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VetMoto - Surgery Records</title>
-<link rel="stylesheet" href="style.css">
+<script>
+  if (!sessionStorage.getItem("vetmoto_user")) {
+    window.location.href = "index.html";
+  }
+  function logout() {
+    sessionStorage.removeItem("vetmoto_user");
+    window.location.href = "index.html";
+  }
+</script>
+<style>
+  :root {
+    --purple: #5b3a82;
+    --lavender: #f3ecfb;
+    --coral: #e85b5b;
+    --bg: #f5effa;
+    --white: #fff;
+    --text: #4a3560;
+    --border: #e0d4ec;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+  .layout { display: flex; min-height: 100vh; }
+  
+  /* SIDEBAR */
+  .sidebar { width: 205px; background: var(--purple); color: #fff; padding: 18px 16px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .logo { height: 100px; width: 100px; border-radius: 50%; background: white; color: var(--purple); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; overflow: hidden; }
+  .logo img { width: 85%; height: 85%; object-fit: contain; }
+  .brand { text-align: center; font-weight: bold; font-size: 16px; letter-spacing: 1px; color: #ffffff; margin-bottom: 20px; }
+  .nav a { display: block; color: white; text-decoration: none; padding: 10px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
+  .nav a.active, .nav a:hover { background: #714c9e; }
+  .sub-nav { padding-left: 10px; background: rgba(0,0,0,0.15); border-bottom: 1px solid #ffffff33; }
+  .sub-nav a { border-top: none; padding: 8px 10px; font-size: 11px; opacity: 0.9; cursor: pointer; text-decoration: none; display: block; color: white; }
+  .sub-nav a:hover { opacity: 1; font-weight: bold; background: rgba(255,255,255,0.2); }
+  .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
+
+  /* MAIN CONTENT */
+  main { flex: 1; min-width: 0; padding: 28px 36px; background: var(--bg); }
+  h1 { margin: 0 0 6px; color: var(--purple); font-size: 24px; font-weight: bold; }
+  .subtitle { margin: 0 0 20px; color: #806b91; font-size: 12px; }
+
+  .panel { background: white; border-radius: 14px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+  .search-input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; width: 260px; outline: none; }
+  .btn-primary { background: var(--purple); color: white; border: none; padding: 9px 14px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; }
+  .btn-primary:hover { opacity: 0.9; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px 12px; text-align: left; font-size: 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--lavender); color: var(--purple); }
+  .badge { background: var(--lavender); color: var(--purple); padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+  .btn-action { background: #eee; border: none; padding: 5px 9px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; color: var(--purple); margin-right: 4px; }
+  .btn-action:hover { background: var(--purple); color: white; }
+  .btn-delete { color: var(--coral); }
+</style>
 </head>
 <body>
 
-<div class="dashboard">
-<aside class="sidebar">
-  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
-  <h2>VETMOTO</h2>
-  <a href="dashboard.html">⌂ Home</a>
-  <a href="pet-record.html">▤ Pet Record</a>
-  <a href="owner-record.html">♧ Owner Record</a>
-  <a href="medicine.html">💊 Medicine</a>
-  <a href="clinic-charge.html">▭ Clinic Charge</a>
-  <a href="appointment.html">◷ Appointment</a>
-  <a href="prescription.html">▤ Prescription</a>
-  <a href="index.html" class="logout">LOG OUT</a>
-</aside>
-
-<main class="main-content">
-  <a href="dashboard.html">← Back to Dashboard</a>
-  <h1 style="margin:20px 0;">SURGERY RECORDS</h1>
-  <p>Record and review pet surgery information.</p>
-
-  <button style="margin-top:20px;"
-    onclick="document.getElementById('surgeryForm').hidden=false">
-    + ADD SURGERY
-  </button>
-
-  <form id="surgeryForm" hidden style="margin:20px 0;">
-    <h2>Surgery Information</h2>
-
-    <label for="surgeryId">Surgery ID</label>
-    <input id="surgeryId" required placeholder="Enter surgery ID">
-
-    <label for="petName">Pet Name</label>
-    <input id="petName" required placeholder="Enter pet name">
-
-    <label for="ownerName">Owner Name</label>
-    <input id="ownerName" required placeholder="Enter owner name">
-
-    <label for="surgeryType">Surgery Type</label>
-    <input id="surgeryType" required placeholder="Enter surgery type">
-
-    <label for="surgeryDate">Surgery Date</label>
-    <input id="surgeryDate" type="date" required>
-
-    <label for="veterinarian">Veterinarian</label>
-    <input id="veterinarian" placeholder="Enter veterinarian's name">
-
-    <label for="notes">Notes</label>
-    <textarea id="notes" rows="3"
-      placeholder="Enter notes"></textarea>
-
-    <label for="surgeryStatus">Status</label>
-    <select id="surgeryStatus">
-      <option>Scheduled</option>
-      <option>In Progress</option>
-      <option>Completed</option>
-      <option>Cancelled</option>
-    </select>
-
-    <div style="display:flex;gap:10px;margin-top:15px;">
-      <button type="submit">SAVE SURGERY</button>
-      <button type="button"
-        onclick="document.getElementById('surgeryForm').hidden=true"
-        style="background:#E85B5B;">CANCEL</button>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="vetmoto-logo.webp" alt="VetMoto Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾<br>VETMOTO';">
     </div>
-  </form>
+    <div class="brand">VÉTMOTO</div>
+    <nav class="nav">
+      <a href="dashboard.html">⌂ Home</a>
+      <a href="pet-record.html">▤ Pet Record</a>
+      <a href="owner-record.html">♙ Owner Record</a>
+      <a href="medicine.html">💊 Medicine</a>
+      <a href="clinic-charge.html">▭ Clinic Charge</a>
+      <a href="appointment.html" class="active">◷ Medical Services</a>
+      
+      <div class="sub-nav">
+        <a href="consultation.html">🩺 Consultation</a>
+        <a href="laboratory.html">🔬 Laboratory</a>
+        <a href="surgery.html" style="font-weight:bold; background:rgba(255,255,255,0.2);">🚑 Surgery</a>
+        <a href="vaccination.html">💉 Vaccination</a>
+        <a href="grooming.html">✂️ Grooming</a>
+        <a href="confinement.html">🏥 Confinement</a>
+      </div>
 
-  <label for="surgerySearch">Search surgery records</label>
-  <input id="surgerySearch" placeholder="Search records..."
-    oninput="filterSurgeries()" style="width:100%;margin:10px 0 20px;">
+      <a href="notifications.html">♧ Notification</a>
+      <a href="history.html">▦ History</a>
+    </nav>
+    <button class="logout" onclick="logout()">LOG OUT</button>
+  </aside>
 
-  <div style="overflow-x:auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>Surgery ID</th>
-          <th>Pet</th>
-          <th>Owner</th>
-          <th>Surgery Type</th>
-          <th>Date</th>
-          <th>Veterinarian</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="surgeryTable"></tbody>
-    </table>
-  </div>
-</main>
+  <main>
+    <h1>Surgery Records</h1>
+    <p class="subtitle">Review surgical procedures and each pet's recovery status[cite: 68].</p>
+
+    <div class="panel">
+      <div class="panel-header">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search pet name, ID, or owner..." onkeyup="filterTable()">
+        <button class="btn-primary" onclick="openAddModal()">+ New Surgery Record</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Pet ID</th>
+            <th>Pet Name</th>
+            <th>Owner</th>
+            <th>Surgery Type</th>
+            <th>Date</th>
+            <th>Status / Recovery</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Dynamically loaded via JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </main>
 </div>
 
 <script>
-const surgeryForm = document.getElementById("surgeryForm");
-const surgeryTable = document.getElementById("surgeryTable");
+  // Initial default dataset based on PDF Surgery records + LocalStorage persistence
+  const defaultSurgeries = [
+    { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", type: "Spay", date: "14 Mar 2025", status: "Scheduled (Pre-op confirmed)" },
+    { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", type: "Spay", date: "13 Mar 2025", status: "Recovering (Under observation)" },
+    { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", type: "Neuter", date: "12 Mar 2025", status: "Postponed (Awaiting clearance)" },
+    { id: "PR-1019", pet: "Daisy", owner: "Emma Garcia", type: "Ear hematoma drainage", date: "11 Mar 2025", status: "Completed (Discharged)" },
+    { id: "PR-1014", pet: "Milo", owner: "Olivia Cruz", type: "Dental extraction", date: "11 Mar 2025", status: "Completed (Discharged)" }
+  ];
 
-function loadSurgeries() {
-  const records = JSON.parse(
-    localStorage.getItem("vetmotoSurgeries") || "[]"
-  );
+  function getStoredData() {
+    let data = localStorage.getItem("vetmoto_surgeries");
+    if (!data) {
+      localStorage.setItem("vetmoto_surgeries", JSON.stringify(defaultSurgeries));
+      return defaultSurgeries;
+    }
+    return JSON.parse(data);
+  }
 
-  surgeryTable.innerHTML = "";
+  function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888; padding:20px;">No surgery records found.</td></tr>`;
+      return;
+    }
 
-  records.forEach(item => {
-    const row = surgeryTable.insertRow();
+    tbody.innerHTML = data.map((item, index) => `
+      <tr>
+        <td><b>${item.id}</b></td>
+        <td>${item.pet}</td>
+        <td>${item.owner}</td>
+        <td>${item.type}</td>
+        <td>${item.date}</td>
+        <td><span class="badge">${item.status}</span></td>
+        <td>
+          <button class="btn-action" onclick="editRecord(${index})">Edit</button>
+          <button class="btn-action btn-delete" onclick="deleteRecord(${index})">Delete</button>
+        </td>
+      </tr>
+    `).join("");
+  }
 
-    [
-      item.id, item.pet, item.owner, item.type,
-      item.date, item.veterinarian, item.status
-    ].forEach(value => {
-      row.insertCell().textContent = value || "—";
+  // CREATE (Add new surgery record)
+  function openAddModal() {
+    let pet = prompt("Enter Pet Name:");
+    if (!pet) return;
+    let owner = prompt("Enter Owner Name:");
+    let type = prompt("Enter Surgery Type (e.g., Mass removal):");
+    let status = prompt("Enter Status / Recovery Notes:");
+
+    let records = getStoredData();
+    records.unshift({
+      id: "PR-" + Math.floor(1000 + Math.random() * 9000),
+      pet: pet,
+      owner: owner || "N/A",
+      type: type || "General Surgery",
+      date: "19 Oct 2026",
+      status: status || "Scheduled"
     });
-  });
 
-  filterSurgeries();
-}
+    localStorage.setItem("vetmoto_surgeries", JSON.stringify(records));
+    renderTable(records);
+    alert("New surgery record successfully created!");
+  }
 
-surgeryForm.addEventListener("submit", function(event) {
-  event.preventDefault();
+  // UPDATE (Edit surgery record)
+  function editRecord(index) {
+    let records = getStoredData();
+    let item = records[index];
 
-  const item = {
-    id: document.getElementById("surgeryId").value,
-    pet: document.getElementById("petName").value,
-    owner: document.getElementById("ownerName").value,
-    type: document.getElementById("surgeryType").value,
-    date: document.getElementById("surgeryDate").value,
-    veterinarian: document.getElementById("veterinarian").value,
-    notes: document.getElementById("notes").value,
-    status: document.getElementById("surgeryStatus").value
-  };
+    let newPet = prompt("Edit Pet Name:", item.pet);
+    if (!newPet) return;
+    let newType = prompt("Edit Surgery Type:", item.type);
+    let newStatus = prompt("Edit Status / Recovery:", item.status);
 
-  const records = JSON.parse(
-    localStorage.getItem("vetmotoSurgeries") || "[]"
-  );
+    item.pet = newPet;
+    item.type = newType || item.type;
+    item.status = newStatus || item.status;
 
-  records.push(item);
-  localStorage.setItem("vetmotoSurgeries", JSON.stringify(records));
+    localStorage.setItem("vetmoto_surgeries", JSON.stringify(records));
+    renderTable(records);
+    alert("Surgery record successfully updated!");
+  }
 
-  surgeryForm.reset();
-  surgeryForm.hidden = true;
-  loadSurgeries();
-});
+  // DELETE (Remove surgery record)
+  function deleteRecord(index) {
+    if (confirm("Are you sure you want to delete this surgery record?")) {
+      let records = getStoredData();
+      records.splice(index, 1);
+      localStorage.setItem("vetmoto_surgeries", JSON.stringify(records));
+      renderTable(records);
+    }
+  }
 
-function filterSurgeries() {
-  const query = document.getElementById("surgerySearch")
-    .value.toLowerCase();
+  // READ & FILTER (Search functionality)
+  function filterTable() {
+    let query = document.getElementById("searchInput").value.toLowerCase();
+    let records = getStoredData();
+    let filtered = records.filter(item => 
+      item.pet.toLowerCase().includes(query) || 
+      item.owner.toLowerCase().includes(query) || 
+      item.id.toLowerCase().includes(query) ||
+      item.type.toLowerCase().includes(query)
+    );
+    renderTable(filtered);
+  }
 
-  [...surgeryTable.rows].forEach(row => {
-    row.hidden = !row.textContent.toLowerCase().includes(query);
-  });
-}
-
-loadSurgeries();
+  // Initial load on page start
+  renderTable(getStoredData());
 </script>
 
 </body>
