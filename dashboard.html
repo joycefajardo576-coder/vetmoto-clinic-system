@@ -6,6 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VetMoto - Dashboard</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        // Proteksyon — hindi makakapasok kung hindi naka-login
+        if (!sessionStorage.getItem("vetmoto_user")) {
+            window.location.href = "index.html";
+        }
+        function logout() {
+            sessionStorage.removeItem("vetmoto_user");
+            window.location.href = "index.html";
+        }
+    </script>
 </head>
 
 <body>
@@ -19,7 +29,7 @@
 
     <h2>VETMOTO</h2>
 
-    <a href="dashboard.html">⌂ &nbsp; Home</a>
+    <a href="dashboard.html" class="active">⌂ &nbsp; Home</a>
 
     <a href="pet-record.html">▤ &nbsp; Pet Record</a>
 
@@ -35,11 +45,9 @@
 
     <a href="history.html">▦ &nbsp; History</a>
 
-    <a href="index.html" class="logout">LOG OUT</a>
+    <a href="#" onclick="logout(); return false;" class="logout">LOG OUT</a>
 
 </aside>
-
-
 
     <!-- MAIN CONTENT -->
     <main class="main-content">
@@ -57,32 +65,30 @@
 
         </section>
 
-
         <!-- STAT CARDS -->
         <div class="stats">
 
             <div class="card purple-card">
                 <h3>TOTAL PETS</h3>
-                <strong>1,284</strong>
+                <strong>1,284</strong>[cite: 25]
             </div>
 
             <div class="card purple-card">
                 <h3>TOTAL OWNERS</h3>
-                <strong>942</strong>
+                <strong>942</strong>[cite: 25]
             </div>
 
             <div class="card">
                 <h3>TODAY'S CONSULTATIONS</h3>
-                <strong>18</strong>
+                <strong>18</strong>[cite: 25]
             </div>
 
             <div class="card">
                 <h3>PENDING APPOINTMENTS</h3>
-                <strong>7</strong>
+                <strong>7</strong>[cite: 25]
             </div>
 
         </div>
-
 
         <!-- QUICK ACTIONS -->
         <h2 class="section-title">QUICK ACTIONS</h2>
@@ -94,25 +100,27 @@
                 New Record
             </button>
 
-           <button onclick="location.href='appointment.html'">
-             <span>▣</span>
-              New Appointment
-          </button>
+            <button onclick="location.href='appointment.html'">
+                <span>▣</span>
+                New Appointment
+            </button>
+
+        </div> <!-- Naayos ang pagsara ng quick-actions div dito -->
 
 
         <!-- RECENT ACTIVITY -->
-           <div class="activity-title">
-           <h2>RECENT ACTIVITY</h2>
-          <a href="history.html">View all</a>
-         </div>
+        <div class="activity-title">
+            <h2>RECENT ACTIVITY</h2>
+            <a href="history.html">View all</a>[cite: 25]
+        </div>
          
         <div class="activity">
 
             <div class="activity-item">
                 <span>▤</span>
                 <div>
-                    <b>Pet record updated</b>
-                    <p>Luna · 09:12 AM</p>
+                    <b>Pet record updated</b>[cite: 25]
+                    <p>Luna · 09:12 AM</p>[cite: 25]
                 </div>
             </div>
 
