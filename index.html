@@ -1,103 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetMoto - Clinic Staff Login</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto | Login</title>
+<style>
+  :root {
+    --purple: #5b3a82;
+    --lavender: #f3ecfb;
+    --coral: #e85b5b;
+    --bg: #f5effa;
+    --text: #4a3560;
+    --border: #e0d4ec;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .login-card {
+    background: white;
+    width: 100%;
+    max-width: 380px;
+    padding: 35px 30px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+    text-align: center;
+  }
+  .logo {
+    height: 90px;
+    width: 90px;
+    border-radius: 50%;
+    background: var(--purple);
+    color: white;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    font-weight: bold;
+    margin: 0 auto 15px;
+    font-size: 12px;
+    line-height: 1.2;
+  }
+  .brand-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--purple);
+    margin: 0 0 4px;
+    letter-spacing: 1px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #806b91;
+    margin-bottom: 25px;
+  }
+  .form-group {
+    text-align: left;
+    margin-bottom: 16px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+    color: #806b91;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+    font-size: 13px;
+    outline: none;
+    color: var(--text);
+  }
+  .form-group input:focus {
+    border-color: var(--purple);
+  }
+  .btn-login {
+    width: 100%;
+    background: var(--coral);
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+  .btn-login:hover { opacity: 0.9; }
+  .btn-create {
+    width: 100%;
+    background: var(--purple);
+    color: white;
+    border: none;
+    padding: 13px;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+    text-transform: uppercase;
+  }
+  .btn-create:hover { opacity: 0.9; }
+  .forgot-pass {
+    display: block;
+    margin-top: 15px;
+    font-size: 12px;
+    color: #806b91;
+    text-decoration: none;
+  }
+  .forgot-pass:hover { text-decoration: underline; }
+</style>
 </head>
-
 <body>
 
-<div class="login-page">
+<div class="login-card">
+  <div class="logo">🐾<br>VETMOTO</div>
+  <div class="brand-title">VETMOTO CLINIC</div>
+  <div class="subtitle">Welcome Back!</div>
 
-    <div class="welcome-section">
-        <img src="vetmoto-logo.webp" alt="VetMoto Logo" class="logo">
-
-        <img src="pet-image.png" alt="Pets" class="pet-image">
-
-        <div class="accent-line"></div>
-
-        <h1>Welcome to VetMoto</h1>
-        <h2>Healthy Pets, Happier Lives.</h2>
-
-        <p>
-            Your trusted companion for pet health,
-            appointments and wellness — all in one place.
-        </p>
+  <form onsubmit="handleLogin(event)">
+    <div class="form-group">
+      <label>Email / Username</label>
+      <input type="text" id="username" placeholder="Enter username or email" required>
     </div>
 
-    <div class="login-section">
-        <div class="login-box">
-
-            <div class="vetmoto-title">VETMOTO</div>
-
-            <h1>CLINIC STAFF LOGIN</h1>
-
-            <p class="description">
-                Sign in with your clinic credentials to continue.
-            </p>
-
-            <form id="loginForm">
-
-                <label for="email">EMAIL / USERNAME</label>
-                <input
-                    type="text"
-                    id="email"
-                    name="email"
-                    placeholder="staff@vetmoto.clinic"
-                    autocomplete="username"
-                    required
-                >
-
-                <label for="password">PASSWORD</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    autocomplete="current-password"
-                    required
-                >
-
-                <button type="submit" class="login-button">
-                    LOGIN
-                </button>
-
-                <p id="loginError" class="login-error" role="alert"></p>
-
-            </form>
-
-            <p class="signup-text">
-                Don't have an Account? <span>Sign-Up</span>
-            </p>
-
-        </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="Enter password" required>
     </div>
 
+    <button type="submit" class="btn-login">❤️ LOGIN</button>
+  </form>
+
+  <button type="button" class="btn-create" onclick="handleCreateAccount()">💜 CREATE ACCOUNT</button>
+
+  <a href="#" class="forgot-pass" onclick="alert('Please contact clinic administrator to reset your password.')">Forgot Password?</a>
 </div>
 
 <script>
-    const loginForm = document.getElementById("loginForm");
-    const loginError = document.getElementById("loginError");
+  // Redirect if already logged in
+  if (sessionStorage.getItem("vetmoto_user")) {
+    window.location.href = "dashboard.html";
+  }
 
-    loginForm.addEventListener("submit", function(event) {
-        event.preventDefault();
+  function handleLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById("username").value.trim();
+    const pass = document.getElementById("password").value.trim();
 
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
+    if (user && pass) {
+      // Save session user
+      sessionStorage.setItem("vetmoto_user", JSON.stringify({ username: user, loginTime: new Date() }));
+      alert("Login successful! Welcome to VetMoto.");
+      window.location.href = "dashboard.html";
+    } else {
+      alert("Please enter both username and password.");
+    }
+  }
 
-        if (email === "" || password === "") {
-            loginError.textContent = "Please enter your email and password.";
-            return;
-        }
+  function handleCreateAccount() {
+    const newUser = prompt("Enter desired Username / Email:");
+    if (!newUser) return;
+    const newPass = prompt("Enter Password:");
+    if (!newPass) return;
 
-        // 👇 ITO ANG DINAGDAG KO: Nagsi-set ito ng session para hindi ka na ibalik sa login
-        sessionStorage.setItem("vetmoto_user", "true");
-
-        // Pagkatapos ma-save, direktang papasok na sa dashboard
-        window.location.href = "dashboard.html";
-    });
+    sessionStorage.setItem("vetmoto_user", JSON.stringify({ username: newUser, loginTime: new Date() }));
+    alert("Account created successfully! Redirecting to Dashboard...");
+    window.location.href = "dashboard.html";
+  }
 </script>
 
 </body>
