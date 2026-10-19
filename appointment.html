@@ -1,325 +1,313 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VetMoto - Appointment & Medical Services</title>
-    <link rel="stylesheet" href="style.css">
-    <script>
-        // Session Protection Check
-        if (!sessionStorage.getItem("vetmoto_user")) {
-            window.location.href = "index.html";
-        }
-        function logout() {
-            sessionStorage.removeItem("vetmoto_user");
-            window.location.href = "index.html";
-        }
-    </script>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        body { display: flex; min-height: 100vh; background: #fff; }
-        
-        /* SIDEBAR NAVIGATION */
-        .sidebar {
-            width: 240px;
-            background: #54207D;
-            color: white;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .sidebar h2 {
-            text-align: center;
-            font-size: 20px;
-            margin-bottom: 25px;
-            letter-spacing: 2px;
-        }
-        .sidebar a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 12px 25px;
-            font-size: 14px;
-            border-left: 3px solid transparent;
-            cursor: pointer;
-        }
-        .sidebar a:hover, .sidebar a.active {
-            background: #6B3595;
-            border-left-color: #E85B5B;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VetMoto - Medical Services & Appointment</title>
+<link rel="stylesheet" href="style.css">
+<script>
+  if (!sessionStorage.getItem("vetmoto_user")) {
+    window.location.href = "index.html";
+  }
+  function logout() {
+    sessionStorage.removeItem("vetmoto_user");
+    window.location.href = "index.html";
+  }
+</script>
+<style>
+  :root {
+    --bg-offwhite: #FFFCFA;
+    --light-purple: #DCC6F2;
+    --dark-purple: #8064A2;
+    --vetmoto-red: #B94A45;
+    --light-gray: #F2F2F2;
+    --text-dark: #333333;
+  }
+  body { margin:0; font-family: 'Poppins', 'Inter', sans-serif; background: var(--bg-offwhite); color: var(--text-dark); }
+  .dashboard { display: flex; min-height: 100vh; }
+  
+  /* SIDEBAR */
+  .sidebar { width: 220px; background: var(--dark-purple); color: white; padding: 20px 15px; display: flex; flex-direction: column; }
+  .side-logo { width: 80px; margin: 0 auto 10px; display: block; border-radius: 50%; }
+  .sidebar h2 { text-align: center; margin-bottom: 20px; font-size: 18px; letter-spacing: 1px; }
+  .sidebar a { color: white; text-decoration: none; padding: 10px 12px; display: block; border-radius: 6px; font-size: 14px; margin-bottom: 4px; }
+  .sidebar a:hover, .sidebar a.active { background: #6B4E8C; }
+  
+  .submenu { margin-left: 10px; border-left: 2px solid var(--light-purple); padding-left: 5px; }
+  .submenu a { font-size: 12px; padding: 6px 10px; }
+  
+  .logout { margin-top: auto; background: var(--vetmoto-red); text-align: center; font-weight: bold; }
 
-        .submenu-group { margin: 8px 0 15px 0; }
-        .submenu-title {
-            padding: 10px 25px 5px;
-            font-size: 12px;
-            text-transform: uppercase;
-            color: #ddd;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #ffffff22;
-            margin-bottom: 5px;
-        }
-        .submenu-link {
-            padding: 9px 15px 9px 45px !important;
-            font-size: 13px !important;
-            color: #eee !important;
-        }
-        .submenu-link.active {
-            background: #7B3FA6 !important;
-            border-left-color: #E85B5B !important;
-            font-weight: bold;
-        }
-        .logout {
-            margin-top: auto;
-            background: #E85B5B !important;
-            text-align: center;
-            margin: 15px;
-            border-radius: 7px;
-        }
+  /* MAIN CONTENT */
+  .main-content { flex: 1; padding: 30px; }
+  h1 { color: var(--dark-purple); margin-top: 0; }
 
-        /* MAIN CONTENT SECTION */
-        .main-content { flex: 1; padding: 30px 40px; background: #fff; }
-        h1 { color: #54207D; margin-bottom: 25px; }
-        .card { background: #F0E5F8; padding: 25px; border-radius: 14px; margin-bottom: 20px; }
-        button {
-            background: #54207D;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 7px;
-            cursor: pointer;
-            margin: 5px 0;
-        }
-        button:hover { background: #E85B5B; }
-        input, select {
-            padding: 10px;
-            margin: 5px 0 15px 0;
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: #54207D; color: white; }
+  /* GRID CARDS FOR SERVICES (Screen 02 Specs) */
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; margin-top: 20px; }
+  .service-card { background: white; border: 1px solid var(--light-gray); border-radius: 12px; padding: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s; }
+  .service-card:hover { transform: translateY(-3px); }
+  .service-card h3 { color: var(--dark-purple); margin-top: 0; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+  .service-card p { font-size: 13px; color: #666; line-height: 1.4; }
+  
+  .btn-action { background: var(--vetmoto-red); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
+  .btn-action:hover { opacity: 0.9; }
 
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-        
-        /* Modal for CRUD Form */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 400px;
-        }
-    </style>
+  /* TAB CONTENT PANES */
+  .service-pane { display: none; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 15px; }
+  .service-pane.active { display: block; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--light-gray); font-size: 13px; }
+  th { background: var(--light-purple); color: var(--text-dark); }
+</style>
 </head>
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+<div class="dashboard">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
     <h2>VETMOTO</h2>
-    <a href="dashboard.html">🏠 Home</a>
-    <a href="pet-record.html">🐾 Pet Record</a>
-    <a href="owner-record.html">👤 Owner Record</a>
+
+    <a href="dashboard.html">⌂ Home</a>
+    <a href="pet-record.html">▤ Pet Record</a>
+    <a href="owner-record.html">♧ Owner Record</a>
     <a href="medicine.html">💊 Medicine</a>
+    <a href="clinic-charge.html">▭ Clinic Charge</a>
     
-    <a href="#" onclick="switchTab('appointment'); return false;" id="nav-appointment" class="active" style="margin-top: 15px; font-weight: bold;">
-        📅 APPOINTMENT
-    </a>
+    <a href="#" onclick="showTab('catalog')" id="nav-catalog" class="active">◷ Medical Services</a>
     
-    <div class="submenu-group">
-        <div class="submenu-title">Medical Services</div>
-        <a href="#" onclick="switchTab('consultation'); return false;" id="nav-consultation" class="submenu-link">🩺 Consultation</a>
-        <a href="#" onclick="switchTab('prescription'); return false;" id="nav-prescription" class="submenu-link">💊 Prescription</a>
-        <a href="#" onclick="switchTab('laboratory'); return false;" id="nav-laboratory" class="submenu-link">🔬 Laboratory</a>
-        <a href="#" onclick="switchTab('surgery'); return false;" id="nav-surgery" class="submenu-link">🏥 Surgery</a>
-        <a href="#" onclick="switchTab('vaccination'); return false;" id="nav-vaccination" class="submenu-link">💉 Vaccination</a>
-        <a href="#" onclick="switchTab('grooming'); return false;" id="nav-grooming" class="submenu-link">✨ Grooming</a>
-        <a href="#" onclick="switchTab('confinement'); return false;" id="nav-confinement" class="submenu-link">🛏️ Confinement</a>
+    <!-- SUBMENU BASED ON PDF MEDICAL SERVICES -->
+    <div class="submenu">
+      <a href="#" onclick="showTab('consultation')" id="nav-consultation">🩺 Consultations</a>
+      <a href="#" onclick="showTab('preventive')" id="nav-preventive">💉 Preventive Care</a>
+      <a href="#" onclick="showTab('diagnostics')" id="nav-diagnostics">🔬 Diagnostics</a>
+      <a href="#" onclick="showTab('surgery')" id="nav-surgery">🏥 Surgery & Procedures</a>
+      <a href="#" onclick="showTab('hospitalization')" id="nav-hospitalization">🛏️ Hospitalization</a>
+      <a href="#" onclick="showTab('grooming')" id="nav-grooming">✂️ Grooming & Care</a>
+      <a href="#" onclick="showTab('housecalls')" id="nav-housecalls">🏠 House Calls</a>
+      <a href="#" onclick="showTab('pharmacy')" id="nav-pharmacy">💊 Pharmacy</a>
     </div>
-    
-    <a href="clinic-charge.html">💰 Clinic Charge</a>
-    <a href="notifications.html">🔔 Notification</a>
-    <a href="history.html">📋 History</a>
-    <a href="#" onclick="logout(); return false;" class="logout">🚪 Log Out</a>
-</div>
 
-<!-- MAIN CONTENT -->
-<div class="main-content">
+    <a href="notifications.html">♧ Notification</a>
+    <a href="history.html">▦ History</a>
+    <a href="#" onclick="logout(); return false;" class="logout">LOG OUT</a>
+  </aside>
 
-    <!-- 1. APPOINTMENT TAB WITH CRUD -->
-    <div id="tab-appointment" class="tab-pane active">
-        <h1>📅 Appointment Management</h1>
-        
-        <div class="card">
-            <h3>Schedule New Appointment (Create)</h3>
-            <p style="margin: 10px 0; color: #666;">Create and manage pet appointments dynamically</p>
-            <button onclick="openModal()">+ New Appointment</button>
+  <!-- MAIN CONTENT AREA -->
+  <main class="main-content">
+
+    <!-- 0. SERVICES CATALOG (Screen 02 Main Catalog) -->
+    <div id="pane-catalog" class="service-pane active">
+      <h1>Our Veterinary Services</h1>
+      <p style="color:#666;">Overview of official VetMoto medical services and clinical care modules.</p>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <h3>🩺 Consultations</h3>
+          <p>General checkups, sick pet evaluations, and wellness exams.</p>
+          <button class="btn-action" onclick="showTab('consultation')">OPEN MODULE</button>
         </div>
 
-        <!-- Search / Filter Component (IT107 Requirement) -->
-        <input type="text" id="searchAppointment" placeholder="🔍 Search by Pet Name or Owner..." onkeyup="filterAppointments()">
+        <div class="service-card">
+          <h3>💉 Preventive Care</h3>
+          <p>Vaccinations, anti-rabies immunizations, and deworming.</p>
+          <button class="btn-action" onclick="showTab('preventive')">OPEN MODULE</button>
+        </div>
 
-        <h3>Upcoming Appointments (Read & Delete)</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Pet Name</th>
-                    <th>Owner</th>
-                    <th>Service Type</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="appointmentTableBody">
-                <!-- Dynamically populated via JS -->
-            </tbody>
-        </table>
+        <div class="service-card">
+          <h3>🔬 Diagnostics</h3>
+          <p>CBC, blood chemistry, laboratory tests, and ultrasonography.</p>
+          <button class="btn-action" onclick="showTab('diagnostics')">OPEN MODULE</button>
+        </div>
+
+        <div class="service-card">
+          <h3>🏥 Surgery & Procedures</h3>
+          <p>General surgery, soft-tissue procedures, gas anesthesia, and monitoring.</p>
+          <button class="btn-action" onclick="showTab('surgery')">OPEN MODULE</button>
+        </div>
+
+        <div class="service-card">
+          <h3>🛏️ Hospitalization</h3>
+          <p>Confinement, monitored recovery, fluid pumps, and oxygen support.</p>
+          <button class="btn-action" onclick="showTab('hospitalization')">OPEN MODULE</button>
+        </div>
+
+        <div class="service-card">
+          <h3>✂️ Grooming & Care</h3>
+          <p>Professional pet grooming, care, and makeovers.</p>
+          <button class="btn-action" onclick="showTab('grooming')">OPEN MODULE</button>
+        </div>
+
+        <div class="service-card">
+          <h3>🏠 House Calls</h3>
+          <p>Veterinary home service and private consultation.</p>
+          <button class="btn-action" onclick="showTab('housecalls')">OPEN MODULE</button>
+        </div>
+
+        <div class="service-card">
+          <h3>💊 Pharmacy</h3>
+          <p>Medicines, health supplements, and OTC pet supplies.</p>
+          <button class="btn-action" onclick="location.href='medicine.html'">VIEW MEDICINES</button>
+        </div>
+      </div>
     </div>
 
-    <!-- OTHER TABS PLACEHOLDER -->
-    <div id="tab-consultation" class="tab-pane">
-        <h1>🩺 Consultation Records</h1>
-        <p>Consultation module ready for records management.</p>
+    <!-- 1. CONSULTATIONS (Screen 03) -->
+    <div id="pane-consultation" class="service-pane">
+      <h1>🩺 Consultations & Checkups</h1>
+      <p>Manage wellness exams, sick pet evaluations, and health assessments.</p>
+      <button class="btn-action" onclick="addServiceEntry('consultations')">+ BOOK CONSULTATION</button>
+      <table>
+        <thead><tr><th>Date</th><th>Pet Name</th><th>Doctor</th><th>Evaluation</th><th>Actions</th></tr></thead>
+        <tbody id="tbl-consultations"></tbody>
+      </table>
     </div>
-    <div id="tab-prescription" class="tab-pane"><h1>💊 Prescription History</h1></div>
-    <div id="tab-laboratory" class="tab-pane"><h1>🔬 Laboratory Test Records</h1></div>
-    <div id="tab-surgery" class="tab-pane"><h1>🏥 Surgery Records</h1></div>
-    <div id="tab-vaccination" class="tab-pane"><h1>💉 Vaccination Records</h1></div>
-    <div id="tab-grooming" class="tab-pane"><h1>✨ Grooming Records</h1></div>
-    <div id="tab-confinement" class="tab-pane"><h1>🛏️ Confinement Records</h1></div>
 
+    <!-- 2. PREVENTIVE CARE (Screen 04) -->
+    <div id="pane-preventive" class="service-pane">
+      <h1>💉 Preventive Care</h1>
+      <p>Vaccinations, anti-rabies shots, and deworming schedule.</p>
+      <button class="btn-action" onclick="addServiceEntry('preventive')">+ RECORD VACCINE / DEWORMING</button>
+      <table>
+        <thead><tr><th>Date</th><th>Pet Name</th><th>Type</th><th>Next Due</th><th>Actions</th></tr></thead>
+        <tbody id="tbl-preventive"></tbody>
+      </table>
+    </div>
+
+    <!-- 3. DIAGNOSTICS (Screen 05) -->
+    <div id="pane-diagnostics" class="service-pane">
+      <h1>🔬 Diagnostics & Laboratory</h1>
+      <p>CBC tests, blood chemistry, laboratory work, and ultrasonography.</p>
+      <button class="btn-action" onclick="addServiceEntry('diagnostics')">+ ADD LAB RESULT</button>
+      <table>
+        <thead><tr><th>Date</th><th>Pet Name</th><th>Test Type</th><th>Result Summary</th><th>Actions</th></tr></thead>
+        <tbody id="tbl-diagnostics"></tbody>
+      </table>
+    </div>
+
+    <!-- 4. SURGERY (Screen 06) -->
+    <div id="pane-surgery" class="service-pane">
+      <h1>🏥 Surgery & Procedures</h1>
+      <p>Soft tissue surgery, general surgery, and patient monitoring logs.</p>
+      <button class="btn-action" onclick="addServiceEntry('surgery')">+ SCHEDULE SURGERY</button>
+      <table>
+        <thead><tr><th>Date</th><th>Pet Name</th><th>Procedure</th><th>Surgeon</th><th>Actions</th></tr></thead>
+        <tbody id="tbl-surgery"></tbody>
+      </table>
+    </div>
+
+    <!-- 5. HOSPITALIZATION (Screen 07) -->
+    <div id="pane-hospitalization" class="service-pane">
+      <h1>🛏️ Hospitalization & Confinement</h1>
+      <p>Monitored recovery, oxygen concentrators, and fluid pump tracking.</p>
+      <button class="btn-action" onclick="addServiceEntry('hospitalization')">+ ADMIT PATIENT</button>
+      <table>
+        <thead><tr><th>Admit Date</th><th>Pet Name</th><th>Cage / Equipment</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="tbl-hospitalization"></tbody>
+      </table>
+    </div>
+
+    <!-- 6. GROOMING (Screen 08) -->
+    <div id="pane-grooming" class="service-pane">
+      <h1>✂️ Grooming & Care</h1>
+      <p>Professional pet grooming, baths, and pet makeover appointments.</p>
+      <button class="btn-action" onclick="addServiceEntry('grooming')">+ BOOK GROOMING</button>
+      <table>
+        <thead><tr><th>Date</th><th>Pet Name</th><th>Grooming Package</th><th>Staff</th><th>Actions</th></tr></thead>
+        <tbody id="tbl-grooming"></tbody>
+      </table>
+    </div>
+
+    <!-- 7. HOUSE CALLS (Screen 09) -->
+    <div id="pane-housecalls" class="service-pane">
+      <h1>🏠 House Calls</h1>
+      <p>Veterinary home service and private home consultations.</p>
+      <button class="btn-action" onclick="addServiceEntry('housecalls')">+ REQUEST HOUSE CALL</button>
+      <table>
+        <thead><tr><th>Date</th><th>Pet Name</th><th>Owner Address</th><th>Assigned Vet</th><th>Actions</th></tr></thead>
+        <tbody id="tbl-housecalls"></tbody>
+      </table>
+    </div>
+
+  </main>
 </div>
 
-<!-- MODAL FORM FOR CREATING APPOINTMENTS -->
-<div id="appointmentModal" class="modal">
-    <div class="modal-content">
-        <h3>New Appointment Form</h3>
-        <form id="addAppointmentForm" onsubmit="saveAppointment(event)">
-            <label>Date:</label>
-            <input type="date" id="apptDate" required>
-            
-            <label>Pet Name:</label>
-            <input type="text" id="apptPet" placeholder="e.g. Luna" required>
-            
-            <label>Owner Name:</label>
-            <input type="text" id="apptOwner" placeholder="e.g. Juan Dela Cruz" required>
-            
-            <label>Service Type:</label>
-            <select id="apptService">
-                <option value="Consultation">Consultation</option>
-                <option value="Surgery">Surgery</option>
-                <option value="Vaccination">Vaccination</option>
-                <option value="Grooming">Grooming</option>
-            </select>
-            
-            <button type="submit">Save Appointment</button>
-            <button type="button" onclick="closeModal()" style="background: #888;">Cancel</button>
-        </form>
-    </div>
-</div>
-
-<!-- JAVASCRIPT LOGIC FOR CRUD & TABS -->
 <script>
-    // Initial Data Array (JSON / Local Storage simulation)
-    let appointments = JSON.parse(localStorage.getItem("vetmoto_appointments")) || [
-        { id: 1, date: "2026-03-20", pet: "Max", owner: "Maria Santos", service: "Consultation", status: "Pending" }
-    ];
+  // Tab Switching Function
+  function showTab(tabKey) {
+    document.querySelectorAll('.service-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
 
-    function renderAppointments(data = appointments) {
-        const tbody = document.getElementById("appointmentTableBody");
-        tbody.innerHTML = "";
+    const activePane = document.getElementById('pane-' + tabKey);
+    if (activePane) activePane.classList.add('active');
 
-        if (data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No appointments found.</td></tr>`;
-            return;
-        }
+    const activeNav = document.getElementById('nav-' + tabKey);
+    if (activeNav) activeNav.classList.add('active');
+  }
 
-        data.forEach((appt, index) => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${appt.date}</td>
-                    <td><b>${appt.pet}</b></td>
-                    <td>${appt.owner}</td>
-                    <td>${appt.service}</td>
-                    <td><span style="color: green; font-weight: bold;">${appt.status}</span></td>
-                    <td>
-                        <button onclick="deleteAppointment(${appt.id})" style="background: #E85B5B; padding: 5px 10px; font-size: 12px;">Delete</button>
-                    </td>
-                </tr>
-            `;
-        });
-    }
+  // LocalStorage JSON Data Management
+  function getStorage(key, defaults) {
+    return JSON.parse(localStorage.getItem(key)) || defaults;
+  }
+  function setStorage(key, data) {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
 
-    // CREATE Operation
-    function saveAppointment(event) {
-        event.preventDefault();
-        const newAppt = {
-            id: Date.now(),
-            date: document.getElementById("apptDate").value,
-            pet: document.getElementById("apptPet").value,
-            owner: document.getElementById("apptOwner").value,
-            service: document.getElementById("apptService").value,
-            status: "Pending"
-        };
-
-        appointments.push(newAppt);
-        localStorage.setItem("vetmoto_appointments", JSON.stringify(appointments));
-        renderAppointments();
-        closeModal();
-        document.getElementById("addAppointmentForm").reset();
-    }
-
-    // DELETE Operation
-    function deleteAppointment(id) {
-        if (confirm("Are you sure you want to delete this appointment?")) {
-            appointments = appointments.filter(a => a.id !== id);
-            localStorage.setItem("vetmoto_appointments", JSON.stringify(appointments));
-            renderAppointments();
-        }
-    }
-
-    // SEARCH / FILTER Operation (IT107 Requirement)
-    function filterAppointments() {
-        const query = document.getElementById("searchAppointment").value.toLowerCase();
-        const filtered = appointments.filter(a => 
-            a.pet.toLowerCase().includes(query) || a.owner.toLowerCase().includes(query)
-        );
-        renderAppointments(filtered);
-    }
-
-    // Modal Controls
-    function openModal() { document.getElementById("appointmentModal").style.display = "flex"; }
-    function closeModal() { document.getElementById("appointmentModal").style.display = "none"; }
-
-    // Tab Switching Function
-    function switchTab(tabName) {
-        const panes = document.querySelectorAll('.tab-pane');
-        panes.forEach(pane => pane.classList.remove('active'));
-
-        const navLinks = document.querySelectorAll('.sidebar a');
-        navLinks.forEach(link => link.classList.remove('active'));
-
-        const targetTab = document.getElementById('tab-' + tabName);
-        if (targetTab) targetTab.classList.add('active');
-
-        const targetNav = document.getElementById('nav-' + tabName);
-        if (targetNav) targetNav.classList.add('active');
-    }
-
-    // Initial load
-    window.onload = function() {
-        renderAppointments();
+  // Render Table Functions
+  function renderAllTables() {
+    const data = {
+      consultations: getStorage('vetmoto_consultations', [{date:'2026-10-15', pet:'Luna', doc:'Dr. Maya Patel', eval:'Sick Pet Evaluation'}]),
+      preventive: getStorage('vetmoto_preventive', [{date:'2026-10-10', pet:'Milo', type:'Anti-Rabies', due:'2027-10-10'}]),
+      diagnostics: getStorage('vetmoto_diagnostics', [{date:'2026-10-12', pet:'Luna', test:'CBC Test', res:'Normal Range'}]),
+      surgery: getStorage('vetmoto_surgery', [{date:'2026-10-18', pet:'Cooper', proc:'Soft Tissue Surgery', doc:'Dr. Maya Patel'}]),
+      hospitalization: getStorage('vetmoto_hospitalization', [{date:'2026-10-14', pet:'Bella', cage:'Cage 02 (Fluid Pump)', status:'Monitored'}]),
+      grooming: getStorage('vetmoto_grooming', [{date:'2026-10-16', pet:'Daisy', pkg:'Full Pet Makeover', staff:'Claire'}]),
+      housecalls: getStorage('vetmoto_housecalls', [{date:'2026-10-17', pet:'Max', addr:'Pasig City', doc:'Dr. Maya Patel'}])
     };
+
+    Object.keys(data).forEach(type => {
+      const tbody = document.getElementById('tbl-' + type);
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      
+      data[type].forEach((row, idx) => {
+        const tr = document.createElement('tr');
+        const vals = Object.values(row);
+        let cells = vals.map(v => `<td>${v}</td>`).join('');
+        cells += `<td><button onclick="deleteEntry('${type}', ${idx})" style="background:var(--vetmoto-red); color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer;">Delete</button></td>`;
+        tr.innerHTML = cells;
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  function addServiceEntry(type) {
+    const pet = prompt("Enter Pet Name:");
+    if (!pet) return;
+    const detail = prompt("Enter Service/Procedure Details:");
+    
+    const records = getStorage('vetmoto_' + type, []);
+    const today = new Date().toISOString().split('T')[0];
+    
+    records.push({ date: today, pet: pet, detail1: detail || "Standard Service", detail2: "Recorded" });
+    setStorage('vetmoto_' + type, records);
+    renderAllTables();
+  }
+
+  function deleteEntry(type, idx) {
+    if (confirm("Are you sure you want to delete this service record?")) {
+      const records = getStorage('vetmoto_' + type, []);
+      records.splice(idx, 1);
+      setStorage('vetmoto_' + type, records);
+      renderAllTables();
+    }
+  }
+
+  window.onload = function() {
+    renderAllTables();
+  };
 </script>
 
 </body>
