@@ -15,6 +15,29 @@
         window.location.href = "index.html";
     }
 </script>
+<style>
+  .summary-card {
+    background: #f5effa;
+    border: 1px solid #dcc6f2;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .summary-card h3 { margin: 0; color: #5b3a82; font-size: 18px; }
+  .summary-card .total-amount { font-size: 24px; font-weight: bold; color: #b94a45; }
+  .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+  .badge-unpaid { background: #ffd2d2; color: #b94a45; }
+  .badge-paid { background: #d2ffd4; color: #2e7d32; }
+  .badge-partial { background: #fff3cd; color: #856404; }
+  
+  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10; align-items:center; justify-content:center; padding:15px; }
+  .modal-card { background:white; padding:25px; border-radius:12px; width:min(420px, 100%); }
+</style>
 </head>
 <body>
 
@@ -30,23 +53,34 @@
   <a href="clinic-charge.html" class="active">▭ Clinic Charge</a>
   <a href="appointment.html">◷ Appointment</a>
   <a href="prescription.html">▤ Prescription</a>
+  <a href="notifications.html">♧ Notification</a>
+  <a href="history.html">▦ History</a>
   <a href="#" onclick="logout(); return false;" class="logout">LOG OUT</a>
 </aside>
 
 <main class="main-content">
 
-  <h1>CLINIC CHARGES</h1>
-  <p style="margin:10px 0 20px;">View and record clinic service charges.</p>
+  <h1>CLINIC CHARGES & PAYMENT</h1>
+  <p style="margin:10px 0 20px;">View, record, and process clinic service charges as per Screen 32 & 33 specifications.</p>
+
+  <!-- Dynamic Summary Box for Charges -->
+  <div class="summary-card">
+    <div>
+      <h3>TOTAL UNPAID CHARGES</h3>
+      <p style="margin:5px 0 0; font-size:13px; color:#666;">Calculated automatically from recorded pending clinic charges.</p>
+    </div>
+    <div class="total-amount" id="totalUnpaidText">₱0.00</div>
+  </div>
 
   <button onclick="document.getElementById('chargeForm').hidden=false">
-    + ADD CHARGE
+    + ADD NEW CHARGE
   </button>
 
-  <form id="chargeForm" hidden style="margin:20px 0;">
+  <form id="chargeForm" hidden style="margin:20px 0; background:#f9f9f9; padding:20px; border-radius:10px; border:1px solid #ddd;">
     <h2>New Clinic Charge</h2>
 
     <label for="chargeId">Charge ID</label>
-    <input id="chargeId" placeholder="Enter charge ID" required>
+    <input id="chargeId" placeholder="Enter charge ID (e.g. CHG-101)" required>
 
     <label for="petName">Pet Name</label>
     <input id="petName" placeholder="Enter pet name" required>
@@ -54,25 +88,26 @@
     <label for="ownerName">Owner Name</label>
     <input id="ownerName" placeholder="Enter owner name" required>
 
-    <label for="service">Service</label>
+    <label for="service">Service Category (PDF Specs)</label>
     <select id="service" required>
-      <option value="">Select service</option>
+      <option value="">Select service category</option>
       <option>Consultation</option>
-      <option>Vaccination</option>
-      <option>Laboratory</option>
-      <option>Surgery</option>
-      <option>Grooming</option>
-      <option>Other</option>
+      <option>Laboratory / Diagnostics</option>
+      <option>Vaccination / Preventive Care</option>
+      <option>Surgery & Procedures</option>
+      <option>Confinement / Hospitalization</option>
+      <option>Grooming & Care</option>
+      <option>Medicine / Pharmacy</option>
     </select>
 
     <label for="amount">Amount (₱)</label>
-    <input id="amount" type="number" min="0" step="0.01" required>
+    <input id="amount" type="number" min="0" step="0.01" placeholder="0.00" required>
 
     <label for="paymentStatus">Payment Status</label>
     <select id="paymentStatus">
-      <option>UNPAID</option>
-      <option>PAID</option>
-      <option>PARTIAL</option>
+      <option value="UNPAID">UNPAID</option>
+      <option value="PAID">PAID</option>
+      <option value="PARTIAL">PARTIAL</option>
     </select>
 
     <div style="display:flex;gap:10px;margin-top:15px;">
@@ -82,7 +117,7 @@
     </div>
   </form>
 
-  <label for="chargeSearch">Search charges</label>
+  <label for="chargeSearch" style="display:block; margin-top:20px; font-weight:bold;">Search charges</label>
   <input id="chargeSearch" placeholder="Search ID, pet, owner or service"
     oninput="filterCharges()" style="width:100%;margin:10px 0 20px;">
 
@@ -106,37 +141,71 @@
 </main>
 </div>
 
+<!-- PAYMENT MODAL (Screen 33 Payment Confirmation) -->
+<div class="modal-bg" id="payModal">
+  <div class="modal-card">
+    <h2 style="color:#5b3a82; margin-top:0;">PROCEED TO PAYMENT</h2>
+    <p id="payModalInfo" style="font-size:14px; color:#555;"></p>
+    
+    <label style="display:block; margin-top:10px;">Payment Method:</label>
+    <select id="payMethod" style="width:100%; padding:8px; margin-bottom:12px;">
+      <option>Cash</option>
+      <option>GCash / Online</option>
+      <option>Credit / Debit Card</option>
+    </select>
+
+    <label style="display:block;">Amount Paid (₱):</label>
+    <input id="payAmount" type="number" step="0.01" style="width:100%; padding:8px; margin-bottom:15px;">
+
+    <div style="display:flex; gap:10px;">
+      <button onclick="confirmPayment()" style="background:#2e7d32; color:white; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; font-weight:bold;">CONFIRM PAYMENT</button>
+      <button onclick="document.getElementById('payModal').style.display='none'" style="background:#888; color:white; border:none; padding:10px 15px; border-radius:6px; cursor:pointer;">CANCEL</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const chargeForm = document.getElementById("chargeForm");
 const chargeTable = document.getElementById("chargeTable");
+let activePayIndex = -1;
 
 function loadCharges() {
   const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
   chargeTable.innerHTML = "";
 
+  let unpaidTotal = 0;
+
   if (records.length === 0) {
     chargeTable.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #888; padding: 20px;">No clinic charges recorded yet.</td></tr>`;
+    document.getElementById("totalUnpaidText").textContent = "₱0.00";
     return;
   }
 
   records.forEach((charge, index) => {
     const row = chargeTable.insertRow();
+    const isUnpaid = charge.status === "UNPAID";
+    if (isUnpaid) unpaidTotal += Number(charge.amount || 0);
 
-    [
-      charge.id,
-      charge.pet,
-      charge.owner,
-      charge.service,
-      "₱" + Number(charge.amount).toFixed(2),
-      charge.status
-    ].forEach(value => {
-      row.insertCell().textContent = value;
-    });
+    const badgeClass = charge.status === "PAID" ? "badge-paid" : (charge.status === "PARTIAL" ? "badge-partial" : "badge-unpaid");
 
-    // Action column for Delete operation (IT107 CRUD Requirement)[cite: 2]
+    row.insertCell().textContent = charge.id;
+    row.insertCell().textContent = charge.pet;
+    row.insertCell().textContent = charge.owner;
+    row.insertCell().textContent = charge.service;
+    row.insertCell().textContent = "₱" + Number(charge.amount).toFixed(2);
+    
+    const statusCell = row.insertCell();
+    statusCell.innerHTML = `<span class="badge ${badgeClass}">${charge.status}</span>`;
+
+    // Action column with Pay + Delete buttons
     const actionCell = row.insertCell();
-    actionCell.innerHTML = `<button onclick="deleteCharge(${index})" style="background: #E85B5B; padding: 5px 10px; font-size: 12px; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>`;
+    let payBtn = isUnpaid ? `<button onclick="openPayModal(${index})" style="background: #2e7d32; padding: 5px 10px; font-size: 12px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px;">Pay</button>` : '';
+    let delBtn = `<button onclick="deleteCharge(${index})" style="background: #E85B5B; padding: 5px 10px; font-size: 12px; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>`;
+    
+    actionCell.innerHTML = payBtn + delBtn;
   });
+
+  document.getElementById("totalUnpaidText").textContent = "₱" + unpaidTotal.toFixed(2);
 }
 
 chargeForm.addEventListener("submit", function(event) {
@@ -160,7 +229,30 @@ chargeForm.addEventListener("submit", function(event) {
   loadCharges();
 });
 
-// DELETE Operation (IT107 Requirement)[cite: 2]
+// PAYMENT FLOW (Screen 33)
+function openPayModal(index) {
+  const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
+  activePayIndex = index;
+  const item = records[index];
+  
+  document.getElementById("payModalInfo").textContent = `Paying for: ${item.service} (${item.pet} / ${item.owner}) - Total Amount: ₱${Number(item.amount).toFixed(2)}`;
+  document.getElementById("payAmount").value = item.amount;
+  document.getElementById("payModal").style.display = "flex";
+}
+
+function confirmPayment() {
+  if (activePayIndex < 0) return;
+  const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
+  records[activePayIndex].status = "PAID";
+  localStorage.setItem("vetmotoCharges", JSON.stringify(records));
+  
+  alert("Payment successful! Status updated to PAID.");
+  document.getElementById("payModal").style.display = "none";
+  activePayIndex = -1;
+  loadCharges();
+}
+
+// DELETE Operation
 function deleteCharge(index) {
   if (confirm("Are you sure you want to delete this charge record?")) {
     const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
