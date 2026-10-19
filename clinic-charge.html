@@ -3,276 +3,310 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VetMoto - Clinic Charges</title>
-<link rel="stylesheet" href="style.css">
+<title>VetMoto | Clinic Charges</title>
 <script>
-    // Session Protection Check (IT107 Requirement)
-    if (!sessionStorage.getItem("vetmoto_user")) {
-        window.location.href = "index.html";
-    }
-    function logout() {
-        sessionStorage.removeItem("vetmoto_user");
-        window.location.href = "index.html";
-    }
+  // Session Protection Check (IT107 Requirement)
+  if (!sessionStorage.getItem("vetmoto_user")) {
+    window.location.href = "index.html";
+  }
+  function logout() {
+    sessionStorage.removeItem("vetmoto_user");
+    window.location.href = "index.html";
+  }
 </script>
 <style>
-  .summary-card {
-    background: #f5effa;
-    border: 1px solid #dcc6f2;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 15px;
+  :root {
+    --purple: #5b3a82;
+    --lavender: #e9ddf7;
+    --coral: #e85b5b;
+    --cream: #fff9f2;
+    --bg: #f5effa;
+    --white: #fff;
+    --text: #5b4672;
+    --border: #e8dfea;
   }
-  .summary-card h3 { margin: 0; color: #5b3a82; font-size: 18px; }
-  .summary-card .total-amount { font-size: 24px; font-weight: bold; color: #b94a45; }
-  .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; }
-  .badge-unpaid { background: #ffd2d2; color: #b94a45; }
-  .badge-paid { background: #d2ffd4; color: #2e7d32; }
-  .badge-partial { background: #fff3cd; color: #856404; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+  .layout { display: flex; min-height: 100vh; }
   
-  .modal-bg { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10; align-items:center; justify-content:center; padding:15px; }
-  .modal-card { background:white; padding:25px; border-radius:12px; width:min(420px, 100%); }
+  /* SIDEBAR */
+  .sidebar { width: 205px; background: var(--purple); color: #fff; padding: 18px 16px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .logo { height: 104px; width: 104px; border-radius: 50%; background: white; color: var(--purple); display: grid; place-items: center; text-align: center; font-weight: bold; margin: 0 auto 12px; }
+  .brand { text-align: center; font-weight: bold; margin-bottom: 18px; }
+  .nav a { display: block; color: white; text-decoration: none; padding: 12px 5px; border-top: 1px solid #ffffff66; font-size: 14px; }
+  .nav a.active, .nav a:hover { background: #795ba0; }
+  .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 9px; padding: 13px; font-weight: bold; cursor: pointer; }
+
+  /* MAIN CONTENT */
+  main { flex: 1; min-width: 0; padding: 28px 30px; }
+  .eyebrow { font-size: 13px; color: #806b91; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+  h1 { margin: 0 0 8px; color: var(--purple); font-size: 28px; font-weight: bold; text-transform: uppercase; }
+  .subtitle { margin: 0 0 22px; color: #806b91; font-size: 14px; }
+
+  /* SEARCH & AUTOCOMPLETE PANEL */
+  .search-container { position: relative; margin-bottom: 20px; }
+  .search-box { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--cream); color: var(--text); font-size: 14px; text-transform: uppercase; font-weight: bold; }
+  .results-panel { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--border); border-radius: 12px; margin-top: 5px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 10; padding: 10px; }
+  .result-item { padding: 10px; border-radius: 8px; cursor: pointer; background: var(--cream); border: 1px solid var(--border); margin-bottom: 5px; }
+  .result-item:hover { background: var(--lavender); }
+
+  /* OWNER & PET INFO INPUTS */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }
+  .field-group label { display: block; font-size: 11px; font-weight: bold; color: #806b91; text-transform: uppercase; margin-bottom: 6px; }
+  .field-group input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--cream); font-weight: bold; color: var(--purple); font-size: 14px; }
+
+  /* SERVICES AVAILED GRID */
+  .section-label { font-size: 11px; color: #806b91; text-transform: uppercase; margin-bottom: 2px; }
+  .section-title { font-size: 16px; font-weight: bold; color: var(--purple); margin-bottom: 12px; }
+  .section-sub { font-size: 12px; color: #806b91; margin-bottom: 15px; display: block; }
+
+  .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+  .service-card { background: var(--cream); border: 1px solid var(--border); border-radius: 12px; padding: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s; }
+  .service-card.selected { background: var(--lavender); border-color: var(--purple); }
+  .service-left { display: flex; align-items: center; gap: 12px; }
+  .service-left input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--purple); cursor: pointer; }
+  .service-name { font-weight: bold; color: var(--purple); text-transform: uppercase; font-size: 14px; }
+  .service-price { font-weight: bold; color: var(--purple); font-size: 14px; }
+
+  /* BILL SUMMARY CARD */
+  .bill-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 5px 22px rgba(70,40,90,0.06); display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+  .bill-total { font-size: 22px; font-weight: bold; color: var(--coral); }
+  .btn-submit { background: var(--coral); color: white; border: none; padding: 14px 28px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 14px; }
+  .btn-submit:hover { opacity: 0.9; }
+
+  @media(max-width: 768px) {
+    .layout { flex-direction: column; }
+    .sidebar { width: 100%; }
+    .info-grid, .services-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
-<div class="dashboard">
+<div class="layout">
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="sidebar">
+    <div class="logo">🐾<br>VETMOTO</div>
+    <div class="brand">VETMOTO</div>
+    <nav class="nav">
+      <a href="dashboard.html">⌂ Home</a>
+      <a href="pet-record.html">▤ Pet Record</a>
+      <a href="owner-record.html">♙ Owner Record</a>
+      <a href="medicine.html">▱ Medicine</a>
+      <a href="clinic-charge.html" class="active">▣ Clinic Charge</a>
+      <a href="appointment.html">◷ Appointment</a>
+      <a href="notifications.html">♧ Notification</a>
+      <a href="history.html">▦ History</a>
+    </nav>
+    <button class="logout" onclick="logout()">LOG OUT</button>
+  </aside>
 
-<aside class="sidebar">
-  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
-  <h2>VETMOTO</h2>
-  <a href="dashboard.html">⌂ Home</a>
-  <a href="pet-record.html">▤ Pet Record</a>
-  <a href="owner-record.html">♧ Owner Record</a>
-  <a href="medicine.html">💊 Medicine</a>
-  <a href="clinic-charge.html" class="active">▭ Clinic Charge</a>
-  <a href="appointment.html">◷ Appointment</a>
-  <a href="prescription.html">▤ Prescription</a>
-  <a href="notifications.html">♧ Notification</a>
-  <a href="history.html">▦ History</a>
-  <a href="#" onclick="logout(); return false;" class="logout">LOG OUT</a>
-</aside>
+  <!-- MAIN BILLING AREA -->
+  <main>
+    <div class="eyebrow">Clinic billing</div>
+    <h1>CLINIC CHARGES</h1>
+    <p class="subtitle">Find the owner, review the services availed, and send the completed bill.</p>
 
-<main class="main-content">
+    <!-- SEARCH OWNER -->
+    <div class="search-container">
+      <input type="text" id="ownerSearch" class="search-box" placeholder="🔍 SEARCH OWNER NAME" oninput="handleSearch()">
+      <div id="resultsPanel" class="results-panel"></div>
+    </div>
 
-  <h1>CLINIC CHARGES & PAYMENT</h1>
-  <p style="margin:10px 0 20px;">View, record, and process clinic service charges as per Screen 32 & 33 specifications.</p>
+    <!-- OWNER & PET DISPLAY -->
+    <div class="info-grid">
+      <div class="field-group">
+        <label>OWNER NAME</label>
+        <input type="text" id="ownerName" value="N/A" readonly>
+      </div>
+      <div class="field-group">
+        <label>PET NAME</label>
+        <input type="text" id="petName" value="N/A" readonly>
+      </div>
+    </div>
 
-  <!-- Dynamic Summary Box for Charges -->
-  <div class="summary-card">
+    <!-- SERVICES AVAILED GRID -->
     <div>
-      <h3>TOTAL UNPAID CHARGES</h3>
-      <p style="margin:5px 0 0; font-size:13px; color:#666;">Calculated automatically from recorded pending clinic charges.</p>
+      <div class="section-label">Choose services</div>
+      <div class="section-title">Services availed</div>
+      <span class="section-sub">Press each service that the client availed</span>
+
+      <div class="services-grid">
+        <div class="service-card" onclick="toggleService('consultation')">
+          <div class="service-left">
+            <input type="checkbox" id="chk-consultation" onclick="event.stopPropagation(); updateBill();">
+            <span class="service-name">consultation</span>
+          </div>
+          <span class="service-price">₱650.00</span>
+        </div>
+
+        <div class="service-card" onclick="toggleService('vaccination')">
+          <div class="service-left">
+            <input type="checkbox" id="chk-vaccination" onclick="event.stopPropagation(); updateBill();">
+            <span class="service-name">vaccination</span>
+          </div>
+          <span class="service-price">₱850.00</span>
+        </div>
+
+        <div class="service-card" onclick="toggleService('laboratory')">
+          <div class="service-left">
+            <input type="checkbox" id="chk-laboratory" onclick="event.stopPropagation(); updateBill();">
+            <span class="service-name">laboratory</span>
+          </div>
+          <span class="service-price">₱900.00</span>
+        </div>
+
+        <div class="service-card" onclick="toggleService('grooming')">
+          <div class="service-left">
+            <input type="checkbox" id="chk-grooming" onclick="event.stopPropagation(); updateBill();">
+            <span class="service-name">grooming</span>
+          </div>
+          <span class="service-price">₱700.00</span>
+        </div>
+
+        <div class="service-card" onclick="toggleService('surgery')">
+          <div class="service-left">
+            <input type="checkbox" id="chk-surgery" onclick="event.stopPropagation(); updateBill();">
+            <span class="service-name">surgery</span>
+          </div>
+          <span class="service-price">₱4500.00</span>
+        </div>
+
+        <div class="service-card" onclick="toggleService('confinement')">
+          <div class="service-left">
+            <input type="checkbox" id="chk-confinement" onclick="event.stopPropagation(); updateBill();">
+            <span class="service-name">confinement</span>
+          </div>
+          <span class="service-price">₱1200.00</span>
+        </div>
+      </div>
     </div>
-    <div class="total-amount" id="totalUnpaidText">₱0.00</div>
-  </div>
 
-  <button onclick="document.getElementById('chargeForm').hidden=false">
-    + ADD NEW CHARGE
-  </button>
-
-  <form id="chargeForm" hidden style="margin:20px 0; background:#f9f9f9; padding:20px; border-radius:10px; border:1px solid #ddd;">
-    <h2>New Clinic Charge</h2>
-
-    <label for="chargeId">Charge ID</label>
-    <input id="chargeId" placeholder="Enter charge ID (e.g. CHG-101)" required>
-
-    <label for="petName">Pet Name</label>
-    <input id="petName" placeholder="Enter pet name" required>
-
-    <label for="ownerName">Owner Name</label>
-    <input id="ownerName" placeholder="Enter owner name" required>
-
-    <label for="service">Service Category (PDF Specs)</label>
-    <select id="service" required>
-      <option value="">Select service category</option>
-      <option>Consultation</option>
-      <option>Laboratory / Diagnostics</option>
-      <option>Vaccination / Preventive Care</option>
-      <option>Surgery & Procedures</option>
-      <option>Confinement / Hospitalization</option>
-      <option>Grooming & Care</option>
-      <option>Medicine / Pharmacy</option>
-    </select>
-
-    <label for="amount">Amount (₱)</label>
-    <input id="amount" type="number" min="0" step="0.01" placeholder="0.00" required>
-
-    <label for="paymentStatus">Payment Status</label>
-    <select id="paymentStatus">
-      <option value="UNPAID">UNPAID</option>
-      <option value="PAID">PAID</option>
-      <option value="PARTIAL">PARTIAL</option>
-    </select>
-
-    <div style="display:flex;gap:10px;margin-top:15px;">
-      <button type="submit">SAVE CHARGE</button>
-      <button type="button" onclick="document.getElementById('chargeForm').hidden=true"
-        style="background:#E85B5B;">CANCEL</button>
+    <!-- BILL SUMMARY CARD -->
+    <div class="bill-card">
+      <div>
+        <div style="font-size: 12px; color: #806b91; text-transform: uppercase;">Total Bill Amount</div>
+        <div class="bill-total" id="billTotal">₱0.00</div>
+      </div>
+      <button class="btn-submit" onclick="submitBill()">SEND COMPLETED BILL</button>
     </div>
-  </form>
-
-  <label for="chargeSearch" style="display:block; margin-top:20px; font-weight:bold;">Search charges</label>
-  <input id="chargeSearch" placeholder="Search ID, pet, owner or service"
-    oninput="filterCharges()" style="width:100%;margin:10px 0 20px;">
-
-  <div style="overflow-x:auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>Charge ID</th>
-          <th>Pet Name</th>
-          <th>Owner</th>
-          <th>Service</th>
-          <th>Amount</th>
-          <th>Payment Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="chargeTable"></tbody>
-    </table>
-  </div>
-
-</main>
-</div>
-
-<!-- PAYMENT MODAL (Screen 33 Payment Confirmation) -->
-<div class="modal-bg" id="payModal">
-  <div class="modal-card">
-    <h2 style="color:#5b3a82; margin-top:0;">PROCEED TO PAYMENT</h2>
-    <p id="payModalInfo" style="font-size:14px; color:#555;"></p>
-    
-    <label style="display:block; margin-top:10px;">Payment Method:</label>
-    <select id="payMethod" style="width:100%; padding:8px; margin-bottom:12px;">
-      <option>Cash</option>
-      <option>GCash / Online</option>
-      <option>Credit / Debit Card</option>
-    </select>
-
-    <label style="display:block;">Amount Paid (₱):</label>
-    <input id="payAmount" type="number" step="0.01" style="width:100%; padding:8px; margin-bottom:15px;">
-
-    <div style="display:flex; gap:10px;">
-      <button onclick="confirmPayment()" style="background:#2e7d32; color:white; border:none; padding:10px 15px; border-radius:6px; cursor:pointer; font-weight:bold;">CONFIRM PAYMENT</button>
-      <button onclick="document.getElementById('payModal').style.display='none'" style="background:#888; color:white; border:none; padding:10px 15px; border-radius:6px; cursor:pointer;">CANCEL</button>
-    </div>
-  </div>
+  </main>
 </div>
 
 <script>
-const chargeForm = document.getElementById("chargeForm");
-const chargeTable = document.getElementById("chargeTable");
-let activePayIndex = -1;
+  // Sample Owners/Pets Database
+  const ownersList = [
+    { owner: "Noah Anderson", pet: "Bella", contact: "09876543211" },
+    { owner: "Maria Santos", pet: "Max", contact: "09123456789" },
+    { owner: "Liam Santos", pet: "Cooper", contact: "09171112233" },
+    { owner: "Maya Patel", pet: "Luna", contact: "09189998877" }
+  ];
 
-function loadCharges() {
-  const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
-  chargeTable.innerHTML = "";
-
-  let unpaidTotal = 0;
-
-  if (records.length === 0) {
-    chargeTable.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #888; padding: 20px;">No clinic charges recorded yet.</td></tr>`;
-    document.getElementById("totalUnpaidText").textContent = "₱0.00";
-    return;
-  }
-
-  records.forEach((charge, index) => {
-    const row = chargeTable.insertRow();
-    const isUnpaid = charge.status === "UNPAID";
-    if (isUnpaid) unpaidTotal += Number(charge.amount || 0);
-
-    const badgeClass = charge.status === "PAID" ? "badge-paid" : (charge.status === "PARTIAL" ? "badge-partial" : "badge-unpaid");
-
-    row.insertCell().textContent = charge.id;
-    row.insertCell().textContent = charge.pet;
-    row.insertCell().textContent = charge.owner;
-    row.insertCell().textContent = charge.service;
-    row.insertCell().textContent = "₱" + Number(charge.amount).toFixed(2);
-    
-    const statusCell = row.insertCell();
-    statusCell.innerHTML = `<span class="badge ${badgeClass}">${charge.status}</span>`;
-
-    // Action column with Pay + Delete buttons
-    const actionCell = row.insertCell();
-    let payBtn = isUnpaid ? `<button onclick="openPayModal(${index})" style="background: #2e7d32; padding: 5px 10px; font-size: 12px; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 5px;">Pay</button>` : '';
-    let delBtn = `<button onclick="deleteCharge(${index})" style="background: #E85B5B; padding: 5px 10px; font-size: 12px; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>`;
-    
-    actionCell.innerHTML = payBtn + delBtn;
-  });
-
-  document.getElementById("totalUnpaidText").textContent = "₱" + unpaidTotal.toFixed(2);
-}
-
-chargeForm.addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  const charge = {
-    id: document.getElementById("chargeId").value,
-    pet: document.getElementById("petName").value,
-    owner: document.getElementById("ownerName").value,
-    service: document.getElementById("service").value,
-    amount: document.getElementById("amount").value,
-    status: document.getElementById("paymentStatus").value
+  const servicePrices = {
+    consultation: 650,
+    vaccination: 850,
+    laboratory: 900,
+    grooming: 700,
+    surgery: 4500,
+    confinement: 1200
   };
 
-  const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
-  records.push(charge);
-  localStorage.setItem("vetmotoCharges", JSON.stringify(records));
+  function handleSearch() {
+    const q = document.getElementById("ownerSearch").value.toLowerCase().trim();
+    const panel = document.getElementById("resultsPanel");
 
-  chargeForm.reset();
-  chargeForm.hidden = true;
-  loadCharges();
-});
-
-// PAYMENT FLOW (Screen 33)
-function openPayModal(index) {
-  const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
-  activePayIndex = index;
-  const item = records[index];
-  
-  document.getElementById("payModalInfo").textContent = `Paying for: ${item.service} (${item.pet} / ${item.owner}) - Total Amount: ₱${Number(item.amount).toFixed(2)}`;
-  document.getElementById("payAmount").value = item.amount;
-  document.getElementById("payModal").style.display = "flex";
-}
-
-function confirmPayment() {
-  if (activePayIndex < 0) return;
-  const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
-  records[activePayIndex].status = "PAID";
-  localStorage.setItem("vetmotoCharges", JSON.stringify(records));
-  
-  alert("Payment successful! Status updated to PAID.");
-  document.getElementById("payModal").style.display = "none";
-  activePayIndex = -1;
-  loadCharges();
-}
-
-// DELETE Operation
-function deleteCharge(index) {
-  if (confirm("Are you sure you want to delete this charge record?")) {
-    const records = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
-    records.splice(index, 1);
-    localStorage.setItem("vetmotoCharges", JSON.stringify(records));
-    loadCharges();
-  }
-}
-
-function filterCharges() {
-  const query = document.getElementById("chargeSearch").value.toLowerCase();
-
-  [...chargeTable.rows].forEach(row => {
-    if (row.cells.length > 1) {
-      row.hidden = !row.textContent.toLowerCase().includes(query);
+    if (!q) {
+      panel.style.display = "none";
+      return;
     }
-  });
-}
 
-loadCharges();
+    const filtered = ownersList.filter(o => o.owner.toLowerCase().includes(q) || o.pet.toLowerCase().includes(q));
+    
+    if (filtered.length > 0) {
+      panel.innerHTML = filtered.map(item => `
+        <div class="result-item" onclick="selectOwner('${item.owner}', '${item.pet}')">
+          <strong style="color:var(--purple);">${item.owner}</strong><br>
+          <small style="color:#666;">Pet Name: ${item.pet} • Contact: ${item.contact}</small>
+        </div>
+      `).join("");
+      panel.style.display = "block";
+    } else {
+      panel.innerHTML = `<div style="padding:10px; font-size:13px; color:#888;">No owners found.</div>`;
+      panel.style.display = "block";
+    }
+  }
+
+  function selectOwner(owner, pet) {
+    document.getElementById("ownerName").value = owner;
+    document.getElementById("petName").value = pet;
+    document.getElementById("ownerSearch").value = owner;
+    document.getElementById("resultsPanel").style.display = "none";
+  }
+
+  function toggleService(key) {
+    const chk = document.getElementById("chk-" + key);
+    chk.checked = !chk.checked;
+    updateBill();
+  }
+
+  function updateBill() {
+    let total = 0;
+    Object.keys(servicePrices).forEach(key => {
+      const chk = document.getElementById("chk-" + key);
+      const card = chk.closest(".service-card");
+      if (chk.checked) {
+        total += servicePrices[key];
+        card.classList.add("selected");
+      } else {
+        card.classList.remove("selected");
+      }
+    });
+
+    document.getElementById("billTotal").textContent = "₱" + total.toFixed(2);
+  }
+
+  function submitBill() {
+    const owner = document.getElementById("ownerName").value;
+    const pet = document.getElementById("petName").value;
+    const totalText = document.getElementById("billTotal").textContent;
+
+    if (owner === "N/A" || !owner) {
+      alert("Please search and select an owner first.");
+      return;
+    }
+
+    if (totalText === "₱0.00") {
+      alert("Please select at least one service availed.");
+      return;
+    }
+
+    const billRecord = {
+      id: "BILL-" + Date.now().toString().slice(-4),
+      owner: owner,
+      pet: pet,
+      amount: totalText,
+      date: new Date().toISOString().split("T")[0],
+      status: "COMPLETED"
+    };
+
+    // Save to localStorage
+    const saved = JSON.parse(localStorage.getItem("vetmotoCharges") || "[]");
+    saved.push(billRecord);
+    localStorage.setItem("vetmotoCharges", JSON.stringify(saved));
+
+    alert(`Completed Bill sent successfully for ${owner} (${pet})!\nTotal: ${totalText}`);
+    
+    // Reset Form
+    document.getElementById("ownerName").value = "N/A";
+    document.getElementById("petName").value = "N/A";
+    document.getElementById("ownerSearch").value = "";
+    Object.keys(servicePrices).forEach(key => {
+      const chk = document.getElementById("chk-" + key);
+      chk.checked = false;
+      chk.closest(".service-card").classList.remove("selected");
+    });
+    updateBill();
+  }
 </script>
 
 </body>
