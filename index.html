@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -93,6 +92,10 @@
             return;
         }
 
+        // 👇 ITO ANG DINAGDAG KO: Nagsi-set ito ng session para hindi ka na ibalik sa login
+        sessionStorage.setItem("vetmoto_user", "true");
+
+        // Pagkatapos ma-save, direktang papasok na sa dashboard
         window.location.href = "dashboard.html";
     });
 </script>
