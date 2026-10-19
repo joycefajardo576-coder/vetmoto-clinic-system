@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VetMoto - Medical Services</title>
+<title>VetMoto - Medical Services & Appointments</title>
 <script>
   if (!sessionStorage.getItem("vetmoto_user")) {
     window.location.href = "index.html";
@@ -44,6 +44,7 @@
   h1 { margin: 0 0 6px; color: var(--purple); font-size: 26px; font-weight: bold; }
   .subtitle { margin: 0 0 25px; color: #806b91; font-size: 13px; }
 
+  /* GRID PARA SA MGA MEDICAL SERVICES */
   .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
   .card { background: white; border-radius: 14px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); cursor: pointer; transition: 0.2s; }
   .card:hover { border-color: var(--purple); transform: translateY(-2px); }
@@ -68,6 +69,7 @@
       <a href="clinic-charge.html">▭ Clinic Charge</a>
       <a href="appointment.html" class="active">◷ Medical Services</a>
       
+      <!-- SUB-NAVIGATION NA NAKALINK SA BAWAT OPISYAL NA MODULE NG PDF -->
       <div class="sub-nav">
         <a href="consultation.html">🩺 Consultation</a>
         <a href="laboratory.html">🔬 Laboratory</a>
@@ -84,44 +86,44 @@
   </aside>
 
   <main>
-    <h1>Medical Services & Care Modules</h1>
-    <p class="subtitle">Select a clinical service module to manage records, visits, and patient history.</p>
+    <h1>Medical Services & Appointments</h1>
+    <p class="subtitle">Select a clinical service module to view records, schedules, and patient history[cite: 57, 58].</p>
 
-    <!-- 6 OFFICIAL MODULE CARDS NAKALINK SA KANI-KANANG HTML PAGES -->
+    <!-- MGA OPISYAL NA CARD NA KONEKTADO SA KANI-KANANG HTML PAGES -->
     <div class="services-grid">
       <div class="card" onclick="window.location.href='consultation.html'">
         <h3>🩺 Consultation</h3>
-        <p>Review visits, diagnoses, and each pet's medical history[cite: 60].</p>
+        <p>Review visits, diagnoses, and patient medical history[cite: 60].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
       <div class="card" onclick="window.location.href='laboratory.html'">
         <h3>🔬 Laboratory</h3>
-        <p>Review laboratory results and each pet's disease tests[cite: 64].</p>
+        <p>Review laboratory results and disease screening tests[cite: 64].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
       <div class="card" onclick="window.location.href='surgery.html'">
         <h3>🚑 Surgery</h3>
-        <p>Review surgical procedures and each pet's recovery status[cite: 68].</p>
+        <p>Review surgical procedures and recovery status[cite: 68].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
       <div class="card" onclick="window.location.href='vaccination.html'">
         <h3>💉 Vaccination</h3>
-        <p>Review vaccines and each pet's vaccination history[cite: 72].</p>
+        <p>Review vaccines and immunization history[cite: 72].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
       <div class="card" onclick="window.location.href='grooming.html'">
         <h3>✂️ Grooming</h3>
-        <p>Review grooming services and each pet's grooming history[cite: 76].</p>
+        <p>Review grooming services and pet styling history[cite: 76].</p>
         <button class="btn-open">Open Module</button>
       </div>
 
       <div class="card" onclick="window.location.href='confinement.html'">
         <h3>🏥 Confinement</h3>
-        <p>Review admissions and each pet's confinement history[cite: 80].</p>
+        <p>Review patient admissions and monitoring[cite: 80].</p>
         <button class="btn-open">Open Module</button>
       </div>
     </div>
