@@ -1,10 +1,19 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VetMoto | History / Activity Log</title>
+<script>
+  // Session Protection Check (IT107 Requirement)
+  if (!sessionStorage.getItem("vetmoto_user")) {
+      window.location.href = "index.html";
+  }
+  function logout() {
+      sessionStorage.removeItem("vetmoto_user");
+      window.location.href = "index.html";
+  }
+</script>
 <style>
 :root {
   --purple:#5b3a82; --lavender:#e9ddf7; --coral:#e85b5b;
@@ -72,7 +81,7 @@ td strong{color:var(--purple)}
       <a href="notifications.html">♧ Notification</a>
       <a href="history.html" class="active">▦ History</a>
     </nav>
-    <button class="logout" onclick="if(confirm('Log out of the demo?')) location.href='index.html'">LOG OUT</button>
+    <button class="logout" onclick="logout()">LOG OUT</button>
   </aside>
 
   <main>
