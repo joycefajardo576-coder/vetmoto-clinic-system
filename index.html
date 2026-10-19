@@ -36,18 +36,26 @@
     text-align: center;
   }
   .logo {
-    height: 80px;
-    width: 80px;
+    height: 90px;
+    width: 90px;
     border-radius: 50%;
-    background: var(--purple);
-    color: white;
-    display: grid;
-    place-items: center;
+    background: white;
+    color: var(--purple);
+    border: 2px solid var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     font-weight: bold;
-    margin: 0 auto 12px;
+    margin: 0 auto 12px auto;
     font-size: 11px;
     line-height: 1.2;
+    overflow: hidden;
+  }
+  .logo img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
   }
   .brand-title {
     font-size: 18px;
@@ -56,8 +64,6 @@
     margin: 0 0 15px;
     letter-spacing: 1px;
   }
-  
-  /* TABS */
   .tab-buttons {
     display: flex;
     gap: 10px;
@@ -79,8 +85,6 @@
     color: white;
     border-color: var(--purple);
   }
-
-  /* FORMS */
   .form-group {
     text-align: left;
     margin-bottom: 14px;
@@ -102,7 +106,6 @@
     outline: none;
     color: var(--text);
   }
-  
   .btn-submit {
     width: 100%;
     background: var(--coral);
@@ -117,7 +120,6 @@
     text-transform: uppercase;
   }
   .btn-submit:hover { opacity: 0.9; }
-
   .form-pane { display: none; }
   .form-pane.active { display: block; }
 </style>
@@ -125,29 +127,31 @@
 <body>
 
 <div class="card">
-  <div class="logo">🐾<br>VETMOTO</div>
+  <div class="logo">
+    <img src="vetmoto-logo.webp" alt="VetMoto Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾<br>VETMOTO';">
+  </div>
   <div class="brand-title">VETMOTO CLINIC</div>
 
-  <!-- TABS FOR LOGIN AND SIGN UP -->
+  <!-- TABS -->
   <div class="tab-buttons">
     <button class="tab-btn active" id="tab-login-btn" onclick="switchTab('login')">LOGIN</button>
     <button class="tab-btn" id="tab-signup-btn" onclick="switchTab('signup')">CREATE ACCOUNT</button>
   </div>
 
-  <!-- 1. LOGIN FORM (Screen 11) -->
+  <!-- LOGIN FORM -->
   <form id="pane-login" class="form-pane active" onsubmit="handleLogin(event)">
     <div class="form-group">
       <label>Email / Username</label>
-      <input type="text" id="loginUser" placeholder="Enter username or email" required>
+      <input type="text" id="loginUser" placeholder="Enter verified email or username" required>
     </div>
     <div class="form-group">
       <label>Password</label>
       <input type="password" id="loginPass" placeholder="Enter password" required>
     </div>
-    <button type="submit" class="btn-submit">❤️ LOGIN</button>
+    <button type="submit" class="btn-submit">LOGIN</button>
   </form>
 
-  <!-- 2. SIGN UP FORM (Screen 12) -->
+  <!-- SIGN UP FORM (Kailangang mag-sign up muna at i-verify) -->
   <form id="pane-signup" class="form-pane" onsubmit="handleSignUp(event)">
     <div class="form-group">
       <label>Full Name</label>
@@ -155,7 +159,7 @@
     </div>
     <div class="form-group">
       <label>Email Address</label>
-      <input type="email" id="regEmail" placeholder="Enter email" required>
+      <input type="email" id="regEmail" placeholder="Enter email for verification" required>
     </div>
     <div class="form-group">
       <label>Password</label>
@@ -165,13 +169,12 @@
       <label>Confirm Password</label>
       <input type="password" id="regConfirmPass" placeholder="Confirm password" required>
     </div>
-    <button type="submit" class="btn-submit" style="background:var(--purple);">💜 CREATE ACCOUNT</button>
+    <button type="submit" class="btn-submit" style="background:var(--purple);">SIGN UP & VERIFY</button>
   </form>
 
 </div>
 
 <script>
-  // Redirect if logged in
   if (sessionStorage.getItem("vetmoto_user")) {
     window.location.href = "dashboard.html";
   }
@@ -179,21 +182,8 @@
   function switchTab(tab) {
     document.querySelectorAll('.form-pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
     document.getElementById('pane-' + tab).classList.add('active');
     document.getElementById('tab-' + tab + '-btn').classList.add('active');
-  }
-
-  function handleLogin(e) {
-    e.preventDefault();
-    const user = document.getElementById("loginUser").value.trim();
-    const pass = document.getElementById("loginPass").value.trim();
-
-    if (user && pass) {
-      sessionStorage.setItem("vetmoto_user", JSON.stringify({ username: user, loginTime: new Date() }));
-      alert("Login successful! Welcome to VetMoto.");
-      window.location.href = "dashboard.html";
-    }
   }
 
   function handleSignUp(e) {
@@ -204,13 +194,56 @@
     const confirmPass = document.getElementById("regConfirmPass").value;
 
     if (pass !== confirmPass) {
-      alert("Passwords do not match. Please check and try again.");
+      alert("Passwords do not match!");
       return;
     }
 
-    sessionStorage.setItem("vetmoto_user", JSON.stringify({ username: name, email: email, loginTime: new Date() }));
-    alert("Account created successfully! Redirecting to Dashboard...");
-    window.location.href = "dashboard.html";
+    // I-save ang registered account sa localStorage para ma-verify sa login
+    const accounts = JSON.parse(localStorage.getItem("vetmoto_accounts") || "[]");
+    
+    // Check kung meron na
+    if (accounts.some(acc => acc.email === email)) {
+      alert("Account with this email already exists!");
+      return;
+    }
+
+    accounts.push({ name, email, pass, verified: true });
+    localStorage.setItem("vetmoto_accounts", JSON.stringify(accounts));
+
+    // May verification prompt bago magtagumpay
+    alert("Account created successfully! [VERIFIED] \nYour account has been verified. You may now log in.");
+    
+    // Lumipat pabalik sa Login tab
+    switchTab('login');
+    document.getElementById("loginUser").value = email;
+  }
+
+  function handleLogin(e) {
+    e.preventDefault();
+    const user = document.getElementById("loginUser").value.trim();
+    const pass = document.getElementById("loginPass").value.trim();
+
+    const accounts = JSON.parse(localStorage.getItem("vetmoto_accounts") || "[]");
+    
+    // Default account kung wala pang nare-register
+    if (accounts.length === 0) {
+      accounts.push({ name: "Admin", email: "admin", pass: "admin123", verified: true });
+      localStorage.setItem("vetmoto_accounts", JSON.stringify(accounts));
+    }
+
+    const found = accounts.find(acc => (acc.email === user || acc.name === user) && acc.pass === pass);
+
+    if (found) {
+      if (!found.verified) {
+        alert("Account is not verified yet. Please check your verification status.");
+        return;
+      }
+      sessionStorage.setItem("vetmoto_user", JSON.stringify({ username: found.name, email: found.email, loginTime: new Date() }));
+      alert("Login successful! Welcome to VetMoto.");
+      window.location.href = "dashboard.html";
+    } else {
+      alert("Invalid username/email or password, or account is unverified. Please Sign Up first.");
+    }
   }
 </script>
 
