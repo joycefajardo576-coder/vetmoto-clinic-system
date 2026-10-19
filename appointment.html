@@ -1,166 +1,402 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VetMoto - Appointments</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VetMoto - Appointment & Medical Services</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Proteksyon — hindi makakapasok kung hindi naka-login
+        if (!sessionStorage.getItem("vetmoto_user")) {
+            window.location.href = "index.html";
+        }
+        function logout() {
+            sessionStorage.removeItem("vetmoto_user");
+            window.location.href = "index.html";
+        }
+    </script>
+    <style>
+        * {box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif;}
+        body {display: flex; min-height: 100vh; background: #fff;}
+        
+        /* SIDEBAR NAVIGATION */
+        .sidebar {
+            width: 240px;
+            background: #54207D;
+            color: white;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar h2 {
+            text-align: center;
+            font-size: 20px;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            font-size: 14px;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+        .sidebar a:hover, .sidebar a.active {
+            background: #6B3595;
+            border-left-color: #E85B5B;
+        }
+
+        /* SUB-MENU GROUP FOR MEDICAL SERVICES */
+        .submenu-group {
+            margin: 8px 0 15px 0;
+        }
+        .submenu-title {
+            padding: 10px 25px 5px;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #ddd;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #ffffff22;
+            margin-bottom: 5px;
+        }
+        .submenu-link {
+            padding: 9px 15px 9px 45px !important;
+            font-size: 13px !important;
+            color: #eee !important;
+        }
+        .submenu-link.active {
+            background: #7B3FA6 !important;
+            border-left-color: #E85B5B !important;
+            font-weight: bold;
+        }
+        .logout {
+            margin-top: auto;
+            background: #E85B5B !important;
+            text-align: center;
+            margin: 15px;
+            border-radius: 7px;
+        }
+
+        /* MAIN CONTENT SECTION */
+        .main-content {
+            flex: 1;
+            padding: 30px 40px;
+            background: #fff;
+        }
+        h1 {
+            color: #54207D;
+            margin-bottom: 25px;
+        }
+        .card {
+            background: #F0E5F8;
+            padding: 25px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+        }
+        button {
+            background: #54207D;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            margin: 5px 0;
+        }
+        button:hover {
+            background: #E85B5B;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #54207D;
+            color: white;
+        }
+
+        /* TAB PANES TOGGLE */
+        .tab-pane {
+            display: none;
+        }
+        .tab-pane.active {
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
-<div class="dashboard">
-<aside class="sidebar">
-  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
-  <h2>VETMOTO</h2>
-  <a href="dashboard.html">⌂ Home</a>
-  <a href="pet-record.html">▤ Pet Record</a>
-  <a href="owner-record.html">♧ Owner Record</a>
-  <a href="medicine.html">💊 Medicine</a>
-  <a href="clinic-charge.html">▭ Clinic Charge</a>
-  <a href="appointment.html">◷ Appointment</a>
-  <a href="prescription.html">▤ Prescription</a>
-  <a href="index.html" class="logout">LOG OUT</a>
-</aside>
-
-<main class="main-content">
-  <h1>APPOINTMENTS</h1>
-  <p style="margin:10px 0 20px;">View and manage clinic appointments.</p>
-
-  <button onclick="document.getElementById('appointmentForm').hidden=false">
-    + ADD APPOINTMENT
-  </button>
-
-  <form id="appointmentForm" hidden style="margin:20px 0;">
-    <h2>Appointment Information</h2>
-
-    <label for="appointmentId">Appointment ID</label>
-    <input id="appointmentId" required placeholder="Enter appointment ID">
-
-    <label for="petName">Pet Name</label>
-    <input id="petName" required placeholder="Enter pet name">
-
-    <label for="ownerName">Owner Name</label>
-    <input id="ownerName" required placeholder="Enter owner name">
-
-    <label for="appointmentDate">Date</label>
-    <input id="appointmentDate" type="date" required>
-
-    <label for="appointmentTime">Time</label>
-    <input id="appointmentTime" type="time" required>
-
-    <label for="appointmentType">Appointment Type</label>
-    <select id="appointmentType" required>
-      <option value="">Select service</option>
-      <option>Consultation</option>
-      <option>Vaccination</option>
-      <option>Laboratory</option>
-      <option>Surgery</option>
-      <option>Grooming</option>
-      <option>Other</option>
-    </select>
-
-    <label for="appointmentStatus">Status</label>
-    <select id="appointmentStatus">
-      <option>Pending</option>
-      <option>Confirmed</option>
-      <option>Completed</option>
-      <option>Cancelled</option>
-    </select>
-
-    <div style="display:flex;gap:10px;margin-top:15px;">
-      <button type="submit">SAVE APPOINTMENT</button>
-      <button type="button"
-        onclick="document.getElementById('appointmentForm').hidden=true"
-        style="background:#E85B5B;">CANCEL</button>
+<!-- SIDEBAR -->
+<div class="sidebar">
+    <h2>VETMOTO</h2>
+    
+    <a href="dashboard.html">🏠 Home</a>
+    <a href="pet-record.html">🐾 Pet Record</a>
+    <a href="owner-record.html">👤 Owner Record</a>
+    <a href="medicine.html">💊 Medicine</a>
+    
+    <!-- MAIN APPOINTMENT BUTTON -->
+    <a href="#" onclick="switchTab('appointment'); return false;" id="nav-appointment" class="active" style="margin-top: 15px; font-weight: bold;">
+        📅 APPOINTMENT
+    </a>
+    
+    <!-- MEDICAL SERVICES SUB-MENU -->
+    <div class="submenu-group">
+        <div class="submenu-title">Medical Services</div>
+        <a href="#" onclick="switchTab('consultation'); return false;" id="nav-consultation" class="submenu-link">🩺 Consultation</a>
+        <a href="#" onclick="switchTab('prescription'); return false;" id="nav-prescription" class="submenu-link">💊 Prescription</a>
+        <a href="#" onclick="switchTab('laboratory'); return false;" id="nav-laboratory" class="submenu-link">🔬 Laboratory</a>
+        <a href="#" onclick="switchTab('surgery'); return false;" id="nav-surgery" class="submenu-link">🏥 Surgery</a>
+        <a href="#" onclick="switchTab('vaccination'); return false;" id="nav-vaccination" class="submenu-link">💉 Vaccination</a>
+        <a href="#" onclick="switchTab('grooming'); return false;" id="nav-grooming" class="submenu-link">✨ Grooming</a>
+        <a href="#" onclick="switchTab('confinement'); return false;" id="nav-confinement" class="submenu-link">🛏️ Confinement</a>
     </div>
-  </form>
-
-  <label for="appointmentSearch">Search appointments</label>
-  <input id="appointmentSearch"
-    placeholder="Search appointment, pet or owner"
-    oninput="filterAppointments()"
-    style="width:100%;margin:10px 0 20px;">
-
-  <div style="overflow-x:auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>Appointment ID</th>
-          <th>Pet</th>
-          <th>Owner</th>
-          <th>Date</th>
-          <th>Time</th>
-          <th>Service</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="appointmentTable"></tbody>
-    </table>
-  </div>
-</main>
+    
+    <a href="clinic-charge.html">💰 Clinic Charge</a>
+    <a href="notifications.html">🔔 Notification</a>
+    <a href="history.html">📋 History</a>
+    
+    <a href="#" onclick="logout(); return false;" class="logout">🚪 Log Out</a>
 </div>
 
+<!-- MAIN CONTENT AREAS -->
+<div class="main-content">
+
+    <!-- 1. APPOINTMENT TAB -->
+    <div id="tab-appointment" class="tab-pane active">
+        <h1>📅 Appointment Management</h1>
+        <div class="card">
+            <h3>Schedule New Appointment</h3>
+            <p style="margin: 10px 0; color: #666;">Create and manage pet appointments</p>
+            <button onclick="alert('Add Appointment form will open!')">+ New Appointment</button>
+        </div>
+        <h3>Upcoming Appointments</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Pet Name</th>
+                    <th>Owner</th>
+                    <th>Service Type</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="6" style="text-align: center; color: #888; padding: 20px;">No appointments scheduled yet.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 2. CONSULTATION TAB -->
+    <div id="tab-consultation" class="tab-pane">
+        <h1>🩺 Consultation Records</h1>
+        <div class="card">
+            <h3>New Consultation</h3>
+            <p style="margin: 10px 0; color: #666;">Record diagnosis and clinical findings</p>
+            <button onclick="alert('New Consultation form will open!')">+ New Consultation</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pet ID</th>
+                    <th>Pet Name</th>
+                    <th>Owner</th>
+                    <th>Date</th>
+                    <th>Diagnosis</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No consultation records found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 3. PRESCRIPTION TAB -->
+    <div id="tab-prescription" class="tab-pane">
+        <h1>💊 Prescription History</h1>
+        <div class="card">
+            <h3>Issue Prescription</h3>
+            <p style="margin: 10px 0; color: #666;">Create prescription for patient care</p>
+            <button onclick="alert('New Prescription form will open!')">+ New Prescription</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>RX ID</th>
+                    <th>Pet Name</th>
+                    <th>Veterinarian</th>
+                    <th>Medicine</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No prescription records found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 4. LABORATORY TAB -->
+    <div id="tab-laboratory" class="tab-pane">
+        <h1>🔬 Laboratory Test Records</h1>
+        <div class="card">
+            <h3>New Lab Test</h3>
+            <p style="margin: 10px 0; color: #666;">Record test results and laboratory observations</p>
+            <button onclick="alert('New Laboratory form will open!')">+ New Test Record</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Test ID</th>
+                    <th>Pet Name</th>
+                    <th>Test Type</th>
+                    <th>Date</th>
+                    <th>Result/Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No laboratory records found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 5. SURGERY TAB -->
+    <div id="tab-surgery" class="tab-pane">
+        <h1>🏥 Surgery Records</h1>
+        <div class="card">
+            <h3>Schedule Surgery</h3>
+            <p style="margin: 10px 0; color: #666;">Manage surgical procedures and recovery status</p>
+            <button onclick="alert('New Surgery form will open!')">+ New Surgery</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pet Name</th>
+                    <th>Surgery Type</th>
+                    <th>Veterinarian</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No surgery records found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 6. VACCINATION TAB -->
+    <div id="tab-vaccination" class="tab-pane">
+        <h1>💉 Vaccination Records</h1>
+        <div class="card">
+            <h3>Record Vaccine</h3>
+            <p style="margin: 10px 0; color: #666;">Track pet vaccines and administration history</p>
+            <button onclick="alert('New Vaccination form will open!')">+ New Vaccination</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pet Name</th>
+                    <th>Vaccine</th>
+                    <th>Veterinarian</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No vaccination records found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 7. GROOMING TAB -->
+    <div id="tab-grooming" class="tab-pane">
+        <h1>✨ Grooming Records</h1>
+        <div class="card">
+            <h3>New Grooming Session</h3>
+            <p style="margin: 10px 0; color: #666;">Review grooming services and session details</p>
+            <button onclick="alert('New Grooming form will open!')">+ New Grooming</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pet Name</th>
+                    <th>Service</th>
+                    <th>Staff/Vet</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No grooming records found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 8. CONFINEMENT TAB -->
+    <div id="tab-confinement" class="tab-pane">
+        <h1>🛏️ Confinement Records</h1>
+        <div class="card">
+            <h3>Admit Pet</h3>
+            <p style="margin: 10px 0; color: #666;">Manage clinic admissions and confinement tracking</p>
+            <button onclick="alert('New Confinement form will open!')">+ New Confinement</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pet Name</th>
+                    <th>Owner</th>
+                    <th>Date Admitted</th>
+                    <th>Veterinarian</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No confinement records found.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- JAVASCRIPT FOR DYNAMIC TAB SWITCHING -->
 <script>
-const appointmentForm = document.getElementById("appointmentForm");
-const appointmentTable = document.getElementById("appointmentTable");
+    function switchTab(tabName) {
+        // 1. Itago lahat ng tab content
+        const panes = document.querySelectorAll('.tab-pane');
+        panes.forEach(pane => pane.classList.remove('active'));
 
-function loadAppointments() {
-  const records = JSON.parse(
-    localStorage.getItem("vetmotoAppointments") || "[]"
-  );
+        // 2. Tanggalin ang active class sa lahat ng sidebar links
+        const navLinks = document.querySelectorAll('.sidebar a');
+        navLinks.forEach(link => link.classList.remove('active'));
 
-  appointmentTable.innerHTML = "";
+        // 3. Ipakita ang napiling tab content
+        const targetTab = document.getElementById('tab-' + tabName);
+        if (targetTab) {
+            targetTab.classList.add('active');
+        }
 
-  records.forEach(item => {
-    const row = appointmentTable.insertRow();
-
-    [
-      item.id, item.pet, item.owner, item.date,
-      item.time, item.type, item.status
-    ].forEach(value => {
-      row.insertCell().textContent = value || "";
-    });
-  });
-
-  filterAppointments();
-}
-
-appointmentForm.addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  const item = {
-    id: document.getElementById("appointmentId").value,
-    pet: document.getElementById("petName").value,
-    owner: document.getElementById("ownerName").value,
-    date: document.getElementById("appointmentDate").value,
-    time: document.getElementById("appointmentTime").value,
-    type: document.getElementById("appointmentType").value,
-    status: document.getElementById("appointmentStatus").value
-  };
-
-  const records = JSON.parse(
-    localStorage.getItem("vetmotoAppointments") || "[]"
-  );
-
-  records.push(item);
-  localStorage.setItem("vetmotoAppointments", JSON.stringify(records));
-
-  appointmentForm.reset();
-  appointmentForm.hidden = true;
-  loadAppointments();
-});
-
-function filterAppointments() {
-  const query = document.getElementById("appointmentSearch")
-    .value.toLowerCase();
-
-  [...appointmentTable.rows].forEach(row => {
-    row.hidden = !row.textContent.toLowerCase().includes(query);
-  });
-}
-
-loadAppointments();
+        // 4. Lagyan ng active class ang napiling menu link
+        const targetNav = document.getElementById('nav-' + tabName);
+        if (targetNav) {
+            targetNav.classList.add('active');
+        }
+    }
 </script>
 
 </body>
