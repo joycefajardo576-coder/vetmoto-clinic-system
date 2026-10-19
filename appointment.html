@@ -33,9 +33,11 @@
   .logo { height: 100px; width: 100px; border-radius: 50%; background: white; color: var(--purple); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; overflow: hidden; }
   .logo img { width: 85%; height: 85%; object-fit: contain; }
   .brand { text-align: center; font-weight: bold; font-size: 16px; letter-spacing: 1px; color: #ffffff; margin-bottom: 20px; }
-  .nav a { display: block; color: white; text-decoration: none; padding: 12px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
+  .nav a { display: block; color: white; text-decoration: none; padding: 10px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
   .nav a.active, .nav a:hover { background: #714c9e; }
-  .sub-nav a { padding-left: 20px; font-size: 12px; background: rgba(0,0,0,0.1); }
+  .sub-nav { padding-left: 10px; background: rgba(0,0,0,0.15); border-bottom: 1px solid #ffffff33; }
+  .sub-nav a { border-top: none; padding: 8px 10px; font-size: 11px; opacity: 0.9; cursor: pointer; }
+  .sub-nav a:hover, .sub-nav a.sub-active { opacity: 1; font-weight: bold; background: rgba(255,255,255,0.2); }
   .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
 
   /* MAIN CONTENT */
@@ -43,12 +45,19 @@
   h1 { margin: 0 0 6px; color: var(--purple); font-size: 26px; font-weight: bold; }
   .subtitle { margin: 0 0 25px; color: #806b91; font-size: 13px; }
 
-  .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; margin-bottom: 30px; }
   .card { background: white; border-radius: 14px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
-  .card h3 { margin: 0 0 8px; color: var(--purple); font-size: 16px; display: flex; align-items: center; gap: 8px; }
+  .card h3 { margin: 0 0 8px; color: var(--purple); font-size: 15px; display: flex; align-items: center; gap: 8px; }
   .card p { margin: 0 0 15px; font-size: 12px; color: #666; line-height: 1.4; }
   
   .btn-open { background: var(--coral); color: white; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; }
+
+  /* DETAIL / RECORD PANEL */
+  .detail-panel { background: white; border-radius: 14px; padding: 22px; border: 1px solid var(--border); }
+  .detail-title { font-size: 18px; font-weight: bold; color: var(--purple); margin-bottom: 15px; border-bottom: 2px solid var(--lavender); padding-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px 12px; text-align: left; font-size: 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--lavender); color: var(--purple); }
 </style>
 </head>
 <body>
@@ -66,16 +75,19 @@
       <a href="medicine.html">💊 Medicine</a>
       <a href="clinic-charge.html">▭ Clinic Charge</a>
       <a href="appointment.html" class="active">◷ Medical Services</a>
+      
+      <!-- SUB NAVIGATION LINKED TO MODULE VIEWS -->
       <div class="sub-nav">
-        <a href="#">🩺 Consultations</a>
-        <a href="#">💉 Preventive Care</a>
-        <a href="#">🔬 Diagnostics</a>
-        <a href="#">🚑 Surgery & Procedures</a>
-        <a href="#">🏥 Hospitalization</a>
-        <a href="#">✂️ Grooming & Care</a>
-        <a href="#">🏠 House Calls</a>
+        <a onclick="showModule('Consultations')">🩺 Consultations</a>
+        <a onclick="showModule('Preventive Care')">💉 Preventive Care</a>
+        <a onclick="showModule('Diagnostics')">🔬 Diagnostics</a>
+        <a onclick="showModule('Surgery & Procedures')">🚑 Surgery & Procedures</a>
+        <a onclick="showModule('Hospitalization')">🏥 Hospitalization</a>
+        <a onclick="showModule('Grooming & Care')">✂️ Grooming & Care</a>
+        <a onclick="showModule('House Calls')">🏠 House Calls</a>
         <a href="medicine.html">💊 Pharmacy</a>
       </div>
+
       <a href="notifications.html">♧ Notification</a>
       <a href="history.html">▦ History</a>
     </nav>
@@ -86,47 +98,48 @@
     <h1>Our Veterinary Services</h1>
     <p class="subtitle">Overview of official VetMoto medical services and clinical care modules.</p>
 
+    <!-- 8 OFFICIAL MEDICAL SERVICE CARDS -->
     <div class="services-grid">
       <div class="card">
         <h3>🩺 Consultations</h3>
         <p>General checkups, sick pet evaluations, and wellness exams.</p>
-        <button class="btn-open">OPEN MODULE</button>
+        <button class="btn-open" onclick="showModule('Consultations')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>💉 Preventive Care</h3>
         <p>Vaccinations, anti-rabies immunizations, and deworming.</p>
-        <button class="btn-open">OPEN MODULE</button>
+        <button class="btn-open" onclick="showModule('Preventive Care')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>🔬 Diagnostics</h3>
         <p>CBC, blood chemistry, laboratory tests, and ultrasonography.</p>
-        <button class="btn-open">OPEN MODULE</button>
+        <button class="btn-open" onclick="showModule('Diagnostics')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>🚑 Surgery & Procedures</h3>
         <p>General surgery, soft-tissue procedures, gas anesthesia, and monitoring.</p>
-        <button class="btn-open">OPEN MODULE</button>
+        <button class="btn-open" onclick="showModule('Surgery & Procedures')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>🏥 Hospitalization</h3>
         <p>Confinement, monitored recovery, fluid pumps, and oxygen support.</p>
-        <button class="btn-open">OPEN MODULE</button>
+        <button class="btn-open" onclick="showModule('Hospitalization')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>✂️ Grooming & Care</h3>
         <p>Professional pet grooming, care, and makeovers.</p>
-        <button class="btn-open">OPEN MODULE</button>
+        <button class="btn-open" onclick="showModule('Grooming & Care')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>🏠 House Calls</h3>
         <p>Veterinary home service and private consultation.</p>
-        <button class="btn-open">OPEN MODULE</button>
+        <button class="btn-open" onclick="showModule('House Calls')">OPEN MODULE</button>
       </div>
 
       <div class="card">
@@ -135,8 +148,80 @@
         <button class="btn-open" onclick="window.location.href='medicine.html'">VIEW MEDICINES</button>
       </div>
     </div>
+
+    <!-- ACTIVE SERVICE DETAILS TABLE -->
+    <div class="detail-panel" id="detailSection">
+      <div class="detail-title" id="moduleTitle">Active Module: Consultations</div>
+      <table id="moduleTable">
+        <thead>
+          <tr>
+            <th>Appointment ID</th>
+            <th>Pet Name</th>
+            <th>Owner</th>
+            <th>Scheduled Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="moduleTableBody">
+          <!-- Dynamic Content Loaded Here -->
+        </tbody>
+      </table>
+    </div>
   </main>
 </div>
+
+<script>
+  const sampleAppointments = {
+    "Consultations": [
+      { id: "APP-101", pet: "Bella", owner: "Noah Anderson", date: "2026-10-20 10:00 AM", status: "SCHEDULED" },
+      { id: "APP-104", pet: "Luna", owner: "Maya Patel", date: "2026-10-21 02:00 PM", status: "COMPLETED" }
+    ],
+    "Preventive Care": [
+      { id: "APP-102", pet: "Milo", owner: "Carlos Reyes", date: "2026-10-22 11:30 AM", status: "SCHEDULED" }
+    ],
+    "Diagnostics": [
+      { id: "APP-103", pet: "Cooper", owner: "Liam Santos", date: "2026-10-20 03:00 PM", status: "IN-PROGRESS" }
+    ],
+    "Surgery & Procedures": [
+      { id: "APP-105", pet: "Max", owner: "Maria Santos", date: "2026-10-23 09:00 AM", status: "SCHEDULED" }
+    ],
+    "Hospitalization": [
+      { id: "APP-106", pet: "Rocky", owner: "Ana Gomez", date: "2026-10-19 08:00 AM", status: "CONFINED" }
+    ],
+    "Grooming & Care": [
+      { id: "APP-107", pet: "Daisy", owner: "John Doe", date: "2026-10-20 01:00 PM", status: "SCHEDULED" }
+    ],
+    "House Calls": [
+      { id: "APP-108", pet: "Charlie", owner: "Jane Smith", date: "2026-10-24 04:00 PM", status: "CONFIRMED" }
+    ]
+  };
+
+  function showModule(moduleName) {
+    document.getElementById("moduleTitle").textContent = "Active Module: " + moduleName;
+    const body = document.getElementById("moduleTableBody");
+    const records = sampleAppointments[moduleName] || [];
+
+    if (records.length === 0) {
+      body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888; padding:15px;">No active appointments or records for ${moduleName}.</td></tr>`;
+    } else {
+      body.innerHTML = records.map(r => `
+        <tr>
+          <td><b>${r.id}</b></td>
+          <td>${r.pet}</td>
+          <td>${r.owner}</td>
+          <td>${r.date}</td>
+          <td><span style="background:var(--lavender); color:var(--purple); padding:3px 8px; border-radius:4px; font-weight:bold; font-size:10px;">${r.status}</span></td>
+        </tr>
+      `).join("");
+    }
+
+    // Scroll smoothly to details table
+    document.getElementById("detailSection").scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Load default module on startup
+  showModule('Consultations');
+</script>
 
 </body>
 </html>
