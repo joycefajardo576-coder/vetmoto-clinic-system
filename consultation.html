@@ -1,135 +1,234 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VetMoto - Consultation</title>
-<link rel="stylesheet" href="style.css">
+<title>VetMoto - Consultations</title>
+<script>
+  if (!sessionStorage.getItem("vetmoto_user")) {
+    window.location.href = "index.html";
+  }
+  function logout() {
+    sessionStorage.removeItem("vetmoto_user");
+    window.location.href = "index.html";
+  }
+</script>
+<style>
+  :root {
+    --purple: #5b3a82;
+    --lavender: #f3ecfb;
+    --coral: #e85b5b;
+    --bg: #f5effa;
+    --white: #fff;
+    --text: #4a3560;
+    --border: #e0d4ec;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+  .layout { display: flex; min-height: 100vh; }
+  
+  /* SIDEBAR */
+  .sidebar { width: 205px; background: var(--purple); color: #fff; padding: 18px 16px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .logo { height: 100px; width: 100px; border-radius: 50%; background: white; color: var(--purple); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; overflow: hidden; }
+  .logo img { width: 85%; height: 85%; object-fit: contain; }
+  .brand { text-align: center; font-weight: bold; font-size: 16px; letter-spacing: 1px; color: #ffffff; margin-bottom: 20px; }
+  .nav a { display: block; color: white; text-decoration: none; padding: 10px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
+  .nav a.active, .nav a:hover { background: #714c9e; }
+  .sub-nav { padding-left: 10px; background: rgba(0,0,0,0.15); border-bottom: 1px solid #ffffff33; }
+  .sub-nav a { border-top: none; padding: 8px 10px; font-size: 11px; opacity: 0.9; cursor: pointer; text-decoration: none; display: block; color: white; }
+  .sub-nav a:hover { opacity: 1; font-weight: bold; background: rgba(255,255,255,0.2); }
+  .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
+
+  /* MAIN CONTENT */
+  main { flex: 1; min-width: 0; padding: 28px 36px; background: var(--bg); }
+  h1 { margin: 0 0 6px; color: var(--purple); font-size: 24px; font-weight: bold; }
+  .subtitle { margin: 0 0 20px; color: #806b91; font-size: 12px; }
+
+  .panel { background: white; border-radius: 14px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+  .search-input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; width: 260px; outline: none; }
+  .btn-primary { background: var(--purple); color: white; border: none; padding: 9px 14px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; }
+  .btn-primary:hover { opacity: 0.9; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px 12px; text-align: left; font-size: 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--lavender); color: var(--purple); }
+  .badge { background: var(--lavender); color: var(--purple); padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+  .btn-action { background: #eee; border: none; padding: 5px 9px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; color: var(--purple); margin-right: 4px; }
+  .btn-action:hover { background: var(--purple); color: white; }
+  .btn-delete { color: var(--coral); }
+</style>
 </head>
 <body>
 
-<div class="dashboard">
-<aside class="sidebar">
-  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
-  <h2>VETMOTO</h2>
-  <a href="dashboard.html">⌂ Home</a>
-  <a href="pet-record.html">▤ Pet Record</a>
-  <a href="owner-record.html">♧ Owner Record</a>
-  <a href="medicine.html">💊 Medicine</a>
-  <a href="clinic-charge.html">▭ Clinic Charge</a>
-  <a href="appointment.html">◷ Appointment</a>
-  <a href="prescription.html">▤ Prescription</a>
-  <a href="index.html" class="logout">LOG OUT</a>
-</aside>
-
-<main class="main-content">
-  <a href="dashboard.html">← Back to Dashboard</a>
-  <h1 style="margin:20px 0;">CONSULTATION</h1>
-  <p>Record consultation details for clinic patients.</p>
-
-  <form id="consultationForm" style="margin-top:25px;">
-    <h2>Consultation Information</h2>
-
-    <label for="consultId">Consultation ID</label>
-    <input id="consultId" required placeholder="Enter consultation ID">
-
-    <label for="petName">Pet Name</label>
-    <input id="petName" required placeholder="Enter pet name">
-
-    <label for="ownerName">Owner Name</label>
-    <input id="ownerName" required placeholder="Enter owner name">
-
-    <label for="consultDate">Date</label>
-    <input id="consultDate" type="date" required>
-
-    <label for="symptoms">Symptoms / Complaint</label>
-    <textarea id="symptoms" rows="3" required
-      placeholder="Describe the pet's complaint"></textarea>
-
-    <label for="diagnosis">Diagnosis</label>
-    <textarea id="diagnosis" rows="3"
-      placeholder="Enter veterinarian's diagnosis"></textarea>
-
-    <label for="treatment">Treatment / Advice</label>
-    <textarea id="treatment" rows="3"
-      placeholder="Enter treatment or advice"></textarea>
-
-    <div style="display:flex;gap:10px;margin-top:20px;">
-      <button type="submit">SAVE CONSULTATION</button>
-      <button type="reset" style="background:#E85B5B;">CLEAR</button>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="vetmoto-logo.webp" alt="VetMoto Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾<br>VETMOTO';">
     </div>
-    <p id="consultMessage" style="margin-top:12px;"></p>
-  </form>
+    <div class="brand">VÉTMOTO</div>
+    <nav class="nav">
+      <a href="dashboard.html">⌂ Home</a>
+      <a href="pet-record.html">▤ Pet Record</a>
+      <a href="owner-record.html">♙ Owner Record</a>
+      <a href="medicine.html">💊 Medicine</a>
+      <a href="clinic-charge.html">▭ Clinic Charge</a>
+      <a href="appointment.html" class="active">◷ Medical Services</a>
+      
+      <div class="sub-nav">
+        <a href="consultation.html" style="font-weight:bold; background:rgba(255,255,255,0.2);">🩺 Consultation</a>
+        <a href="laboratory.html">🔬 Laboratory</a>
+        <a href="surgery.html">🚑 Surgery</a>
+        <a href="vaccination.html">💉 Vaccination</a>
+        <a href="grooming.html">✂️ Grooming</a>
+        <a href="confinement.html">🏥 Confinement</a>
+      </div>
 
-  <h2 style="margin:30px 0 12px;">CONSULTATION HISTORY</h2>
-  <div style="overflow-x:auto;">
-    <table>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Pet</th>
-          <th>Owner</th>
-          <th>Date</th>
-          <th>Symptoms</th>
-          <th>Diagnosis</th>
-        </tr>
-      </thead>
-      <tbody id="consultTable"></tbody>
-    </table>
-  </div>
-</main>
+      <a href="notifications.html">♧ Notification</a>
+      <a href="history.html">▦ History</a>
+    </nav>
+    <button class="logout" onclick="logout()">LOG OUT</button>
+  </aside>
+
+  <main>
+    <h1>Consultation Records</h1>
+    <p class="subtitle">Review visits, diagnoses, and each pet's medical history[cite: 60].</p>
+
+    <div class="panel">
+      <div class="panel-header">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search pet name, ID, or owner..." onkeyup="filterTable()">
+        <button class="btn-primary" onclick="openAddModal()">+ New Consultation</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Pet ID</th>
+            <th>Pet Name</th>
+            <th>Owner</th>
+            <th>Date</th>
+            <th>Veterinarian</th>
+            <th>Diagnosis</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Dynamically loaded via JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </main>
 </div>
 
 <script>
-const consultForm = document.getElementById("consultationForm");
-const consultTable = document.getElementById("consultTable");
+  // Initial default dataset based on PDF records + LocalStorage support for CRUD
+  const defaultConsultations = [
+    { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", vet: "Dr. Maya Patel", diagnosis: "Allergic dermatitis" },
+    { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", vet: "Dr. Maya Patel", diagnosis: "Annual wellness exam" },
+    { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", date: "12 Mar 2025", vet: "Dr. Alex Reyes", diagnosis: "Acute gastritis" },
+    { id: "PR-1019", pet: "Daisy", owner: "Emma Garcia", date: "11 Mar 2025", vet: "Dr. Alex Reyes", diagnosis: "Otitis externa" },
+    { id: "PR-1014", pet: "Milo", owner: "Olivia Cruz", date: "11 Mar 2025", vet: "Dr. Maya Patel", diagnosis: "Mild gingivitis" }
+  ];
 
-function loadConsultations() {
-  const records = JSON.parse(
-    localStorage.getItem("vetmotoConsultations") || "[]"
-  );
+  function getStoredData() {
+    let data = localStorage.getItem("vetmoto_consultations");
+    if (!data) {
+      localStorage.setItem("vetmoto_consultations", JSON.stringify(defaultConsultations));
+      return defaultConsultations;
+    }
+    return JSON.parse(data);
+  }
 
-  consultTable.innerHTML = "";
+  function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888; padding:20px;">No consultation records found.</td></tr>`;
+      return;
+    }
 
-  records.forEach(item => {
-    const row = consultTable.insertRow();
+    tbody.innerHTML = data.map((item, index) => `
+      <tr>
+        <td><b>${item.id}</b></td>
+        <td>${item.pet}</td>
+        <td>${item.owner}</td>
+        <td>${item.date}</td>
+        <td>${item.vet}</td>
+        <td><span class="badge">${item.diagnosis}</span></td>
+        <td>
+          <button class="btn-action" onclick="editRecord(${index})">Edit</button>
+          <button class="btn-action btn-delete" onclick="deleteRecord(${index})">Delete</button>
+        </td>
+      </tr>
+    `).join("");
+  }
 
-    [item.id, item.pet, item.owner, item.date,
-     item.symptoms, item.diagnosis].forEach(value => {
-      row.insertCell().textContent = value || "";
+  // CREATE (Add new record)
+  function openAddModal() {
+    let pet = prompt("Enter Pet Name:");
+    if (!pet) return;
+    let owner = prompt("Enter Owner Name:");
+    let vet = prompt("Enter Veterinarian Name (e.g., Dr. Maya Patel):");
+    let diagnosis = prompt("Enter Diagnosis / Reason:");
+
+    let records = getStoredData();
+    records.unshift({
+      id: "PR-" + Math.floor(1000 + Math.random() * 9000),
+      pet: pet,
+      owner: owner || "N/A",
+      date: "19 Oct 2026",
+      vet: vet || "Dr. Maya Patel",
+      diagnosis: diagnosis || "General Checkup"
     });
-  });
-}
 
-consultForm.addEventListener("submit", function(event) {
-  event.preventDefault();
+    localStorage.setItem("vetmoto_consultations", JSON.stringify(records));
+    renderTable(records);
+    alert("New consultation record successfully created!");
+  }
 
-  const item = {
-    id: document.getElementById("consultId").value,
-    pet: document.getElementById("petName").value,
-    owner: document.getElementById("ownerName").value,
-    date: document.getElementById("consultDate").value,
-    symptoms: document.getElementById("symptoms").value,
-    diagnosis: document.getElementById("diagnosis").value,
-    treatment: document.getElementById("treatment").value
-  };
+  // UPDATE (Edit record)
+  function editRecord(index) {
+    let records = getStoredData();
+    let item = records[index];
 
-  const records = JSON.parse(
-    localStorage.getItem("vetmotoConsultations") || "[]"
-  );
+    let newPet = prompt("Edit Pet Name:", item.pet);
+    if (!newPet) return;
+    let newOwner = prompt("Edit Owner Name:", item.owner);
+    let newDiagnosis = prompt("Edit Diagnosis:", item.diagnosis);
 
-  records.push(item);
-  localStorage.setItem("vetmotoConsultations", JSON.stringify(records));
+    item.pet = newPet;
+    item.owner = newOwner || item.owner;
+    item.diagnosis = newDiagnosis || item.diagnosis;
 
-  consultForm.reset();
-  loadConsultations();
+    localStorage.setItem("vetmoto_consultations", JSON.stringify(records));
+    renderTable(records);
+    alert("Record successfully updated!");
+  }
 
-  document.getElementById("consultMessage").textContent =
-    "Consultation saved in this browser.";
-});
+  // DELETE (Remove record)
+  function deleteRecord(index) {
+    if (confirm("Are you sure you want to delete this consultation record?")) {
+      let records = getStoredData();
+      records.splice(index, 1);
+      localStorage.setItem("vetmoto_consultations", JSON.stringify(records));
+      renderTable(records);
+    }
+  }
 
-loadConsultations();
+  // READ & FILTER (Search functionality)
+  function filterTable() {
+    let query = document.getElementById("searchInput").value.toLowerCase();
+    let records = getStoredData();
+    let filtered = records.filter(item => 
+      item.pet.toLowerCase().includes(query) || 
+      item.owner.toLowerCase().includes(query) || 
+      item.id.toLowerCase().includes(query) ||
+      item.diagnosis.toLowerCase().includes(query)
+    );
+    renderTable(filtered);
+  }
+
+  // Initial load on page start
+  renderTable(getStoredData());
 </script>
 
 </body>
