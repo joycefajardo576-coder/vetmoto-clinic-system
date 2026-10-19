@@ -2,171 +2,134 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VetMoto - Medicine Inventory</title>
-<link rel="stylesheet" href="style.css">
 <script>
-    // Session Protection Check
-    if (!sessionStorage.getItem("vetmoto_user")) {
-        window.location.href = "index.html";
-    }
-    function logout() {
-        sessionStorage.removeItem("vetmoto_user");
-        window.location.href = "index.html";
-    }
+  if (!sessionStorage.getItem("vetmoto_user")) {
+    window.location.href = "index.html";
+  }
+  function logout() {
+    sessionStorage.removeItem("vetmoto_user");
+    window.location.href = "index.html";
+  }
 </script>
+<style>
+  :root {
+    --purple: #5b3a82;
+    --lavender: #f3ecfb;
+    --coral: #e85b5b;
+    --cream: #fbf7f4;
+    --bg: #f5effa;
+    --white: #fff;
+    --text: #4a3560;
+    --border: #e0d4ec;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+  .layout { display: flex; min-height: 100vh; }
+  
+  /* UNIFIED SIDEBAR */
+  .sidebar { width: 205px; background: var(--purple); color: #fff; padding: 18px 16px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .logo { height: 100px; width: 100px; border-radius: 50%; background: white; color: var(--purple); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; overflow: hidden; }
+  .logo img { width: 85%; height: 85%; object-fit: contain; }
+  .brand { text-align: center; font-weight: bold; font-size: 16px; letter-spacing: 1px; color: #ffffff; margin-bottom: 20px; }
+  .nav a { display: block; color: white; text-decoration: none; padding: 12px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
+  .nav a.active, .nav a:hover { background: #714c9e; }
+  .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
+
+  /* MAIN CONTENT */
+  main { flex: 1; min-width: 0; padding: 28px 36px; background: var(--bg); }
+  .eyebrow { font-size: 12px; color: #806b91; margin-bottom: 4px; }
+  h1 { margin: 0 0 6px; color: var(--purple); font-size: 26px; font-weight: bold; text-transform: uppercase; }
+  .subtitle { margin: 0 0 20px; color: #806b91; font-size: 13px; }
+
+  .btn-purple { background: var(--purple); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-weight: bold; cursor: pointer; margin-bottom: 20px; font-size: 13px; text-transform: uppercase; }
+  
+  .table-card { background: white; border-radius: 12px; border: 1px solid var(--border); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th { background: var(--purple); color: white; text-align: left; padding: 12px 15px; font-size: 13px; }
+  td { padding: 12px 15px; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .status-stock { color: #2e7d32; font-weight: bold; }
+  
+  .btn-action { padding: 5px 10px; border-radius: 5px; border: none; color: white; font-size: 11px; cursor: pointer; font-weight: bold; margin-right: 3px; }
+  .btn-open { background: var(--purple); }
+  .btn-edit { background: #714c9e; }
+  .btn-del { background: var(--coral); }
+</style>
 </head>
 <body>
 
-<div class="dashboard">
+<div class="layout">
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="vetmoto-logo.webp" alt="VetMoto Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾<br>VETMOTO';">
+    </div>
+    <div class="brand">VETMOTO</div>
+    <nav class="nav">
+      <a href="dashboard.html">⌂ Home</a>
+      <a href="pet-record.html">▤ Pet Record</a>
+      <a href="owner-record.html">♙ Owner Record</a>
+      <a href="medicine.html" class="active">💊 Medicine</a>
+      <a href="clinic-charge.html">▭ Clinic Charge</a>
+      <a href="appointment.html">◷ Appointment</a>
+      <a href="notifications.html">♧ Notification</a>
+      <a href="history.html">▦ History</a>
+    </nav>
+    <button class="logout" onclick="logout()">LOG OUT</button>
+  </aside>
 
-<aside class="sidebar">
-  <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
-  <h2>VETMOTO</h2>
-  <a href="dashboard.html">⌂ Home</a>
-  <a href="pet-record.html">▤ Pet Record</a>
-  <a href="owner-record.html">♧ Owner Record</a>
-  <a href="medicine.html" class="active">💊 Medicine</a>
-  <a href="clinic-charge.html">▭ Clinic Charge</a>
-  <a href="appointment.html">◷ Appointment</a>
-  <a href="notifications.html">♧ Notification</a>
-  <a href="history.html">▦ History</a>
-  <a href="#" onclick="logout(); return false;" class="logout">LOG OUT</a>
-</aside>
+  <main>
+    <div class="eyebrow">Thursday, May 29</div>
+    <h1>MEDICINE INVENTORY</h1>
+    <p class="subtitle">Monitor stock, prescriptions, and upcoming expirations.</p>
 
-<main class="main-content">
-  <p>Thursday, May 29</p>
-  <h1>MEDICINE INVENTORY</h1>
-  <p>Monitor stock, prescriptions, and upcoming expirations.</p>
+    <button class="btn-purple">+ ADD MEDICINE</button>
 
-  <br>
-  <button onclick="addMedicinePrompt()">
-    ADD MEDICINE
-  </button>
+    <h3 style="color:var(--purple); margin-bottom: 10px;">Medicines Directory</h3>
+    <input type="text" placeholder="Search medicine name..." style="padding: 10px; width: 250px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 15px;">
 
-  <br><br>
-  <h2>Medicines Directory</h2>
-  <p id="medicineCount">3 medicines shown</p>
-
-  <br>
-  <input id="medicineSearch" placeholder="Search medicine name..." onkeyup="searchMedicineData()">
-
-  <br><br>
-  
-<table>
-  <thead>
-    <tr>
-      <th>Expiration Date</th>
-      <th>Medicine Name</th>
-      <th>Inventory</th>
-      <th>Status</th>
-      <th>Actions</th>
-      <th>Production Date</th>
-    </tr>
-  </thead>
-  <tbody id="medicineTableBody">
-    <!-- Dynamically populated via JavaScript -->
-  </tbody>
-</table>
-
-</main>
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Expiration Date</th>
+            <th>Medicine Name</th>
+            <th>Inventory</th>
+            <th>Status</th>
+            <th>Actions</th>
+            <th>Production Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2027-05-29</td>
+            <td><b style="color:var(--purple);">Credelio Quattro (lotilaner + praziquantel)</b></td>
+            <td>84 units</td>
+            <td><span class="status-stock">IN STOCK</span></td>
+            <td>
+              <button class="btn-action btn-open">OPEN</button>
+              <button class="btn-action btn-edit">Edit</button>
+              <button class="btn-action btn-del">Delete</button>
+            </td>
+            <td>2025-06-13</td>
+          </tr>
+          <tr>
+            <td>2028-01-15</td>
+            <td><b style="color:var(--purple);">NexGard Spectra</b></td>
+            <td>45 units</td>
+            <td><span class="status-stock">IN STOCK</span></td>
+            <td>
+              <button class="btn-action btn-open">OPEN</button>
+              <button class="btn-action btn-edit">Edit</button>
+              <button class="btn-action btn-del">Delete</button>
+            </td>
+            <td>2026-01-10</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
 </div>
 
-<script>
-    // LocalStorage & JSON Array Data Simulation for Medicines (IT107 CRUD Requirement)[cite: 2]
-    let medicines = JSON.parse(localStorage.getItem("vetmoto_medicines")) || [
-        { expDate: "2027-05-29", name: "Credelio Quattro (lotilaner + praziquantel)", inventory: "84 units", status: "IN STOCK", prodDate: "2025-06-13" },
-        { expDate: "2028-01-15", name: "NexGard Spectra", inventory: "45 units", status: "IN STOCK", prodDate: "2026-01-10" }
-    ];
-
-    function renderMedicines(data = medicines) {
-        const tbody = document.getElementById("medicineTableBody");
-        tbody.innerHTML = "";
-
-        if (data.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #888; padding: 20px;">No medicine records found.</td></tr>`;
-            document.getElementById("medicineCount").textContent = "0 medicines shown";
-            return;
-        }
-
-        data.forEach((med, index) => {
-            tbody.innerHTML += `
-                <tr>
-                    <td>${med.expDate}</td>
-                    <td><b>${med.name}</b></td>
-                    <td>${med.inventory}</td>
-                    <td><span style="color: green; font-weight: bold;">${med.status}</span></td>
-                    <td>
-                        <button onclick="location.href='medicine-detail.html?name=${encodeURIComponent(med.name)}'" style="padding: 5px 10px; font-size: 12px;">OPEN</button>
-                        <button onclick="editMedicine(${index})" style="padding: 5px 10px; font-size: 12px;">Edit</button>
-                        <button onclick="deleteMedicine(${index})" style="background: #E85B5B; padding: 5px 10px; font-size: 12px; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
-                    </td>
-                    <td>${med.prodDate}</td>
-                </tr>
-            `;
-        });
-
-        document.getElementById("medicineCount").textContent = `${data.length} medicines shown`;
-    }
-
-    // CREATE / ADD Medicine Function[cite: 2]
-    function addMedicinePrompt() {
-        const name = prompt("Enter Medicine Name:");
-        if (!name) return;
-        const inventory = prompt("Enter Inventory (e.g., 50 units):", "50 units");
-        const expDate = prompt("Enter Expiration Date (YYYY-MM-DD):", "2028-12-31");
-        const prodDate = prompt("Enter Production Date (YYYY-MM-DD):", "2026-01-01");
-
-        const newMed = {
-            expDate: expDate || "2028-12-31",
-            name: name,
-            inventory: inventory || "10 units",
-            status: "IN STOCK",
-            prodDate: prodDate || "2026-01-01"
-        };
-
-        medicines.push(newMed);
-        localStorage.setItem("vetmoto_medicines", JSON.stringify(medicines));
-        renderMedicines();
-    }
-
-    // UPDATE Medicine Function[cite: 2]
-    function editMedicine(index) {
-        const med = medicines[index];
-        const newName = prompt("Edit Medicine Name:", med.name);
-        if (newName === null) return;
-        const newInv = prompt("Edit Inventory:", med.inventory);
-
-        med.name = newName || med.name;
-        med.inventory = newInv || med.inventory;
-
-        localStorage.setItem("vetmoto_medicines", JSON.stringify(medicines));
-        renderMedicines();
-    }
-
-    // DELETE Medicine Function[cite: 2]
-    function deleteMedicine(index) {
-        if (confirm("Are you sure you want to delete this medicine record?")) {
-            medicines.splice(index, 1);
-            localStorage.setItem("vetmoto_medicines", JSON.stringify(medicines));
-            renderMedicines();
-        }
-    }
-
-    // SEARCH / FILTER Function[cite: 2]
-    function searchMedicineData() {
-        const query = document.getElementById("medicineSearch").value.toLowerCase();
-        const filtered = medicines.filter(m => 
-            m.name.toLowerCase().includes(query) ||
-            m.status.toLowerCase().includes(query)
-        );
-        renderMedicines(filtered);
-    }
-
-    // Initial load on page start
-    window.onload = function() {
-        renderMedicines();
-    };
-</script>
 </body>
 </html>
