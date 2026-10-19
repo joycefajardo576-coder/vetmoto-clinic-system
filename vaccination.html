@@ -1,348 +1,235 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VetMoto - Vaccination Records</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Vaccination Records</title>
+<script>
+  if (!sessionStorage.getItem("vetmoto_user")) {
+    window.location.href = "index.html";
+  }
+  function logout() {
+    sessionStorage.removeItem("vetmoto_user");
+    window.location.href = "index.html";
+  }
+</script>
+<style>
+  :root {
+    --purple: #5b3a82;
+    --lavender: #f3ecfb;
+    --coral: #e85b5b;
+    --bg: #f5effa;
+    --white: #fff;
+    --text: #4a3560;
+    --border: #e0d4ec;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+  .layout { display: flex; min-height: 100vh; }
+  
+  /* SIDEBAR */
+  .sidebar { width: 205px; background: var(--purple); color: #fff; padding: 18px 16px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .logo { height: 100px; width: 100px; border-radius: 50%; background: white; color: var(--purple); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; overflow: hidden; }
+  .logo img { width: 85%; height: 85%; object-fit: contain; }
+  .brand { text-align: center; font-weight: bold; font-size: 16px; letter-spacing: 1px; color: #ffffff; margin-bottom: 20px; }
+  .nav a { display: block; color: white; text-decoration: none; padding: 10px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
+  .nav a.active, .nav a:hover { background: #714c9e; }
+  .sub-nav { padding-left: 10px; background: rgba(0,0,0,0.15); border-bottom: 1px solid #ffffff33; }
+  .sub-nav a { border-top: none; padding: 8px 10px; font-size: 11px; opacity: 0.9; cursor: pointer; text-decoration: none; display: block; color: white; }
+  .sub-nav a:hover { opacity: 1; font-weight: bold; background: rgba(255,255,255,0.2); }
+  .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
 
-  <style>
-    .vaccine-form {
-      background: #FFF9F2;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 20px 0;
-    }
+  /* MAIN CONTENT */
+  main { flex: 1; min-width: 0; padding: 28px 36px; background: var(--bg); }
+  h1 { margin: 0 0 6px; color: var(--purple); font-size: 24px; font-weight: bold; }
+  .subtitle { margin: 0 0 20px; color: #806b91; font-size: 12px; }
 
-    .vaccine-form input,
-    .vaccine-form select,
-    .vaccine-form textarea {
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px;
-      margin: 6px 0 14px;
-      border: 1px solid #D7C8E8;
-      border-radius: 8px;
-    }
+  .panel { background: white; border-radius: 14px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+  .search-input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; width: 260px; outline: none; }
+  .btn-primary { background: var(--purple); color: white; border: none; padding: 9px 14px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; }
+  .btn-primary:hover { opacity: 0.9; }
 
-    .vaccine-actions button {
-      margin: 3px;
-    }
-
-    .vaccine-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .vaccine-table th,
-    .vaccine-table td {
-      padding: 10px;
-      border-bottom: 1px solid #E9DDF7;
-      text-align: left;
-    }
-
-    .vaccine-table th {
-      background: #5B3A82;
-      color: white;
-    }
-
-    .delete-button {
-      background: #E85B5B !important;
-      color: white;
-    }
-
-    .cancel-button {
-      background: #E85B5B !important;
-      color: white;
-    }
-
-    .search-box {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      margin: 10px 0 20px;
-      border: 1px solid #D7C8E8;
-      border-radius: 8px;
-    }
-  </style>
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px 12px; text-align: left; font-size: 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--lavender); color: var(--purple); }
+  .badge { background: var(--lavender); color: var(--purple); padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+  .btn-action { background: #eee; border: none; padding: 5px 9px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; color: var(--purple); margin-right: 4px; }
+  .btn-action:hover { background: var(--purple); color: white; }
+  .btn-delete { color: var(--coral); }
+</style>
 </head>
-
 <body>
-<div class="dashboard">
 
+<div class="layout">
   <aside class="sidebar">
-    <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
-    <h2>VETMOTO</h2>
-    <a href="dashboard.html">⌂ Home</a>
-    <a href="pet-record.html">🐾 Pet Records</a>
-    <a href="owner-record.html">♧ Owner Records</a>
-    <a href="medicine.html">💊 Medicine</a>
-    <a href="appointment.html">◷ Appointment</a>
-    <a href="prescription.html">▤ Prescription</a>
-    <a href="surgery.html">✚ Surgery</a>
-    <a href="index.html" class="logout">LOG OUT</a>
+    <div class="logo">
+      <img src="vetmoto-logo.webp" alt="VetMoto Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾<br>VETMOTO';">
+    </div>
+    <div class="brand">VÉTMOTO</div>
+    <nav class="nav">
+      <a href="dashboard.html">⌂ Home</a>
+      <a href="pet-record.html">▤ Pet Record</a>
+      <a href="owner-record.html">♙ Owner Record</a>
+      <a href="medicine.html">💊 Medicine</a>
+      <a href="clinic-charge.html">▭ Clinic Charge</a>
+      <a href="appointment.html" class="active">◷ Medical Services</a>
+      
+      <div class="sub-nav">
+        <a href="consultation.html">🩺 Consultation</a>
+        <a href="laboratory.html">🔬 Laboratory</a>
+        <a href="surgery.html">🚑 Surgery</a>
+        <a href="vaccination.html" style="font-weight:bold; background:rgba(255,255,255,0.2);">💉 Vaccination</a>
+        <a href="grooming.html">✂️ Grooming</a>
+        <a href="confinement.html">🏥 Confinement</a>
+      </div>
+
+      <a href="notifications.html">♧ Notification</a>
+      <a href="history.html">▦ History</a>
+    </nav>
+    <button class="logout" onclick="logout()">LOG OUT</button>
   </aside>
 
-  <main class="main-content">
-    <a href="dashboard.html">← Back to Dashboard</a>
+  <main>
+    <h1>Vaccination Records</h1>
+    <p class="subtitle">Review vaccines and each pet's vaccination history[cite: 72].</p>
 
-    <h1 style="margin-top:20px;">VACCINATION RECORDS</h1>
-    <p>Manage and review pet vaccination history.</p>
+    <div class="panel">
+      <div class="panel-header">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search pet name, ID, or owner..." onkeyup="filterTable()">
+        <button class="btn-primary" onclick="openAddModal()">+ New Vaccination</button>
+      </div>
 
-    <button type="button" onclick="newVaccine()">
-      + ADD VACCINATION
-    </button>
-
-    <form id="vaccineForm" class="vaccine-form" hidden>
-      <h2 id="formTitle">Add Vaccination</h2>
-
-      <label for="vaccineId">Record ID</label>
-      <input id="vaccineId" required placeholder="Enter record ID">
-
-      <label for="petName">Pet Name</label>
-      <input id="petName" required placeholder="Enter pet name">
-
-      <label for="ownerName">Owner Name</label>
-      <input id="ownerName" required placeholder="Enter owner name">
-
-      <label for="vaccineName">Vaccine Name</label>
-      <input id="vaccineName" required placeholder="Enter vaccine name">
-
-      <label for="vaccinationDate">Vaccination Date</label>
-      <input id="vaccinationDate" type="date" required>
-
-      <label for="nextDate">Next Vaccination Date</label>
-      <input id="nextDate" type="date">
-
-      <label for="veterinarian">Veterinarian</label>
-      <input id="veterinarian" placeholder="Enter veterinarian's name">
-
-      <label for="vaccineNotes">Notes</label>
-      <textarea id="vaccineNotes" rows="3"
-        placeholder="Enter notes"></textarea>
-
-      <label for="vaccineStatus">Status</label>
-      <select id="vaccineStatus">
-        <option>Completed</option>
-        <option>Scheduled</option>
-        <option>Overdue</option>
-      </select>
-
-      <button type="submit">SAVE RECORD</button>
-      <button type="button" class="cancel-button"
-        onclick="cancelVaccine()">CANCEL</button>
-    </form>
-
-    <label for="vaccineSearch">Search Records</label>
-    <input id="vaccineSearch" class="search-box"
-      placeholder="Search ID, pet, owner, or vaccine..."
-      oninput="renderVaccines()">
-
-    <div style="overflow-x:auto;">
-      <table class="vaccine-table">
+      <table>
         <thead>
           <tr>
-            <th>Record ID</th>
-            <th>Pet</th>
+            <th>Pet ID</th>
+            <th>Pet Name</th>
             <th>Owner</th>
             <th>Vaccine</th>
             <th>Date</th>
-            <th>Next Date</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody id="vaccineTable"></tbody>
+        <tbody id="tableBody">
+          <!-- Dynamically loaded via JavaScript -->
+        </tbody>
       </table>
     </div>
-
-    <p id="emptyMessage" hidden>No vaccination records found.</p>
   </main>
 </div>
 
 <script>
-const vaccineForm = document.getElementById("vaccineForm");
-const vaccineTable = document.getElementById("vaccineTable");
-let editingVaccineIndex = -1;
+  // Initial default dataset based on PDF Vaccination records + LocalStorage persistence
+  const defaultVaccines = [
+    { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", vaccine: "Rabies", date: "12 Mar 2025", status: "Current" },
+    { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", vaccine: "DHPP", date: "12 Mar 2025", status: "Current" },
+    { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", vaccine: "Bordetella", date: "12 Mar 2025", status: "Current" },
+    { id: "PR-1019", pet: "Daisy", owner: "Emma Garcia", vaccine: "Leptospirosis", date: "11 Mar 2025", status: "Due soon" },
+    { id: "PR-1014", pet: "Milo", owner: "Olivia Cruz", vaccine: "FVRCP", date: "11 Mar 2025", status: "Current" }
+  ];
 
-function getVaccines() {
-  try {
-    return JSON.parse(
-      localStorage.getItem("vetmotoVaccinations") || "[]"
-    );
-  } catch (error) {
-    return [];
-  }
-}
-
-function saveVaccines(records) {
-  localStorage.setItem(
-    "vetmotoVaccinations",
-    JSON.stringify(records)
-  );
-}
-
-function newVaccine() {
-  editingVaccineIndex = -1;
-  vaccineForm.reset();
-  document.getElementById("formTitle").textContent =
-    "Add Vaccination";
-  vaccineForm.hidden = false;
-  vaccineForm.scrollIntoView({ behavior: "smooth" });
-}
-
-function cancelVaccine() {
-  vaccineForm.reset();
-  vaccineForm.hidden = true;
-  editingVaccineIndex = -1;
-}
-
-vaccineForm.addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  const records = getVaccines();
-
-  const record = {
-    id: document.getElementById("vaccineId").value.trim(),
-    pet: document.getElementById("petName").value.trim(),
-    owner: document.getElementById("ownerName").value.trim(),
-    vaccine: document.getElementById("vaccineName").value.trim(),
-    date: document.getElementById("vaccinationDate").value,
-    nextDate: document.getElementById("nextDate").value,
-    veterinarian: document.getElementById("veterinarian").value.trim(),
-    notes: document.getElementById("vaccineNotes").value.trim(),
-    status: document.getElementById("vaccineStatus").value
-  };
-
-  const duplicate = records.some((item, index) =>
-    item.id === record.id && index !== editingVaccineIndex
-  );
-
-  if (duplicate) {
-    alert("This Record ID already exists.");
-    return;
+  function getStoredData() {
+    let data = localStorage.getItem("vetmoto_vaccinations");
+    if (!data) {
+      localStorage.setItem("vetmoto_vaccinations", JSON.stringify(defaultVaccines));
+      return defaultVaccines;
+    }
+    return JSON.parse(data);
   }
 
-  if (editingVaccineIndex >= 0) {
-    records[editingVaccineIndex] = record;
-  } else {
-    records.push(record);
+  function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888; padding:20px;">No vaccination records found.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map((item, index) => `
+      <tr>
+        <td><b>${item.id}</b></td>
+        <td>${item.pet}</td>
+        <td>${item.owner}</td>
+        <td>${item.vaccine}</td>
+        <td>${item.date}</td>
+        <td><span class="badge">${item.status}</span></td>
+        <td>
+          <button class="btn-action" onclick="editRecord(${index})">Edit</button>
+          <button class="btn-action btn-delete" onclick="deleteRecord(${index})">Delete</button>
+        </td>
+      </tr>
+    `).join("");
   }
 
-  saveVaccines(records);
-  cancelVaccine();
-  renderVaccines();
-  alert("Vaccination record saved successfully!");
-});
+  // CREATE (Add new vaccination record)
+  function openAddModal() {
+    let pet = prompt("Enter Pet Name:");
+    if (!pet) return;
+    let owner = prompt("Enter Owner Name:");
+    let vaccine = prompt("Enter Vaccine Name (e.g., Rabies):");
+    let status = prompt("Enter Status (e.g., Current):");
 
-function viewVaccine(index) {
-  const item = getVaccines()[index];
-  if (!item) return;
-
-  alert(
-    "VACCINATION DETAILS\n\n" +
-    "Record ID: " + item.id +
-    "\nPet: " + item.pet +
-    "\nOwner: " + item.owner +
-    "\nVaccine: " + item.vaccine +
-    "\nDate: " + item.date +
-    "\nNext Date: " + (item.nextDate || "—") +
-    "\nVeterinarian: " + (item.veterinarian || "—") +
-    "\nStatus: " + item.status +
-    "\nNotes: " + (item.notes || "—")
-  );
-}
-
-function editVaccine(index) {
-  const item = getVaccines()[index];
-  if (!item) return;
-
-  editingVaccineIndex = index;
-
-  document.getElementById("formTitle").textContent =
-    "Edit Vaccination";
-  document.getElementById("vaccineId").value = item.id;
-  document.getElementById("petName").value = item.pet;
-  document.getElementById("ownerName").value = item.owner;
-  document.getElementById("vaccineName").value = item.vaccine;
-  document.getElementById("vaccinationDate").value = item.date;
-  document.getElementById("nextDate").value = item.nextDate || "";
-  document.getElementById("veterinarian").value =
-    item.veterinarian || "";
-  document.getElementById("vaccineNotes").value = item.notes || "";
-  document.getElementById("vaccineStatus").value = item.status;
-
-  vaccineForm.hidden = false;
-  vaccineForm.scrollIntoView({ behavior: "smooth" });
-}
-
-function deleteVaccine(index) {
-  const records = getVaccines();
-  if (!records[index]) return;
-
-  if (!confirm("Are you sure you want to delete this record?")) {
-    return;
-  }
-
-  records.splice(index, 1);
-  saveVaccines(records);
-  renderVaccines();
-}
-
-function renderVaccines() {
-  const records = getVaccines();
-  const query = document.getElementById("vaccineSearch")
-    .value.trim().toLowerCase();
-
-  const matches = records
-    .map((item, index) => ({ item, index }))
-    .filter(({ item }) =>
-      [
-        item.id, item.pet, item.owner,
-        item.vaccine, item.status
-      ].some(value =>
-        String(value || "").toLowerCase().includes(query)
-      )
-    );
-
-  vaccineTable.replaceChildren();
-
-  matches.forEach(({ item, index }) => {
-    const row = vaccineTable.insertRow();
-
-    [
-      item.id, item.pet, item.owner, item.vaccine,
-      item.date, item.nextDate || "—", item.status
-    ].forEach(value => {
-      row.insertCell().textContent = value || "—";
+    let records = getStoredData();
+    records.unshift({
+      id: "PR-" + Math.floor(1000 + Math.random() * 9000),
+      pet: pet,
+      owner: owner || "N/A",
+      vaccine: vaccine || "Rabies",
+      date: "19 Oct 2026",
+      status: status || "Current"
     });
 
-    const actions = row.insertCell();
-    actions.className = "vaccine-actions";
+    localStorage.setItem("vetmoto_vaccinations", JSON.stringify(records));
+    renderTable(records);
+    alert("New vaccination record successfully created!");
+  }
 
-    const viewButton = document.createElement("button");
-    viewButton.textContent = "VIEW";
-    viewButton.onclick = () => viewVaccine(index);
+  // UPDATE (Edit vaccination record)
+  function editRecord(index) {
+    let records = getStoredData();
+    let item = records[index];
 
-    const editButton = document.createElement("button");
-    editButton.textContent = "EDIT";
-    editButton.onclick = () => editVaccine(index);
+    let newPet = prompt("Edit Pet Name:", item.pet);
+    if (!newPet) return;
+    let newVaccine = prompt("Edit Vaccine Name:", item.vaccine);
+    let newStatus = prompt("Edit Status:", item.status);
 
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "DELETE";
-    deleteButton.className = "delete-button";
-    deleteButton.onclick = () => deleteVaccine(index);
+    item.pet = newPet;
+    item.vaccine = newVaccine || item.vaccine;
+    item.status = newStatus || item.status;
 
-    actions.append(viewButton, editButton, deleteButton);
-  });
+    localStorage.setItem("vetmoto_vaccinations", JSON.stringify(records));
+    renderTable(records);
+    alert("Vaccination record successfully updated!");
+  }
 
-  document.getElementById("emptyMessage").hidden =
-    matches.length > 0;
-}
+  // DELETE (Remove vaccination record)
+  function deleteRecord(index) {
+    if (confirm("Are you sure you want to delete this vaccination record?")) {
+      let records = getStoredData();
+      records.splice(index, 1);
+      localStorage.setItem("vetmoto_vaccinations", JSON.stringify(records));
+      renderTable(records);
+    }
+  }
 
-renderVaccines();
+  // READ & FILTER (Search functionality)
+  function filterTable() {
+    let query = document.getElementById("searchInput").value.toLowerCase();
+    let records = getStoredData();
+    let filtered = records.filter(item => 
+      item.pet.toLowerCase().includes(query) || 
+      item.owner.toLowerCase().includes(query) || 
+      item.id.toLowerCase().includes(query) ||
+      item.vaccine.toLowerCase().includes(query)
+    );
+    renderTable(filtered);
+  }
+
+  // Initial load on page start
+  renderTable(getStoredData());
 </script>
+
 </body>
 </html>
