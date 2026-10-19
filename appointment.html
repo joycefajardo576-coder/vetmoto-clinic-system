@@ -67,7 +67,7 @@
     <div class="logo">
       <img src="vetmoto-logo.webp" alt="VetMoto Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾<br>VETMOTO';">
     </div>
-    <div class="brand">VETMOTO</div>
+    <div class="brand">VÉTMOTO</div>
     <nav class="nav">
       <a href="dashboard.html">⌂ Home</a>
       <a href="pet-record.html">▤ Pet Record</a>
@@ -76,7 +76,6 @@
       <a href="clinic-charge.html">▭ Clinic Charge</a>
       <a href="appointment.html" class="active">◷ Medical Services</a>
       
-      <!-- SUB NAVIGATION LINKED TO MODULE VIEWS -->
       <div class="sub-nav">
         <a onclick="showModule('Consultation')">🩺 Consultation</a>
         <a onclick="showModule('Laboratory')">🔬 Laboratory</a>
@@ -97,60 +96,54 @@
     <h1>Our Veterinary Services</h1>
     <p class="subtitle">Overview of official VetMoto medical services and clinical care modules.</p>
 
-    <!-- OFFICIAL MEDICAL SERVICE CARDS -->
+    <!-- SERVICE CARDS -->
     <div class="services-grid">
       <div class="card">
         <h3>🩺 Consultation</h3>
-        <p>General checkups, sick pet evaluations, and wellness exams[cite: 60].</p>
+        <p>Review visits, diagnoses, and each pet's medical history[cite: 60].</p>
         <button class="btn-open" onclick="showModule('Consultation')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>🔬 Laboratory</h3>
-        <p>CBC, blood chemistry, laboratory tests, and disease tests[cite: 64].</p>
+        <p>Review laboratory results and each pet's disease tests[cite: 64].</p>
         <button class="btn-open" onclick="showModule('Laboratory')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>🚑 Surgery</h3>
-        <p>General surgery, soft-tissue procedures, and recovery status[cite: 68].</p>
+        <p>Review surgical procedures and each pet's recovery status[cite: 68].</p>
         <button class="btn-open" onclick="showModule('Surgery')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>💉 Vaccination</h3>
-        <p>Immunizations, rabies vaccines, and preventive care records[cite: 72].</p>
+        <p>Review vaccines and each pet's vaccination history[cite: 72].</p>
         <button class="btn-open" onclick="showModule('Vaccination')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>✂️ Grooming</h3>
-        <p>Professional pet grooming, bath and brush, and care[cite: 76].</p>
+        <p>Review grooming services and each pet's grooming history[cite: 76].</p>
         <button class="btn-open" onclick="showModule('Grooming')">OPEN MODULE</button>
       </div>
 
       <div class="card">
         <h3>🏥 Confinement</h3>
-        <p>Admissions, monitored recovery, and confinement history[cite: 80].</p>
+        <p>Review admissions and each pet's confinement history[cite: 79].</p>
         <button class="btn-open" onclick="showModule('Confinement')">OPEN MODULE</button>
       </div>
     </div>
 
-    <!-- ACTIVE SERVICE DETAILS TABLE -->
+    <!-- DYNAMIC DETAIL TABLE -->
     <div class="detail-panel" id="detailSection">
       <div class="detail-title" id="moduleTitle">Active Module: Consultation</div>
       <table id="moduleTable">
-        <thead>
-          <tr>
-            <th>Record ID</th>
-            <th>Pet Name</th>
-            <th>Owner</th>
-            <th>Date</th>
-            <th>Details / Status</th>
-          </tr>
+        <thead id="tableHead">
+          <!-- Dynamic Headers -->
         </thead>
         <tbody id="moduleTableBody">
-          <!-- Dynamic Content Loaded Here -->
+          <!-- Dynamic Content -->
         </tbody>
       </table>
     </div>
@@ -158,56 +151,89 @@
 </div>
 
 <script>
-  const sampleAppointments = {
-    "Consultation": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", status: "Allergic dermatitis[cite: 60]" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", status: "Annual wellness exam[cite: 60]" }
-    ],
-    "Laboratory": [
-      { id: "LT-2042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", status: "Normal / Within range[cite: 64]" },
-      { id: "LT-2041", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", status: "Negative / Not detected[cite: 64]" }
-    ],
-    "Surgery": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "14 Mar 2025", status: "Spay (Scheduled)[cite: 68]" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "13 Mar 2025", status: "Spay (Recovering)[cite: 68]" }
-    ],
-    "Vaccination": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", status: "Rabies (Current)[cite: 72]" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", status: "DHPP (Current)[cite: 72]" }
-    ],
-    "Grooming": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", status: "Bath & brush (Completed)[cite: 76]" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", status: "Full grooming (Completed)[cite: 76]" }
-    ],
-    "Confinement": [
-      { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", status: "Confined[cite: 80]" },
-      { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", status: "Pending[cite: 80]" }
-    ]
+  const moduleData = {
+    "Consultation": {
+      headers: `<tr><th>Pet ID</th><th>Pet Name</th><th>Owner</th><th>Date</th><th>Veterinarian</th><th>Reason / Diagnosis</th></tr>`,
+      rows: [
+        { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", vet: "Dr. Maya Patel", info: "Allergic dermatitis[cite: 60]" },
+        { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", vet: "Dr. Maya Patel", info: "Annual wellness exam[cite: 60]" },
+        { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", date: "12 Mar 2025", vet: "Dr. Alex Reyes", info: "Acute gastritis[cite: 60]" }
+      ]
+    },
+    "Laboratory": {
+      headers: `<tr><th>Test ID</th><th>Pet Name</th><th>Owner</th><th>Test Type</th><th>Date</th><th>Result / Status</th></tr>`,
+      rows: [
+        { id: "LT-2042", pet: "Luna", owner: "Maya Peterson", type: "Complete blood count", date: "12 Mar 2025", status: "Normal / Within range[cite: 64]" },
+        { id: "LT-2041", pet: "Bella", owner: "Noah Anderson", type: "Heartworm antigen", date: "12 Mar 2025", status: "Negative / Not detected[cite: 64]" },
+        { id: "LT-2040", pet: "Cooper", owner: "Liam Santos", type: "Canine parvovirus", date: "12 Mar 2025", status: "Positive / Detected[cite: 64]" }
+      ]
+    },
+    "Surgery": {
+      headers: `<tr><th>Pet ID</th><th>Pet Name</th><th>Owner</th><th>Surgery Type</th><th>Surgery Date</th><th>Status / Recovery</th></tr>`,
+      rows: [
+        { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", type: "Spay", date: "14 Mar 2025", status: "Scheduled (Pre-op confirmed)[cite: 68]" },
+        { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", type: "Spay", date: "13 Mar 2025", status: "Recovering (Under observation)[cite: 68]" },
+        { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", type: "Neuter", date: "12 Mar 2025", status: "Postponed (Awaiting clearance)[cite: 68]" }
+      ]
+    },
+    "Vaccination": {
+      headers: `<tr><th>Pet ID</th><th>Pet Name</th><th>Owner</th><th>Vaccine</th><th>Date</th><th>Status</th></tr>`,
+      rows: [
+        { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", vaccine: "Rabies", date: "12 Mar 2025", status: "Current[cite: 72]" },
+        { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", vaccine: "DHPP", date: "12 Mar 2025", status: "Current[cite: 72]" },
+        { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", vaccine: "Bordetella", date: "12 Mar 2025", status: "Current[cite: 72]" }
+      ]
+    },
+    "Grooming": {
+      headers: `<tr><th>Pet ID</th><th>Pet Name</th><th>Owner</th><th>Grooming Service</th><th>Date</th><th>Status</th></tr>`,
+      rows: [
+        { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", service: "Bath & brush", date: "12 Mar 2025", status: "Completed[cite: 76]" },
+        { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", service: "Full grooming", date: "12 Mar 2025", status: "Completed[cite: 76]" },
+        { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", service: "Nail trimming", date: "12 Mar 2025", status: "Pending[cite: 76]" }
+      ]
+    },
+    "Confinement": {
+      headers: `<tr><th>Pet ID</th><th>Pet Name</th><th>Owner</th><th>Confinement Date</th><th>Veterinarian</th><th>Status</th></tr>`,
+      rows: [
+        { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", date: "12 Mar 2025", vet: "Dr. Maya Patel", status: "Confined[cite: 79]" },
+        { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", date: "12 Mar 2025", vet: "Dr. Maya Patel", status: "Pending[cite: 79]" },
+        { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", date: "12 Mar 2025", vet: "Dr. Alex Reyes", status: "Confined[cite: 79]" }
+      ]
+    }
   };
 
   function showModule(moduleName) {
     document.getElementById("moduleTitle").textContent = "Active Module: " + moduleName;
-    const body = document.getElementById("moduleTableBody");
-    const records = sampleAppointments[moduleName] || [];
+    const headerEl = document.getElementById("tableHead");
+    const bodyEl = document.getElementById("moduleTableBody");
+    const data = moduleData[moduleName];
 
-    if (records.length === 0) {
-      body.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#888; padding:15px;">No active records found for ${moduleName}.</td></tr>`;
+    headerEl.innerHTML = data.headers;
+
+    if (data.rows.length === 0) {
+      bodyEl.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#888; padding:15px;">No records found for ${moduleName}.</td></tr>`;
     } else {
-      body.innerHTML = records.map(r => `
-        <tr>
-          <td><b>${r.id}</b></td>
-          <td>${r.pet}</td>
-          <td>${r.owner}</td>
-          <td>${r.date}</td>
-          <td><span style="background:var(--lavender); color:var(--purple); padding:3px 8px; border-radius:4px; font-weight:bold; font-size:10px;">${r.status}</span></td>
-        </tr>
-      `).join("");
+      bodyEl.innerHTML = data.rows.map(r => {
+        if (moduleName === 'Consultation') {
+          return `<tr><td><b>${r.id}</b></td><td>${r.pet}</td><td>${r.owner}</td><td>${r.date}</td><td>${r.vet}</td><td>${r.info}</td></tr>`;
+        } else if (moduleName === 'Laboratory') {
+          return `<tr><td><b>${r.id}</b></td><td>${r.pet}</td><td>${r.owner}</td><td>${r.type}</td><td>${r.date}</td><td><span style="background:var(--lavender); color:var(--purple); padding:3px 8px; border-radius:4px; font-weight:bold; font-size:10px;">${r.status}</span></td></tr>`;
+        } else if (moduleName === 'Surgery') {
+          return `<tr><td><b>${r.id}</b></td><td>${r.pet}</td><td>${r.owner}</td><td>${r.type}</td><td>${r.date}</td><td><span style="background:var(--lavender); color:var(--purple); padding:3px 8px; border-radius:4px; font-weight:bold; font-size:10px;">${r.status}</span></td></tr>`;
+        } else if (moduleName === 'Vaccination') {
+          return `<tr><td><b>${r.id}</b></td><td>${r.pet}</td><td>${r.owner}</td><td>${r.vaccine}</td><td>${r.date}</td><td><span style="background:var(--lavender); color:var(--purple); padding:3px 8px; border-radius:4px; font-weight:bold; font-size:10px;">${r.status}</span></td></tr>`;
+        } else if (moduleName === 'Grooming') {
+          return `<tr><td><b>${r.id}</b></td><td>${r.pet}</td><td>${r.owner}</td><td>${r.service}</td><td>${r.date}</td><td><span style="background:var(--lavender); color:var(--purple); padding:3px 8px; border-radius:4px; font-weight:bold; font-size:10px;">${r.status}</span></td></tr>`;
+        } else if (moduleName === 'Confinement') {
+          return `<tr><td><b>${r.id}</b></td><td>${r.pet}</td><td>${r.owner}</td><td>${r.date}</td><td>${r.vet}</td><td><span style="background:var(--lavender); color:var(--purple); padding:3px 8px; border-radius:4px; font-weight:bold; font-size:10px;">${r.status}</span></td></tr>`;
+        }
+      }).join("");
     }
 
     document.getElementById("detailSection").scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Load default module on startup
+  // Default load
   showModule('Consultation');
 </script>
 
