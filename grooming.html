@@ -1,362 +1,235 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VetMoto - Grooming Records</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VetMoto - Grooming Records</title>
+<script>
+  if (!sessionStorage.getItem("vetmoto_user")) {
+    window.location.href = "index.html";
+  }
+  function logout() {
+    sessionStorage.removeItem("vetmoto_user");
+    window.location.href = "index.html";
+  }
+</script>
+<style>
+  :root {
+    --purple: #5b3a82;
+    --lavender: #f3ecfb;
+    --coral: #e85b5b;
+    --bg: #f5effa;
+    --white: #fff;
+    --text: #4a3560;
+    --border: #e0d4ec;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Arial, sans-serif; background: var(--bg); color: var(--text); }
+  .layout { display: flex; min-height: 100vh; }
+  
+  /* SIDEBAR */
+  .sidebar { width: 205px; background: var(--purple); color: #fff; padding: 18px 16px; display: flex; flex-direction: column; flex-shrink: 0; }
+  .logo { height: 100px; width: 100px; border-radius: 50%; background: white; color: var(--purple); display: flex; align-items: center; justify-content: center; margin: 0 auto 12px auto; overflow: hidden; }
+  .logo img { width: 85%; height: 85%; object-fit: contain; }
+  .brand { text-align: center; font-weight: bold; font-size: 16px; letter-spacing: 1px; color: #ffffff; margin-bottom: 20px; }
+  .nav a { display: block; color: white; text-decoration: none; padding: 10px 8px; border-top: 1px solid #ffffff33; font-size: 13px; }
+  .nav a.active, .nav a:hover { background: #714c9e; }
+  .sub-nav { padding-left: 10px; background: rgba(0,0,0,0.15); border-bottom: 1px solid #ffffff33; }
+  .sub-nav a { border-top: none; padding: 8px 10px; font-size: 11px; opacity: 0.9; cursor: pointer; text-decoration: none; display: block; color: white; }
+  .sub-nav a:hover { opacity: 1; font-weight: bold; background: rgba(255,255,255,0.2); }
+  .logout { margin-top: auto; background: var(--coral); color: white; border: 0; border-radius: 10px; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; }
 
-  <style>
-    .grooming-form {
-      background: #FFF9F2;
-      padding: 20px;
-      margin: 20px 0;
-      border-radius: 12px;
-    }
+  /* MAIN CONTENT */
+  main { flex: 1; min-width: 0; padding: 28px 36px; background: var(--bg); }
+  h1 { margin: 0 0 6px; color: var(--purple); font-size: 24px; font-weight: bold; }
+  .subtitle { margin: 0 0 20px; color: #806b91; font-size: 12px; }
 
-    .grooming-form input,
-    .grooming-form select,
-    .grooming-form textarea {
-      display: block;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 10px;
-      margin: 6px 0 14px;
-      border: 1px solid #D7C8E8;
-      border-radius: 8px;
-    }
+  .panel { background: white; border-radius: 14px; padding: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+  .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+  .search-input { padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; width: 260px; outline: none; }
+  .btn-primary { background: var(--purple); color: white; border: none; padding: 9px 14px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer; text-transform: uppercase; }
+  .btn-primary:hover { opacity: 0.9; }
 
-    .grooming-search {
-      width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      margin: 15px 0;
-      border: 1px solid #D7C8E8;
-      border-radius: 8px;
-    }
-
-    .grooming-table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .grooming-table th,
-    .grooming-table td {
-      padding: 10px;
-      border-bottom: 1px solid #E9DDF7;
-      text-align: left;
-    }
-
-    .grooming-table th {
-      background: #5B3A82;
-      color: white;
-    }
-
-    .grooming-actions button {
-      margin: 3px;
-    }
-
-    .cancel-button,
-    .delete-button {
-      background: #E85B5B !important;
-      color: white;
-    }
-  </style>
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px 12px; text-align: left; font-size: 12px; border-bottom: 1px solid var(--border); }
+  th { background: var(--lavender); color: var(--purple); }
+  .badge { background: var(--lavender); color: var(--purple); padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 10px; }
+  .btn-action { background: #eee; border: none; padding: 5px 9px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; color: var(--purple); margin-right: 4px; }
+  .btn-action:hover { background: var(--purple); color: white; }
+  .btn-delete { color: var(--coral); }
+</style>
 </head>
-
 <body>
-<div class="dashboard">
 
+<div class="layout">
   <aside class="sidebar">
-    <img src="vetmoto-logo.webp" class="side-logo" alt="VetMoto Logo">
-    <h2>VETMOTO</h2>
+    <div class="logo">
+      <img src="vetmoto-logo.webp" alt="VetMoto Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾<br>VETMOTO';">
+    </div>
+    <div class="brand">VÉTMOTO</div>
+    <nav class="nav">
+      <a href="dashboard.html">⌂ Home</a>
+      <a href="pet-record.html">▤ Pet Record</a>
+      <a href="owner-record.html">♙ Owner Record</a>
+      <a href="medicine.html">💊 Medicine</a>
+      <a href="clinic-charge.html">▭ Clinic Charge</a>
+      <a href="appointment.html" class="active">◷ Medical Services</a>
+      
+      <div class="sub-nav">
+        <a href="consultation.html">🩺 Consultation</a>
+        <a href="laboratory.html">🔬 Laboratory</a>
+        <a href="surgery.html">🚑 Surgery</a>
+        <a href="vaccination.html">💉 Vaccination</a>
+        <a href="grooming.html" style="font-weight:bold; background:rgba(255,255,255,0.2);">✂️ Grooming</a>
+        <a href="confinement.html">🏥 Confinement</a>
+      </div>
 
-    <a href="dashboard.html">⌂ Home</a>
-    <a href="owner-record.html">♧ Owner Records</a>
-    <a href="pet-record.html">🐾 Pet Records</a>
-    <a href="medicine.html">💊 Medicine</a>
-    <a href="appointment.html">◷ Appointment</a>
-    <a href="consultation.html">🩺 Consultation</a>
-    <a href="vaccination.html">💉 Vaccination</a>
-    <a href="index.html" class="logout">LOG OUT</a>
+      <a href="notifications.html">♧ Notification</a>
+      <a href="history.html">▦ History</a>
+    </nav>
+    <button class="logout" onclick="logout()">LOG OUT</button>
   </aside>
 
-  <main class="main-content">
-    <a href="dashboard.html">← Back to Dashboard</a>
+  <main>
+    <h1>Grooming Records</h1>
+    <p class="subtitle">Review grooming services and each pet's grooming history[cite: 76].</p>
 
-    <h1 style="margin-top:20px;">GROOMING RECORDS</h1>
-    <p>Manage pet grooming services and appointments.</p>
+    <div class="panel">
+      <div class="panel-header">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search pet name, ID, or owner..." onkeyup="filterTable()">
+        <button class="btn-primary" onclick="openAddModal()">+ New Grooming Record</button>
+      </div>
 
-    <button type="button" onclick="addGrooming()">
-      + ADD GROOMING
-    </button>
-
-    <form id="groomingForm" class="grooming-form" hidden>
-      <h2 id="formTitle">Add Grooming Record</h2>
-
-      <label for="groomingId">Record ID</label>
-      <input id="groomingId" required placeholder="Enter record ID">
-
-      <label for="petName">Pet Name</label>
-      <input id="petName" required placeholder="Enter pet name">
-
-      <label for="ownerName">Owner Name</label>
-      <input id="ownerName" required placeholder="Enter owner name">
-
-      <label for="service">Grooming Service</label>
-      <select id="service" required>
-        <option value="">Select service</option>
-        <option>Bath and Blow Dry</option>
-        <option>Haircut</option>
-        <option>Nail Trimming</option>
-        <option>Ear Cleaning</option>
-        <option>Full Grooming</option>
-      </select>
-
-      <label for="groomingDate">Grooming Date</label>
-      <input id="groomingDate" type="date" required>
-
-      <label for="groomingTime">Grooming Time</label>
-      <input id="groomingTime" type="time" required>
-
-      <label for="staffName">Assigned Staff</label>
-      <input id="staffName" placeholder="Enter staff name">
-
-      <label for="groomingFee">Service Fee (₱)</label>
-      <input id="groomingFee" type="number" min="0" step="0.01"
-        required placeholder="Enter fee">
-
-      <label for="groomingStatus">Status</label>
-      <select id="groomingStatus">
-        <option>Scheduled</option>
-        <option>In Progress</option>
-        <option>Completed</option>
-        <option>Cancelled</option>
-      </select>
-
-      <label for="groomingNotes">Notes</label>
-      <textarea id="groomingNotes" rows="3"
-        placeholder="Enter additional notes"></textarea>
-
-      <button type="submit">SAVE RECORD</button>
-      <button type="button" class="cancel-button"
-        onclick="cancelGrooming()">CANCEL</button>
-    </form>
-
-    <h2>Grooming History</h2>
-
-    <input id="groomingSearch" class="grooming-search"
-      placeholder="Search ID, pet, owner, or service..."
-      oninput="renderGrooming()">
-
-    <div style="overflow-x:auto;">
-      <table class="grooming-table">
+      <table>
         <thead>
           <tr>
-            <th>Record ID</th>
-            <th>Pet</th>
+            <th>Pet ID</th>
+            <th>Pet Name</th>
             <th>Owner</th>
-            <th>Service</th>
+            <th>Grooming Service</th>
             <th>Date</th>
-            <th>Time</th>
-            <th>Fee</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
-        <tbody id="groomingTable"></tbody>
+        <tbody id="tableBody">
+          <!-- Dynamically loaded via JavaScript -->
+        </tbody>
       </table>
     </div>
-
-    <p id="emptyMessage" hidden>No grooming records found.</p>
   </main>
 </div>
 
 <script>
-const groomingForm = document.getElementById("groomingForm");
-const groomingTable = document.getElementById("groomingTable");
-let editingGroomingIndex = -1;
+  // Initial default dataset based on PDF Grooming records + LocalStorage persistence
+  const defaultGrooming = [
+    { id: "PR-1042", pet: "Luna", owner: "Maya Peterson", service: "Bath & brush", date: "12 Mar 2025", status: "Completed" },
+    { id: "PR-1038", pet: "Bella", owner: "Noah Anderson", service: "Full grooming", date: "12 Mar 2025", status: "Completed" },
+    { id: "PR-1026", pet: "Cooper", owner: "Liam Santos", service: "Nail trimming", date: "12 Mar 2025", status: "Pending" },
+    { id: "PR-1019", pet: "Daisy", owner: "Emma Garcia", service: "Bath & haircut", date: "11 Mar 2025", status: "Completed" },
+    { id: "PR-1014", pet: "Milo", owner: "Olivia Cruz", service: "De-shedding", date: "11 Mar 2025", status: "Completed" }
+  ];
 
-function getGroomingRecords() {
-  try {
-    return JSON.parse(
-      localStorage.getItem("vetmotoGrooming") || "[]"
-    );
-  } catch (error) {
-    return [];
-  }
-}
-
-function saveGroomingRecords(records) {
-  localStorage.setItem("vetmotoGrooming", JSON.stringify(records));
-}
-
-function addGrooming() {
-  editingGroomingIndex = -1;
-  groomingForm.reset();
-  document.getElementById("formTitle").textContent =
-    "Add Grooming Record";
-  groomingForm.hidden = false;
-  groomingForm.scrollIntoView({ behavior: "smooth" });
-}
-
-function cancelGrooming() {
-  groomingForm.reset();
-  groomingForm.hidden = true;
-  editingGroomingIndex = -1;
-}
-
-groomingForm.addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  const records = getGroomingRecords();
-
-  const record = {
-    id: document.getElementById("groomingId").value.trim(),
-    pet: document.getElementById("petName").value.trim(),
-    owner: document.getElementById("ownerName").value.trim(),
-    service: document.getElementById("service").value,
-    date: document.getElementById("groomingDate").value,
-    time: document.getElementById("groomingTime").value,
-    staff: document.getElementById("staffName").value.trim(),
-    fee: document.getElementById("groomingFee").value,
-    status: document.getElementById("groomingStatus").value,
-    notes: document.getElementById("groomingNotes").value.trim()
-  };
-
-  const duplicate = records.some((item, index) =>
-    item.id === record.id && index !== editingGroomingIndex
-  );
-
-  if (duplicate) {
-    alert("This Record ID already exists.");
-    return;
+  function getStoredData() {
+    let data = localStorage.getItem("vetmoto_grooming");
+    if (!data) {
+      localStorage.setItem("vetmoto_grooming", JSON.stringify(defaultGrooming));
+      return defaultGrooming;
+    }
+    return JSON.parse(data);
   }
 
-  if (editingGroomingIndex >= 0) {
-    records[editingGroomingIndex] = record;
-  } else {
-    records.push(record);
+  function renderTable(data) {
+    const tbody = document.getElementById("tableBody");
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#888; padding:20px;">No grooming records found.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map((item, index) => `
+      <tr>
+        <td><b>${item.id}</b></td>
+        <td>${item.pet}</td>
+        <td>${item.owner}</td>
+        <td>${item.service}</td>
+        <td>${item.date}</td>
+        <td><span class="badge">${item.status}</span></td>
+        <td>
+          <button class="btn-action" onclick="editRecord(${index})">Edit</button>
+          <button class="btn-action btn-delete" onclick="deleteRecord(${index})">Delete</button>
+        </td>
+      </tr>
+    `).join("");
   }
 
-  saveGroomingRecords(records);
-  cancelGrooming();
-  renderGrooming();
-  alert("Grooming record saved successfully!");
-});
+  // CREATE (Add new grooming record)
+  function openAddModal() {
+    let pet = prompt("Enter Pet Name:");
+    if (!pet) return;
+    let owner = prompt("Enter Owner Name:");
+    let service = prompt("Enter Grooming Service (e.g., Bath & brush):");
+    let status = prompt("Enter Status (e.g., Completed):");
 
-function viewGrooming(index) {
-  const item = getGroomingRecords()[index];
-  if (!item) return;
-
-  alert(
-    "GROOMING DETAILS\n\n" +
-    "Record ID: " + item.id +
-    "\nPet: " + item.pet +
-    "\nOwner: " + item.owner +
-    "\nService: " + item.service +
-    "\nDate: " + item.date +
-    "\nTime: " + item.time +
-    "\nStaff: " + (item.staff || "—") +
-    "\nFee: ₱" + item.fee +
-    "\nStatus: " + item.status +
-    "\nNotes: " + (item.notes || "—")
-  );
-}
-
-function editGrooming(index) {
-  const item = getGroomingRecords()[index];
-  if (!item) return;
-
-  editingGroomingIndex = index;
-
-  document.getElementById("formTitle").textContent =
-    "Edit Grooming Record";
-  document.getElementById("groomingId").value = item.id;
-  document.getElementById("petName").value = item.pet;
-  document.getElementById("ownerName").value = item.owner;
-  document.getElementById("service").value = item.service;
-  document.getElementById("groomingDate").value = item.date;
-  document.getElementById("groomingTime").value = item.time;
-  document.getElementById("staffName").value = item.staff || "";
-  document.getElementById("groomingFee").value = item.fee;
-  document.getElementById("groomingStatus").value = item.status;
-  document.getElementById("groomingNotes").value = item.notes || "";
-
-  groomingForm.hidden = false;
-  groomingForm.scrollIntoView({ behavior: "smooth" });
-}
-
-function deleteGrooming(index) {
-  const records = getGroomingRecords();
-  if (!records[index]) return;
-
-  if (!confirm("Delete this grooming record?")) return;
-
-  records.splice(index, 1);
-  saveGroomingRecords(records);
-  renderGrooming();
-}
-
-function renderGrooming() {
-  const records = getGroomingRecords();
-  const query = document.getElementById("groomingSearch")
-    .value.trim().toLowerCase();
-
-  const matches = records
-    .map((item, index) => ({ item, index }))
-    .filter(({ item }) =>
-      [
-        item.id, item.pet, item.owner,
-        item.service, item.status
-      ].some(value =>
-        String(value || "").toLowerCase().includes(query)
-      )
-    );
-
-  groomingTable.replaceChildren();
-
-  matches.forEach(({ item, index }) => {
-    const row = groomingTable.insertRow();
-
-    [
-      item.id,
-      item.pet,
-      item.owner,
-      item.service,
-      item.date,
-      item.time,
-      "₱" + Number(item.fee || 0).toFixed(2),
-      item.status
-    ].forEach(value => {
-      row.insertCell().textContent = value || "—";
+    let records = getStoredData();
+    records.unshift({
+      id: "PR-" + Math.floor(1000 + Math.random() * 9000),
+      pet: pet,
+      owner: owner || "N/A",
+      service: service || "Bath & brush",
+      date: "19 Oct 2026",
+      status: status || "Completed"
     });
 
-    const actions = row.insertCell();
-    actions.className = "grooming-actions";
+    localStorage.setItem("vetmoto_grooming", JSON.stringify(records));
+    renderTable(records);
+    alert("New grooming record successfully created!");
+  }
 
-    const viewButton = document.createElement("button");
-    viewButton.textContent = "VIEW";
-    viewButton.onclick = () => viewGrooming(index);
+  // UPDATE (Edit grooming record)
+  function editRecord(index) {
+    let records = getStoredData();
+    let item = records[index];
 
-    const editButton = document.createElement("button");
-    editButton.textContent = "EDIT";
-    editButton.onclick = () => editGrooming(index);
+    let newPet = prompt("Edit Pet Name:", item.pet);
+    if (!newPet) return;
+    let newService = prompt("Edit Grooming Service:", item.service);
+    let newStatus = prompt("Edit Status:", item.status);
 
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "DELETE";
-    deleteButton.className = "delete-button";
-    deleteButton.onclick = () => deleteGrooming(index);
+    item.pet = newPet;
+    item.service = newService || item.service;
+    item.status = newStatus || item.status;
 
-    actions.append(viewButton, editButton, deleteButton);
-  });
+    localStorage.setItem("vetmoto_grooming", JSON.stringify(records));
+    renderTable(records);
+    alert("Grooming record successfully updated!");
+  }
 
-  document.getElementById("emptyMessage").hidden =
-    matches.length > 0;
-}
+  // DELETE (Remove grooming record)
+  function deleteRecord(index) {
+    if (confirm("Are you sure you want to delete this grooming record?")) {
+      let records = getStoredData();
+      records.splice(index, 1);
+      localStorage.setItem("vetmoto_grooming", JSON.stringify(records));
+      renderTable(records);
+    }
+  }
 
-renderGrooming();
+  // READ & FILTER (Search functionality)
+  function filterTable() {
+    let query = document.getElementById("searchInput").value.toLowerCase();
+    let records = getStoredData();
+    let filtered = records.filter(item => 
+      item.pet.toLowerCase().includes(query) || 
+      item.owner.toLowerCase().includes(query) || 
+      item.id.toLowerCase().includes(query) ||
+      item.service.toLowerCase().includes(query)
+    );
+    renderTable(filtered);
+  }
+
+  // Initial load on page start
+  renderTable(getStoredData());
 </script>
+
 </body>
 </html>
