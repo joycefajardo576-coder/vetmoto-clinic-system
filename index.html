@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VetMoto - Clinic Staff Login & Sign Up</title>
+<title>VetMoto - Clinic Staff Login</title>
 <style>
   :root {
     --purple: #5b3a82;
@@ -26,7 +26,7 @@
     padding: 20px;
   }
 
-  /* SPLIT CONTAINER (Kalahati kaliwa, kalahati kanan ayon sa PDF) */
+  /* SPLIT CONTAINER (Eksaktong gayak sa PDF Screen 11 at 12) */
   .auth-container {
     background: white;
     width: 100%;
@@ -38,7 +38,7 @@
     overflow: hidden;
   }
 
-  /* KALIWANG BAHAGI: Logo, Picture, at Welcome text */
+  /* KALIWANG BAHAGI */
   .auth-left {
     background: linear-gradient(135deg, #f3ecfb 0%, #e2d1f9 100%);
     width: 45%;
@@ -84,7 +84,7 @@
   .left-sub { font-size: 11px; font-weight: bold; color: var(--coral); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
   .left-desc { font-size: 10px; color: #705b82; line-height: 1.3; }
 
-  /* KANANG BAHAGI: Form (Login / Sign Up) */
+  /* KANANG BAHAGI */
   .auth-right {
     width: 55%;
     padding: 40px 35px;
@@ -148,13 +148,12 @@
 
 <div class="auth-container">
   
-  <!-- KALIWANG PANEL (Eksaktong disenyo sa PDF) -->
+  <!-- KALIWANG PANEL -->
   <div class="auth-left">
     <div class="left-logo">
       <img src="vetmoto-logo.webp" alt="Logo" onerror="this.onerror=null; this.parentNode.innerHTML='🐾 VETMOTO';">
     </div>
     <div class="pet-image-box">
-      <!-- Pwede mong palitan ang src ng totoong picture ng puppy at kitten kung meron ka -->
       <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=400&q=80" alt="Pets">
     </div>
     <div class="left-title">Welcome to VetMoto</div>
@@ -162,10 +161,10 @@
     <div class="left-desc">Your trusted companion for pet health, appointments, and wellness — all in one place.</div>
   </div>
 
-  <!-- KANANG PANEL (Login & Sign Up Forms) -->
+  <!-- KANANG PANEL -->
   <div class="auth-right">
     
-    <!-- 1. LOGIN FORM -->
+    <!-- 1. LOGIN FORM (Screen 11) -->
     <div id="pane-login" class="form-pane active">
       <div class="top-paw-logo">🐾 VETMOTO</div>
       <div class="form-main-title">Clinic Staff Login</div>
@@ -184,15 +183,15 @@
       </form>
 
       <div class="switch-text">
-        Dont have an Account? <a onclick="toggleAuth('signup')">Sign-Up</a>
+        Dont have an Account? <a onclick="switchPane('signup')">Sign-Up</a>
       </div>
     </div>
 
-    <!-- 2. SIGN UP & VERIFY FORM -->
+    <!-- 2. SIGN UP & VERIFICATION FORM (Screen 12) -->
     <div id="pane-signup" class="form-pane">
       <div class="top-paw-logo">🐾 VETMOTO</div>
       <div class="form-main-title">Create Account</div>
-      <div class="form-sub-title">Sign up and verify your staff account.</div>
+      <div class="form-sub-title">Sign up and verify your clinic staff account.</div>
 
       <form onsubmit="handleSignUp(event)">
         <div class="form-group">
@@ -215,7 +214,7 @@
       </form>
 
       <div class="switch-text">
-        Already have an account? <a onclick="toggleAuth('login')">Sign-In</a>
+        Already have an account? <a onclick="switchPane('login')">Sign-In</a>
       </div>
     </div>
 
@@ -228,9 +227,9 @@
     window.location.href = "dashboard.html";
   }
 
-  function toggleAuth(mode) {
+  function switchPane(target) {
     document.querySelectorAll('.form-pane').forEach(p => p.classList.remove('active'));
-    if (mode === 'signup') {
+    if (target === 'signup') {
       document.getElementById('pane-signup').classList.add('active');
     } else {
       document.getElementById('pane-login').classList.add('active');
@@ -255,12 +254,12 @@
       return;
     }
 
-    // Isinasagawa ang Registration at Verification step
+    // Save and Verify account
     accounts.push({ name, email, pass, verified: true });
     localStorage.setItem("vetmoto_accounts", JSON.stringify(accounts));
 
-    alert("Account successfully created and [VERIFIED]! You can now sign in.");
-    toggleAuth('login');
+    alert("Account successfully created and [VERIFIED]! You may now sign in.");
+    switchPane('login');
     document.getElementById("loginUser").value = email;
   }
 
@@ -271,7 +270,7 @@
 
     const accounts = JSON.parse(localStorage.getItem("vetmoto_accounts") || "[]");
     
-    // Default account kung wala pang nare-register
+    // Default fallback account
     if (accounts.length === 0) {
       accounts.push({ name: "Mae", email: "mae@vetmoto.com", pass: "VetMoto01", verified: true });
       localStorage.setItem("vetmoto_accounts", JSON.stringify(accounts));
