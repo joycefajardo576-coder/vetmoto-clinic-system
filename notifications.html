@@ -1,10 +1,19 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>VetMoto | Notifications</title>
+<script>
+  // Session Protection Check (IT107 Requirement)
+  if (!sessionStorage.getItem("vetmoto_user")) {
+      window.location.href = "index.html";
+  }
+  function logout() {
+      sessionStorage.removeItem("vetmoto_user");
+      window.location.href = "index.html";
+  }
+</script>
 <style>
 :root {
   --purple:#5b3a82; --lavender:#e9ddf7; --coral:#e85b5b;
@@ -72,7 +81,7 @@ button,input,select{font:inherit}
       <a href="notifications.html" class="active">♧ Notification</a>
       <a href="history.html">▦ History</a>
     </nav>
-    <button class="logout" onclick="if(confirm('Log out of the demo?'))location.href='index.html'">LOG OUT</button>
+    <button class="logout" onclick="logout()">LOG OUT</button>
   </aside>
 
   <main>
@@ -108,7 +117,10 @@ button,input,select{font:inherit}
   <div class="modal">
     <h2 id="modalTitle">Notification details</h2>
     <div id="modalContent"></div>
-    <button class="btn primary" onclick="closeModal()">CLOSE</button>
+    <div style="display:flex; gap:10px; margin-top:15px;">
+      <button class="btn primary" onclick="closeModal()">CLOSE</button>
+      <button class="btn secondary" id="deleteNotifBtn" style="background:#E85B5B; color:white; border:none;">DELETE</button>
+    </div>
   </div>
 </div>
 
@@ -190,8 +202,20 @@ function viewNotification(id) {
     <p><strong>Related record:</strong> ${escapeHTML(n.record)}</p>
     <p><strong>Status:</strong> Read</p>
   `;
+  $("deleteNotifBtn").onclick = function() { deleteNotification(id); };
   $("modalBg").style.display = "flex";
 }
+
+// DELETE Operation for IT107 CRUD Compliance
+function deleteNotification(id) {
+  if (confirm("Are you sure you want to delete this notification?")) {
+    notifications = notifications.filter(n => n.id !== id);
+    save();
+    renderNotifications();
+    closeModal();
+  }
+}
+
 function closeModal() {
   $("modalBg").style.display = "none";
 }
